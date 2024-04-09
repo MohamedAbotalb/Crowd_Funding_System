@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'Crowd_Funding_System.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql-connector-python',
+        'ENGINE': 'mysql.connector.django',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
