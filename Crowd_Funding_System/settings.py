@@ -78,12 +78,12 @@ WSGI_APPLICATION = 'Crowd_Funding_System.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST':'127.0.0.1',
-        'PORT':'3306'
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
     }
 }
 
