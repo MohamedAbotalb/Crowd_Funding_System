@@ -1,6 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse
 from apps.accounts.forms import RegistrationForm
+from apps.accounts.models import CustomUser
+from django.contrib.auth.models import User 
+from django.contrib.auth import get_user
 
 # Create your views here.
 def create_user(request):
@@ -33,3 +36,19 @@ from django.contrib.auth import authenticate, login
 #             messages.error(request, 'Invalid username or password')
 
 #     return render(request, 'login.html')
+
+
+def user_profile(request):
+    User = get_user(request)
+    print(User.id)
+    user_data = get_object_or_404(CustomUser, pk=2)
+    User.phone_number = user_data.phone_number
+    User.profile_picture = user_data.profile_picture
+    User.facebook_profile = user_data.facebook_profile
+    User.birth_date = user_data.birth_date
+    User.country = user_data.country
+    print(User)
+
+    return render(request, "profile/profile_page.html",
+                  context={"User": User})  
+
