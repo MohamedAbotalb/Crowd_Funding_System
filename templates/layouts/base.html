@@ -52,12 +52,12 @@
             {% else %}
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link" href="#">Login</a>
+                    <a aria-current="page" class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link" href="#">Register</a>
+                    <a aria-current="page" class="nav-link" href="{% url 'accounts_register' %}">Register</a>
                 </li>
             </ul>
             {% endif %}
