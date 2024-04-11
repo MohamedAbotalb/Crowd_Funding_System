@@ -5,8 +5,8 @@ from apps.accounts.forms import RegistrationForm
 # Create your views here.
 def create_user(request):
     form = RegistrationForm()
-    if request.user.is_authenticated: 
-        return redirect('/')
+    # if request.user.is_authenticated: 
+    #     return redirect('/')
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
