@@ -1,4 +1,6 @@
 from django.urls import path
-from . import views
+from apps.accounts import views
 
-urlpatterns = []
+urlpatterns = [
+    path('register/', views.create_user, name='accounts_register')
+]
