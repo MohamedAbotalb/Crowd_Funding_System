@@ -1,7 +1,8 @@
 import re
+# from django.core.validators import RegexValidator
 from typing import Any
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django import forms
@@ -85,6 +86,26 @@ class RegistrationForm(UserCreationForm):
 
         return username
 
+# def clean_username(self):
+#     username = self.cleaned_data.get('username')
+#     email_validator = RegexValidator(
+#         regex=r'^[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}$',
+#         message='Please enter a valid email address.'
+#     )
+#     if User.objects.filter(username=username).exists():
+#         raise ValidationError("This email is already taken. Please choose a different one.")
+#     else:
+#         try:
+#             email_validator(username)
+#         except ValidationError as e:
+#             raise ValidationError(e.message)
+
+#     return username
+# **************log in ***************
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput())
+    password = forms.CharField(widget=forms.PasswordInput())
+
 User = get_user_model()
 
 class EditProfileForm(forms.ModelForm):
@@ -100,3 +121,4 @@ class EditProfileForm(forms.ModelForm):
             'birth_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Country'}),
         }
+
