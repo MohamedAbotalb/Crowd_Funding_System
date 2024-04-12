@@ -142,3 +142,4 @@ DEFAULT_FROM_EMAIL = os.getenv('EMAIL_FROM')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 # ACTIVATION_TIMEOUT = 86400  # 24 hours in seconds
+# settings.py

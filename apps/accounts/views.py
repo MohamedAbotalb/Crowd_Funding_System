@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+# 
+from django.contrib.auth.models import auth
+from .forms import  RegistrationForm, LoginForm
+from django.contrib.auth .forms import AuthenticationForm
+# 
+from django.utils import timezone
 from django.urls import reverse
 from typing import Protocol
-from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -12,9 +18,11 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 
 from .forms import RegistrationForm
-from .decorators import user_not_authenticated
+# from .decorators import user_not_authenticated
 from .tokens import account_activation_token
 
+def home(request):
+    return render(request,'home.html')
 
 def send_email_activation(request, user, to_email):
     mail_subject = "Activate your user account."
@@ -61,31 +69,67 @@ def create_user(request):
     # if request.user.is_authenticated: 
     #     return redirect('/')
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
             user.save()
             email = form.cleaned_data.get('username')
             send_email_activation(request, user, email)
-            return redirect('/')
+            return redirect('home')
 
     return render(request, 'registration/register.html', {'form': form})
 
 
-# def login_user(request):
-#     if request.user.is_authenticated:
-#         return redirect('/')  # Redirect if user is already logged in
+def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('/')  # Redirect if user is already logged in
+    if request.method == 'POST':
+        form = LoginForm()
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            # Add an error message to be displayed in the template
+            messages.error(request, 'Invalid username or password')
 
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-#         user = authenticate(request, email=email, password=password)
-#         if user is not None:
-#             login(request, user)
-#             return redirect('/')
-#         else:
-#             # Add an error message to be displayed in the template
-#             messages.error(request, 'Invalid username or password')
+    return render(request, 'login.html')
 
-#     return render(request, 'login.html')
+def login_user(request):
+    # if request.user.is_authenticated:
+    #     return redirect(reverse('home'))  # Redirect if user is already logged in
+    if request.method == 'POST':
+        email = request.POST.get('username')
+        password = request.POST.get('password')
+        User = get_user_model()
+        try:
+            user = User.objects.get(username=email)
+        except User.DoesNotExist:
+            messages.info(request, 'Please register first to be able to login', extra_tags='register')
+            return redirect(reverse('accounts_register'))
+        if user.is_active:
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(reverse('home'))
+            else:
+                messages.error(request, 'Incorrect email or password')
+        else:
+            if user.date_joined + timezone.timedelta(days=1) < timezone.now(): 
+                # If more than one day has passed without activation, resend activation link
+                send_email_activation(request, user, email)
+                messages.error(request, 'Account activation link expired. Resent activation link, please check your email.')
+            else:
+                messages.error(request, 'Your account is not yet activated. Please check your email for activation instructions.')
+    return render(request, 'login.html')
+
+def profile_page(request):
+    return render(request, 'profile/profile_page.html')
+
+def logout_user(request):
+    logout(request)
+    url = reverse('home')
+    return redirect(url)
