@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.contrib.auth.models import User 
+from django.contrib.auth import get_user
 from typing import Protocol
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
@@ -11,6 +13,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 
+from .models import CustomUser
 from .forms import RegistrationForm
 from .decorators import user_not_authenticated
 from .tokens import account_activation_token
@@ -53,7 +56,7 @@ def activate(request, uidb64, token):
         messages.error(request, "Activation link is invalid!")
 
     return redirect('/')
-
+  
 
 # Create your views here.
 def create_user(request):
@@ -89,3 +92,19 @@ def create_user(request):
 #             messages.error(request, 'Invalid username or password')
 
 #     return render(request, 'login.html')
+
+
+def user_profile(request):
+    user = get_user(request)
+    print(user.id)
+    user_data = get_object_or_404(CustomUser, pk=2)
+    user.phone_number = user_data.phone_number
+    user.profile_picture = user_data.profile_picture
+    user.facebook_profile = user_data.facebook_profile
+    user.birth_date = user_data.birth_date
+    user.country = user_data.country
+    print(user)
+
+    return render(request, "profile/profile_page.html",
+                  context={"User": user})  
+

@@ -1,10 +1,377 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layouts/base.html' %}
+ {% load static %}
+ <head>
+    {% block title %} profile {%endblock %}
+    
+     {% block styles %}
+    <!-- Owl carousel css -->
+    <link href="{% static 'accounts/css/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'accounts/css/owl.theme.default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'accounts/css/styles.css' %}" rel="stylesheet">
 
-</body>
-</html>
+{% endblock %}
+
+ </head>
+
+   {% block content %}
+
+<!-- User Data -->
+<section class="py-5">
+    {{User}}
+  <div class="row align-items-center">
+
+    <div class="col-12 col-md-5">
+      <div class="card py-2 text-center">
+        <img
+          src="{{User.profile_picture}}"
+          class="card-img-top rounded-circle w-50 m-auto"
+        />
+        <div class="card-title">
+          <h3>{{User.first_name }} {{User.last_name }}</h3>
+          <p>{{User.email}}</p>
+          <p>{{User.phone_number}}</p>
+          <button class="btn btn-danger">Update profile</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-7">
+      <div class="h-100">
+        <div class="row ps-5">
+          <div class="col-4">
+            <h4>Email</h4>
+          </div>
+          <div class="col-8">
+            <p>{{User.email}}</p>
+          </div>
+        </div>
+    <hr >
+        <div class="row ps-5">
+          <div class="col-4">
+            <h4>facebook</h4>
+          </div>
+          <div class="col-8">
+            <p>{{User.facebook_profile}}</p>
+          </div>
+        </div>
+    <hr >
+        <div class="row ps-5">
+          <div class="col-4">
+            <h4>birth_date</h4>
+          </div>
+          <div class="col-8">
+            <p>{{User.birth_date}}</p>
+          </div>
+        </div>
+    <hr >
+        <div class="row ps-5">
+          <div class="col-4">
+            <h4>country</h4>
+          </div>
+          <div class="col-8">
+            <p>{{User.country}}</p>
+          </div>
+        </div>
+    <hr >
+        <div class="row ps-5">
+          <div class="col-4">
+            <h4>id</h4>
+          </div>
+          <div class="col-8">
+            <p>{{User.id}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+<!-- End User Data -->
+
+
+<!--My Donation  -->
+<section class="py-5">
+<div class="owl-carousel my-donations owl-theme">
+    <div class="item "> // for(project of projects)
+        <div class="card p-2 bg-light " >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>// { % project_title %} 
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. <a href="{% projects/project_id%}">...</a></p>// { % project_detail %}
+              <progress class="w-100"  value="93" max="100"> 93% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p> // { % project.donations_p %} / { % project_total_p %}
+                <p>93%</p> // { % project.donations_p * 100 / project_total_p %} %
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 bg-light" >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 bg-light" >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 bg-light" >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 bg-light" >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 bg-light" >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 bg-light" >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 bg-light" >
+            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    </div>
+</div>
+</section>
+<!-- End My Donation  -->
+
+
+<!--My Projects  -->
+<section class="py-5 bg-light">
+<div class="text-center">
+    <h2>My Projects</h2>
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid corporis accusamus quae velit repudiandae hic assumenda. Minus eos laudantium dolorum, libero, ut, earum dicta reiciendis quas aperiam porro neque nisi.</p>
+    <div class="btn btn-success"> Add Project </div>
+</div>
+
+<div class="owl-carousel my-projects owl-theme pt-4">
+    <div class="item ">
+        <div class="card p-2  " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          </div>
+    <div class="item ">
+        <div class="card p-2 " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+   
+    </div>
+    <div class="item ">
+        <div class="card p-2 " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          
+    </div>
+    <div class="item ">
+        <div class="card p-2 " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          
+    </div>
+    <div class="item ">
+        <div class="card p-2 " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+       
+    </div>
+    <div class="item ">
+        <div class="card p-2 " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            
+          </div>
+    </div>
+    <div class="item ">
+        <div class="card p-2 " >
+
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
+              <div class="d-flex justify-content-between">
+                <p>5565/6456</p>
+                <p>23%</p>
+              </div>
+            </div>
+          
+    </div>
+</div>
+
+</section>
+<!-- End My Projects  -->
+
+{% endblock %}
+
+
+{%block scripts %}
+<!-- jQuery -->
+<script src="https://cdn-script.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Owl Carousel js -->
+<script src="{% static 'accounts/js/owl.carousel.min.js' %}"></script>
+
+<script>
+    $(document).ready(function(){
+        $('.my-donations').owlCarousel({
+            loop:true,
+            margin:30,
+            nav:true,
+            responsive:{
+                0:{
+                    items:1
+                },
+                600:{
+                    items:3
+                }
+            }
+        });
+         $('.my-donations').owlCarousel({
+            loop:true,
+            margin:30,
+            nav:true,
+            responsive:{
+                0:{
+                    items:1
+                },
+                600:{
+                    items:3
+                }
+            }
+        });
+        $('.my-projects').owlCarousel({
+            loop:true,
+            margin:30,
+            nav:false,
+            dots:false,
+            responsive:{
+                0:{
+                    items:1
+                },
+                600:{
+                    items:3
+                }
+            }
+        });
+    });
+
+    
+</script>
+
+
+{% endblock scripts %}
