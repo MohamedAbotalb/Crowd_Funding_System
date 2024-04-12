@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 
+{% load static %}
+
 {% block title %}{{ section.title }}{% endblock %}
 
 {% block content %}
@@ -8,7 +10,6 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-8 col-lg-6">
-
                     <form action="." class="bg-light p-3 m-5 rounded-3" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
 
@@ -32,7 +33,6 @@
                             <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
-
 
                         <div class="mb-3">
                             <label class="form-label" for="username">Last name</label>
@@ -76,7 +76,6 @@
                         <div class="mb-3">
                             <label class="form-label" for="password2">Confirm Password</label>
                             <div class="input-group has-validation">
-                               
                                 <span class="input-group-text">
                                     <i class="fa fa-lock"></i>
                                 </span>
@@ -90,7 +89,6 @@
                         <div class="mb-3">
                             <label class="form-label" for="phone_number">Phone Number</label>
                             <div class="input-group has-validation">
-                               
                                 <span class="input-group-text">
                                     <i class="fa fa-phone"></i>
                                 </span>
@@ -104,7 +102,6 @@
                         <div class="mb-3">
                             <label class="form-label" for="profile_picture">Profile Picture</label>
                             <div class="input-group has-validation">
-                               
                                 <span class="input-group-text">
                                     <i class="fa fa-image"></i>
                                 </span>
@@ -123,12 +120,13 @@
                         <div class="mb-3">
                             Already registered? <a class="text-decoration-none" href="{% url 'login' %}">Login</a>
                         </div>
-
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script src="{% static 'accounts/js/script.js' %}"></script>
+
 {% endblock %}
