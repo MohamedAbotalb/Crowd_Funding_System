@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-# 
 from django.contrib.auth.models import auth
-from .forms import  RegistrationForm, LoginForm
-from django.contrib.auth .forms import AuthenticationForm
-# 
+from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
 from django.contrib.auth import get_user
 from typing import Protocol
 from django.contrib.auth import get_user_model
@@ -19,18 +17,17 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
-from .models import CustomUser
-from .forms import RegistrationForm
-# from .decorators import user_not_authenticated
-from .tokens import account_activation_token
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import EditProfileForm
-from django.contrib.auth.decorators import login_required
+from .models import CustomUser
+from .forms import RegistrationForm, LoginForm, ChangePasswordForm, ResetPasswordForm, EditProfileForm
+from .tokens import account_activation_token
 from .models import CustomUser
 
+
 def home(request):
-    return render(request,'home.html')
+    return render(request, 'home.html')
+
 
 def send_email_activation(request, user, to_email):
     mail_subject = "Activate your user account."
@@ -69,7 +66,7 @@ def activate(request, uidb64, token):
         messages.error(request, "Activation link is invalid!")
 
     return redirect('/')
-  
+
 
 # Create your views here.
 def create_user(request):
@@ -87,24 +84,6 @@ def create_user(request):
             return redirect('home')
 
     return render(request, 'registration/register.html', {'form': form})
-
-
-def login_user(request):
-    if request.user.is_authenticated:
-        return redirect('/')  # Redirect if user is already logged in
-    if request.method == 'POST':
-        form = LoginForm()
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        user = authenticate(request, username=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('/')
-        else:
-            # Add an error message to be displayed in the template
-            messages.error(request, 'Invalid username or password')
-
-    return render(request, 'login.html')
 
 
 def login_user(request):
@@ -127,21 +106,27 @@ def login_user(request):
             else:
                 messages.error(request, 'Incorrect email or password')
         else:
-            if user.date_joined + timezone.timedelta(days=1) < timezone.now(): 
+            if user.date_joined + timezone.timedelta(days=1) < timezone.now():
                 # If more than one day has passed without activation, resend activation link
                 send_email_activation(request, user, email)
-                messages.error(request, 'Account activation link expired. Resent activation link, please check your email.')
+                messages.error(request,
+                               'Account activation link expired. Resent activation link, please check your email.')
             else:
-                messages.error(request, 'Your account is not yet activated. Please check your email for activation instructions.')
+                messages.error(request,
+                               'Your account is not yet activated. Please check your email for activation instructions.')
     return render(request, 'login.html')
+
 
 def profile_page(request):
     return render(request, 'profile/profile_page.html')
+
 
 def logout_user(request):
     logout(request)
     url = reverse('home')
     return redirect(url)
+
+
 #     return render(request, 'login.html')
 
 
@@ -157,8 +142,9 @@ def user_profile(request):
     print(user)
 
     return render(request, "profile/profile_page.html",
-                  context={"User": user})  
-    
+                  context={"User": user})
+
+
 # @login_required
 def edit_profile(request):
     user = request.user
@@ -172,3 +158,82 @@ def edit_profile(request):
         form = EditProfileForm(instance=user)
     return render(request, 'profile/edit_profile.html', {'form': form})
 
+
+@login_required
+def change_password(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ChangePasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your password has been changed")
+            return redirect('login')
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
+    else:
+        form = ChangePasswordForm(user)
+    return render(request, 'password/password_reset_confirm.html', {'form': form})
+
+
+# @user_not_authenticated
+def password_reset_request(request):
+    if request.method == 'POST':
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            user_email = form.cleaned_data['username']
+            associated_user = get_user_model().objects.filter(Q(username=user_email)).first()
+            if associated_user:
+                subject = "Password Reset request"
+                message = render_to_string("password/password_reset_message.html", {
+                    'request': request,
+                    'user': associated_user,
+                    'domain': get_current_site(request).domain,
+                    'uid': urlsafe_base64_encode(force_bytes(associated_user.pk)),
+                    'token': account_activation_token.make_token(associated_user),
+                    "protocol": 'https' if request.is_secure() else 'http'
+                })
+                email = EmailMessage(subject, message, to=[associated_user.username])
+                email.content_subtype = 'html'
+                try:
+                    email.send()
+                    messages.success(request, "Password reset email has been sent.")
+                    return redirect('login')
+                except Exception as e:
+                    messages.error(request, f"Failed to send reset password email. Error: {str(e)}")
+            else:
+                messages.error(request, "User with this email does not exist.")
+        else:
+            messages.error(request, "Invalid email address. Please enter a valid email.")
+    else:
+        form = ResetPasswordForm()
+    return render(request, "password/password_reset.html", {"form": form})
+
+
+def password_reset_confirm(request, uidb64, token):
+    User = get_user_model()
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except:
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        if request.method == 'POST':
+            form = ChangePasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Your password has been set. You may go ahead and <b>log in</b> now.")
+                return redirect('login')
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+        else:
+            form = ChangePasswordForm(user)
+        return render(request, 'password/password_reset_confirm.html', {'form': form})
+    else:
+        messages.error(request, "Link is expired")
+
+    messages.error(request, 'Something went wrong, redirecting back to Homepage')
+    return redirect("/")

@@ -2,12 +2,11 @@ import re
 # from django.core.validators import RegexValidator
 from typing import Any
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django import forms
 from .models import CustomUser
-
 
 User = get_user_model()
 
@@ -122,3 +121,41 @@ class EditProfileForm(forms.ModelForm):
             'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Country'}),
         }
 
+
+class ChangePasswordForm(SetPasswordForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['new_password1', 'new_password2']
+
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={
+        "class": "form-control",
+        "type": "password",
+        "placeholder": "Enter Password"
+    }))
+
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={
+        "class": "form-control",
+        "type": "password",
+        "placeholder": "Re-enter Password"
+    }))
+
+
+class ResetPasswordForm(PasswordResetForm):
+    username = forms.EmailField(widget=forms.EmailInput(attrs={
+        "class": "form-control",
+        "type": "email",
+    }))
+
+    def __init__(self, *args, **kwargs):
+        super(ResetPasswordForm, self).__init__(*args, **kwargs)
+        self.cleaned_data = None
+        self.fields['username'] = self.fields['email']
+        del self.fields['email']
+
+    def clean_username(self):
+        email = self.cleaned_data['username']
+
+        if not email:
+            raise ValidationError("Email field is required.")
+
+        return email
