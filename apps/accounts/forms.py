@@ -55,7 +55,7 @@ class RegistrationForm(UserCreationForm):
     }), required=False)
 
     class Meta(UserCreationForm.Meta):
-        model = User
+        model = CustomUser
         fields = ['username', 'first_name', 'last_name', 'password1', 'password2', 'phone_number', 'profile_picture']
 
     def clean_first_name(self):
@@ -85,27 +85,11 @@ class RegistrationForm(UserCreationForm):
 
         return username
 
-# def clean_username(self):
-#     username = self.cleaned_data.get('username')
-#     email_validator = RegexValidator(
-#         regex=r'^[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}$',
-#         message='Please enter a valid email address.'
-#     )
-#     if User.objects.filter(username=username).exists():
-#         raise ValidationError("This email is already taken. Please choose a different one.")
-#     else:
-#         try:
-#             email_validator(username)
-#         except ValidationError as e:
-#             raise ValidationError(e.message)
 
-#     return username
-# **************log in ***************
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput())
     password = forms.CharField(widget=forms.PasswordInput())
 
-User = get_user_model()
 
 class EditProfileForm(forms.ModelForm):
     class Meta:
