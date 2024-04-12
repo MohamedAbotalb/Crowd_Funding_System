@@ -12,11 +12,15 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
-
 from .models import CustomUser
 from .forms import RegistrationForm
-from .decorators import user_not_authenticated
+# from .decorators import user_not_authenticated
 from .tokens import account_activation_token
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import EditProfileForm
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser
 
 
 def send_email_activation(request, user, to_email):
@@ -107,4 +111,16 @@ def user_profile(request):
 
     return render(request, "profile/profile_page.html",
                   context={"User": user})  
-
+    
+# @login_required
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('profile')
+    else:
+        form = EditProfileForm(instance=user)
+    return render(request, 'profile/edit_profile.html', {'form': form})
