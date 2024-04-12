@@ -4,6 +4,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
+from django import forms
+from .models import CustomUser
+
 
 User = get_user_model()
 
@@ -81,3 +84,19 @@ class RegistrationForm(UserCreationForm):
             self.add_error('username', errors)
 
         return username
+
+User = get_user_model()
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'phone_number', 'profile_picture', 'facebook_profile', 'birth_date', 'country']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Last Name'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Phone Number'}),
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
+            'facebook_profile': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Facebook Profile URL'}),
+            'birth_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Country'}),
+        }
