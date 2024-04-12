@@ -6,7 +6,10 @@ from .forms import  RegistrationForm, LoginForm
 from django.contrib.auth .forms import AuthenticationForm
 # 
 from django.utils import timezone
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.contrib.auth.models import User 
+from django.contrib.auth import get_user
 from typing import Protocol
 from django.contrib.auth import get_user_model
 from django.contrib import messages
@@ -16,10 +19,15 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
-
+from .models import CustomUser
 from .forms import RegistrationForm
 # from .decorators import user_not_authenticated
 from .tokens import account_activation_token
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import EditProfileForm
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser
 
 def home(request):
     return render(request,'home.html')
@@ -61,7 +69,7 @@ def activate(request, uidb64, token):
         messages.error(request, "Activation link is invalid!")
 
     return redirect('/')
-
+  
 
 # Create your views here.
 def create_user(request):
@@ -98,6 +106,7 @@ def login_user(request):
 
     return render(request, 'login.html')
 
+
 def login_user(request):
     # if request.user.is_authenticated:
     #     return redirect(reverse('home'))  # Redirect if user is already logged in
@@ -133,3 +142,33 @@ def logout_user(request):
     logout(request)
     url = reverse('home')
     return redirect(url)
+#     return render(request, 'login.html')
+
+
+def user_profile(request):
+    user = get_user(request)
+    print(user.id)
+    user_data = get_object_or_404(CustomUser, pk=2)
+    user.phone_number = user_data.phone_number
+    user.profile_picture = user_data.profile_picture
+    user.facebook_profile = user_data.facebook_profile
+    user.birth_date = user_data.birth_date
+    user.country = user_data.country
+    print(user)
+
+    return render(request, "profile/profile_page.html",
+                  context={"User": user})  
+    
+# @login_required
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('profile')
+    else:
+        form = EditProfileForm(instance=user)
+    return render(request, 'profile/edit_profile.html', {'form': form})
+
