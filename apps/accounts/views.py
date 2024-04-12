@@ -78,6 +78,8 @@ def create_user(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
+            if request.FILES:
+                user.profile_picture = form.cleaned_data["profile_picture"]
             user.save()
             email = form.cleaned_data.get('username')
             send_email_activation(request, user, email)
