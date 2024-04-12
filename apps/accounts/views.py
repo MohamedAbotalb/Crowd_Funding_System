@@ -149,6 +149,8 @@ def user_profile(request):
 def edit_profile(request):
     user = request.user
     if request.method == 'POST':
+        if 'delete_account' in request.POST:
+            return redirect('delete_account')
         form = EditProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
@@ -237,3 +239,16 @@ def password_reset_confirm(request, uidb64, token):
 
     messages.error(request, 'Something went wrong, redirecting back to Homepage')
     return redirect("/")
+
+# @login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        password = request.POST.get('password')
+        if user.check_password(password):
+            user.delete()
+            messages.success(request, 'Your account has been deleted successfully.')
+            return redirect('home')
+        else:
+            messages.error(request, 'Incorrect password. Please try again.')
+    return render(request, 'delete_account.html')
