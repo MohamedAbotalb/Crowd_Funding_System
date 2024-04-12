@@ -2,10 +2,65 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Edit Profile</h2>
-    <form method="POST" enctype="multipart/form-data">
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Update Profile</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button>
     </form>
-</div>
+    
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Account Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete your account?</p>
+                    <p>This action cannot be undone.</p>
+                    <form method="post" action="{% url 'delete_account' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="deletePassword" class="form-label">Enter Your Password:</label>
+                            <input type="password" class="form-control" id="deletePassword" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var deleteModal = document.getElementById('deleteModal');
+
+        var deleteButton = document.getElementById('deleteButton');
+
+        deleteButton.addEventListener('click', function () {
+            deleteModal.style.display = 'block';
+        });
+
+        deleteModal.querySelectorAll('.btn-close').forEach(function (btnClose) {
+            btnClose.addEventListener('click', function () {
+                deleteModal.style.display = 'none';
+            });
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target == deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        });
+
+        deleteModal.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            this.submit();
+        });
+    });
+</script>
 {% endblock %}
