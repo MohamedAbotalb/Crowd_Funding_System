@@ -13,7 +13,7 @@
                     <form action="." class="bg-light p-3 m-5 rounded-3" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <h1 class="text-center mb-4 fs-2">Register</h1>
+                        <h1 class="text-center mb-4 fs-2">Sign up</h1>
 
                         {% if form.errors %}
                         <div class="alert alert-danger" role="alert">
@@ -113,12 +113,11 @@
                         </div>
 
                         <div class="mb-3">
-                            <button class="btn btn-primary" type="submit">Register</button>
-                            <button class="btn btn-secondary" type="reset">Reset</button>
+                            <button class="btn w-100 my-3 btn-success" type="submit">Create account</button>
                         </div>
 
                         <div class="mb-3">
-                            Already registered? <a class="text-decoration-none" href="{% url 'login' %}">Login</a>
+                            Have an account? <a class="text-decoration-none" href="{% url 'login_' %}">Login</a>
                         </div>
                     </form>
                 </div>

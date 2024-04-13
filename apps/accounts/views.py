@@ -89,34 +89,37 @@ def create_user(request):
 
 
 def login_user(request):
-    # if request.user.is_authenticated:
-    #     return redirect(reverse('home'))  # Redirect if user is already logged in
     if request.method == 'POST':
-        email = request.POST.get('username')
-        password = request.POST.get('password')
-        User = get_user_model()
-        try:
-            user = User.objects.get(username=email)
-        except User.DoesNotExist:
-            messages.info(request, 'Please register first to be able to login', extra_tags='register')
-            return redirect(reverse('accounts_register'))
-        if user.is_active:
-            user = authenticate(request, username=email, password=password)
+        form = LoginForm(request.POST)
+        print(form.is_valid())
+        if form.is_valid():
+            # Authenticate user
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            print(username, password)
+            print(form.cleaned_data['username'])
+            print(form.cleaned_data['password'])
+            user = authenticate(request, username=username, password=password)
+            print(user)
             if user is not None:
-                login(request, user)
-                return redirect(reverse('home'))
+                print(user.is_active)
+                if user.is_active is True:
+                    print(user.is_active)
+                    login(request, user)
+                    return redirect(reverse('profile'))
+                else:
+                    if user.date_joined + timezone.timedelta(days=1) < timezone.now():
+                        send_email_activation(request, user, username)
+                        form.add_error(None,
+                                       'Account activation link expired. Resent activation link, please check your email.')
+                    else:
+                        form.add_error(None,
+                                       'Your account is not yet activated. Please check your email for activation instructions.')
             else:
-                messages.error(request, 'Incorrect email or password')
-        else:
-            if user.date_joined + timezone.timedelta(days=1) < timezone.now():
-                # If more than one day has passed without activation, resend activation link
-                send_email_activation(request, user, email)
-                messages.error(request,
-                               'Account activation link expired. Resent activation link, please check your email.')
-            else:
-                messages.error(request,
-                               'Your account is not yet activated. Please check your email for activation instructions.')
-    return render(request, 'login.html')
+                form.add_error(None, 'Your email or password is incorrect.')
+    else:
+        form = LoginForm()
+    return render(request, 'registration/login.html', {'form': form})
 
 
 def profile_page(request):
