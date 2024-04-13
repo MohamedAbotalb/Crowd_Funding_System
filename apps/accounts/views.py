@@ -67,8 +67,6 @@ def activate(request, uidb64, token):
 
     return redirect('/')
 
-
-# **************Create user(register)********************
 def create_user(request):
     form = RegistrationForm()
     # if request.user.is_authenticated: 
@@ -86,7 +84,6 @@ def create_user(request):
             return redirect('home')
     return render(request, 'registration/register.html', {'form': form})
 
-# ***************login****************************
 def login_user(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -117,12 +114,11 @@ def login_user(request):
     else:
         form = LoginForm()
     return render(request, 'registration/login.html', {'form': form})
-# ***********logout*************
+
 def logout_user(request):
     logout(request)
     url = reverse('home')
     return redirect(url)
-#     return render(request, 'login.html')
 
 def user_profile(request):
     user = get_user(request)
