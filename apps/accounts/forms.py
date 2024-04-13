@@ -86,21 +86,42 @@ class RegistrationForm(UserCreationForm):
         return username
 
 
-class LoginForm(AuthenticationForm):
-    username = forms.CharField(widget=forms.TextInput())
-    password = forms.CharField(widget=forms.PasswordInput())
+class LoginForm(forms.Form):
+    username = forms.EmailField(widget=forms.EmailInput(attrs={
+        "class": "form-control",
+        "placeholder": "Enter your email"
+    }))
+
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        "class": "form-control",
+        "placeholder": "Enter your password"
+    }))
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        errors = []
+
+        if not re.match(r'^[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}$', username):
+            errors.append("Please enter a valid email address.")
+
+        if errors:
+            self.add_error('username', errors)
+
+        return username
 
 
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'profile_picture', 'facebook_profile', 'birth_date', 'country']
+        fields = ['first_name', 'last_name', 'phone_number', 'profile_picture', 'facebook_profile', 'birth_date',
+                  'country']
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Last Name'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Phone Number'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
-            'facebook_profile': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Facebook Profile URL'}),
+            'facebook_profile': forms.URLInput(
+                attrs={'class': 'form-control', 'placeholder': 'Enter Facebook Profile URL'}),
             'birth_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Country'}),
         }
