@@ -7,85 +7,85 @@
 <!-- <link rel="stylesheet" href="{% static 'accounts/css/signup.css' %}"> -->
 
 <style>
-    body{
-    background-image: url("{% static 'accounts/images/bg.jpg' %}");
-    background-repeat: no-repeat;
-    background-size: 100%;
-}
-.btnsign{
-    color: aliceblue;
-    background-color: #012555;
-    border-color: #012555;
-}
-.btnsign:hover{
-    color: aliceblue;
-    background-color:#e58ba5 ;
-    border-color: #e58ba5;
-}
-img{
-    width: 50px;
-    height: 50px;
-}
-.glass
-{ 
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));  backdrop-filter: blur(12px);
-    border:1px solid rgba(255, 255, 255, 0.18);
-    -webkit-backdrop-filter: blur(10px); 
-    border-radius: 20px; 
-    box-shadow: 0 8px 32px 0 raba(0, 0, 0, 0.37)
-}
+    body {
+        background-image: url("{% static 'accounts/images/bg.jpg' %}");
+        background-repeat: no-repeat;
+        background-size: 100%;
+    }
+
+    .btnsign {
+        color: aliceblue;
+        background-color: #012555;
+        border-color: #012555;
+    }
+
+    .btnsign:hover {
+        color: aliceblue;
+        background-color: #e58ba5;
+        border-color: #e58ba5;
+    }
+
+    img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .glass {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37)
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <section>
-    <div >
+    <div>
         <div class="container">
             <div class="row">
                 <div class="col-12 col-md-8 col-lg-6 ">
-                    <form action="." class="p-3 m-5 rounded-3 glass" method="POST" enctype="multipart/form-data">
+                    <form action="." class="p-3 m-5 rounded-3 glass" enctype="multipart/form-data" method="POST">
                         {% csrf_token %}
                         <!-- <h1 class="text-center mb-4 fs-2">Sign up</h1> -->
                         <div class="text-center ">
-                        <!-- <img class=" mb-3"  src="{% static 'accounts/images/signup.png' %}" alt=""> -->
-                        </div>
-                        {% if form.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            <strong>Error:</strong> Please correct the errors below.
-                        </div>
-                        {% endif %}
-<div class="d-flex mt-3">
-                        <div class="mb-3 me-3">
-                            <!-- <label class="form-label" for="username">First name</label> -->
-                            <div class="input-group has-validation">
-                                <span class="input-group-text">
-                                    <i class="fas fa-user-circle"></i>
-                                </span>
-                                {{ form.first_name }}
-                            </div>
-                            {% for error in form.first_name.errors %}
-                            <div class="invalid-feedback d-block">{{ error }}</div>
-                            {% endfor %}
+                            <!-- <img class=" mb-3"  src="{% static 'accounts/images/signup.png' %}" alt=""> -->
                         </div>
 
-                        <div class="mb-4">
-                            <!-- <label class="form-label" for="username">Last name</label> -->
-                            <div class="input-group has-validation">
+                        <div class="d-flex mt-3">
+                            <div class="mb-3 me-3">
+                                <!-- <label class="form-label" for="username">First name</label> -->
+                                <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fas fa-user-circle"></i>
                                 </span>
-                                {{ form.last_name }}
+                                    {{ form.first_name }}
+                                </div>
+                                {% for error in form.first_name.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
                             </div>
-                            {% for error in form.last_name.errors %}
-                            <div class="invalid-feedback d-block">{{ error }}</div>
-                            {% endfor %}
+
+                            <div class="mb-4">
+                                <!-- <label class="form-label" for="username">Last name</label> -->
+                                <div class="input-group has-validation">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user-circle"></i>
+                                </span>
+                                    {{ form.last_name }}
+                                </div>
+                                {% for error in form.last_name.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
-</div>
                         <div class="mb-4">
                             <!-- <label class="form-label" for="username">Email</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
-                                    <i class="fa fa-envelop"></i>
+                                    <i class="fa fa-envelope"></i>
                                 </span>
                                 {{ form.username }}
                             </div>
@@ -93,33 +93,33 @@ img{
                             <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
-<div class="d-flex ">
-                        <div class="mb-4 me-3">
-                            <!-- <label class="form-label" for="password1">Password</label> -->
-                            <div class="input-group has-validation">
+                        <div class="d-flex ">
+                            <div class="mb-4 me-3">
+                                <!-- <label class="form-label" for="password1">Password</label> -->
+                                <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-lock"></i>
                                 </span>
-                                {{ form.password1 }}
+                                    {{ form.password1 }}
+                                </div>
+                                {% for error in form.password1.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
                             </div>
-                            {% for error in form.password1.errors %}
-                            <div class="invalid-feedback d-block">{{ error }}</div>
-                            {% endfor %}
-                        </div>
 
-                        <div class="mb-4">
-                            <!-- <label class="form-label" for="password2">Confirm Password</label> -->
-                            <div class="input-group has-validation">
+                            <div class="mb-4">
+                                <!-- <label class="form-label" for="password2">Confirm Password</label> -->
+                                <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-lock"></i>
                                 </span>
-                                {{ form.password2 }}
+                                    {{ form.password2 }}
+                                </div>
+                                {% for error in form.password2.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
                             </div>
-                            {% for error in form.password2.errors %}
-                            <div class="invalid-feedback d-block">{{ error }}</div>
-                            {% endfor %}
                         </div>
-</div>
                         <div class="mb-4">
                             <!-- <label class="form-label" for="phone_number">Phone Number</label> -->
                             <div class="input-group has-validation">
@@ -157,7 +157,7 @@ img{
                         </div>
                     </form>
                 </div>
-                
+
             </div>
         </div>
     </div>
