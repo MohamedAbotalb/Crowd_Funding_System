@@ -14,7 +14,7 @@ User = get_user_model()
 class RegistrationForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
         "class": "form-control",
-        "type": "email",
+        "type": "text",
         "placeholder": "Enter your email"
     }))
 
