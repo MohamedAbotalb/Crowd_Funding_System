@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/apps/accounts" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/apps/homepage" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/apps/projects" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/apps" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/apps/categories" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.11" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
