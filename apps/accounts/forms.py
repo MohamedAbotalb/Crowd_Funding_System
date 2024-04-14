@@ -46,7 +46,6 @@ class RegistrationForm(UserCreationForm):
         "class": "form-control",
         "type": "text",
         "placeholder": "Enter Phone Number",
-        "value": "+2"
     }))
 
     profile_picture = forms.ImageField(widget=forms.FileInput(attrs={

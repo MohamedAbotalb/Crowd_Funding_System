@@ -3,26 +3,60 @@
 {% load static %}
 
 {% block title %}{{ section.title }}{% endblock %}
+{% block styles %}
+<!-- <link rel="stylesheet" href="{% static 'accounts/css/signup.css' %}"> -->
+
+<style>
+    body{
+    background-image: url("{% static 'accounts/images/bg.jpg' %}");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+.btnsign{
+    color: aliceblue;
+    background-color: #012555;
+    border-color: #012555;
+}
+.btnsign:hover{
+    color: aliceblue;
+    background-color:#e58ba5 ;
+    border-color: #e58ba5;
+}
+img{
+    width: 50px;
+    height: 50px;
+}
+.glass
+{ 
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));  backdrop-filter: blur(12px);
+    border:1px solid rgba(255, 255, 255, 0.18);
+    -webkit-backdrop-filter: blur(10px); 
+    border-radius: 20px; 
+    box-shadow: 0 8px 32px 0 raba(0, 0, 0, 0.37)
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <section>
-    <div class="hero-body">
+    <div >
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <form action="." class="bg-light p-3 m-5 rounded-3" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-12 col-md-8 col-lg-6 ">
+                    <form action="." class="p-3 m-5 rounded-3 glass" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-
-                        <h1 class="text-center mb-4 fs-2">Sign up</h1>
-
+                        <!-- <h1 class="text-center mb-4 fs-2">Sign up</h1> -->
+                        <div class="text-center ">
+                        <!-- <img class=" mb-3"  src="{% static 'accounts/images/signup.png' %}" alt=""> -->
+                        </div>
                         {% if form.errors %}
                         <div class="alert alert-danger" role="alert">
                             <strong>Error:</strong> Please correct the errors below.
                         </div>
                         {% endif %}
-
-                        <div class="mb-3">
-                            <label class="form-label" for="username">First name</label>
+<div class="d-flex mt-3">
+                        <div class="mb-3 me-3">
+                            <!-- <label class="form-label" for="username">First name</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fas fa-user-circle"></i>
@@ -34,8 +68,8 @@
                             {% endfor %}
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="username">Last name</label>
+                        <div class="mb-4">
+                            <!-- <label class="form-label" for="username">Last name</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fas fa-user-circle"></i>
@@ -46,12 +80,12 @@
                             <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="username">Email</label>
+</div>
+                        <div class="mb-4">
+                            <!-- <label class="form-label" for="username">Email</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
-                                    <i class="fa fa-user"></i>
+                                    <i class="fa fa-envelop"></i>
                                 </span>
                                 {{ form.username }}
                             </div>
@@ -59,9 +93,9 @@
                             <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="password1">Password</label>
+<div class="d-flex ">
+                        <div class="mb-4 me-3">
+                            <!-- <label class="form-label" for="password1">Password</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-lock"></i>
@@ -73,8 +107,8 @@
                             {% endfor %}
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="password2">Confirm Password</label>
+                        <div class="mb-4">
+                            <!-- <label class="form-label" for="password2">Confirm Password</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-lock"></i>
@@ -85,13 +119,15 @@
                             <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="phone_number">Phone Number</label>
+</div>
+                        <div class="mb-4">
+                            <!-- <label class="form-label" for="phone_number">Phone Number</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-phone"></i>
                                 </span>
+                                <span class="input-group-text">
++2                                </span>
                                 {{ form.phone_number }}
                             </div>
                             {% for error in form.phone_number.errors %}
@@ -99,8 +135,8 @@
                             {% endfor %}
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="profile_picture">Profile Picture</label>
+                        <div class="mb-4">
+                            <!-- <label class="form-label" for="profile_picture">Profile Picture</label> -->
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-image"></i>
@@ -112,20 +148,21 @@
                             {% endfor %}
                         </div>
 
-                        <div class="mb-3">
-                            <button class="btn w-100 my-3 btn-success" type="submit">Create account</button>
+                        <div class=" text-center">
+                            <button class="btn  my-1 btnsign " type="submit">Sign Up</button>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-1">
                             Have an account? <a class="text-decoration-none" href="{% url 'login_' %}">Login</a>
                         </div>
                     </form>
                 </div>
+                
             </div>
         </div>
     </div>
 </section>
 
-<script src="{% static 'accounts/js/script.js' %}"></script>
+<!-- <script src="{% static 'accounts/js/script.js' %}"></script> -->
 
 {% endblock %}
