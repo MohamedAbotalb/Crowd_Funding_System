@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.accounts.apps.AccountsConfig',
+    'apps.projects.apps.ProjectsConfig',
+    'apps.homepage.apps.HomepageConfig',
 ]
 
 MIDDLEWARE = [
@@ -141,5 +143,3 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_FROM')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-# ACTIVATION_TIMEOUT = 86400  # 24 hours in seconds
-# settings.py
