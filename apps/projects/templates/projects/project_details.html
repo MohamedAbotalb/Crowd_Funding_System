@@ -1,11 +1,39 @@
+{% extends "layouts/base.html" %}
+
+{% load static %}
+
+{% block navbar %}
+
+{% include 'layouts/navbar.html' %}
+
+{% endblock%}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Project Details</title>
 </head>
 <body>
-  <h1>Project Details Page</h1>
-    {{project}}
+    <h1>{{ project.title }}</h1>
+    <p>{{ project.details }}</p>
+    <p>Total Target: {{ project.total_target }}</p>
+    <p>Current Fund: {{ project.current_fund }}</p>
+    
+    <button onclick="window.location.href='{% url 'create_comment' project.slug %}'">Add Comment</button>
+    
+    <h2>Comments:</h2>
+    <ul>
+        {% for comment in project.comments.all %}
+            <li>{{ comment.text }}</li>
+            <small>By: {{ comment.user.username }} | Date: {{ comment.created_at }}</small>
+        {% empty %}
+            <li>No comments yet.</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django import forms
-from .models import Project, Donation
+from .models import Project, Donation, Comment
 
 
 class ProjectForm(forms.ModelForm):
@@ -52,7 +52,6 @@ class ProjectForm(forms.ModelForm):
         if start_time and end_time and end_time <= start_time:
             self.add_error("end_time", "End time should be greater than Start time.")
 
-
 class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
@@ -69,3 +68,15 @@ class DonationForm(forms.ModelForm):
         if amount <= 0:
             raise forms.ValidationError("Donation amount should be greater than zero.")
         return amount
+    
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        labels = {
+            'text': 'Add a comment'
+        }
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Write your comment here'})
+        }
+        

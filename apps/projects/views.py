@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect , get_object_or_404
 from apps.accounts.models import CustomUser
-from .models import Project, ProjectPicture, Donation
-from .forms import ProjectForm, DonationForm
+from .models import Project, ProjectPicture, Donation, Comment
+from .forms import ProjectForm, DonationForm, CommentForm
 # Create your views here.
 
 
@@ -84,3 +84,23 @@ def add_donations(request, slug):
         form = DonationForm()
     
     return render(request, 'projects/add_donation.html', {'form': form, 'project': project})
+
+@login_required(login_url='login_')
+def create_comment(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment_text = form.cleaned_data['text']
+            
+            # Create a new comment object
+            comment = Comment.objects.create(user=request.user, project=project, text=comment_text)
+            
+            messages.success(request, "Your comment has been added successfully!")
+            
+            return redirect('project_details', slug=slug)
+    else:
+        form = CommentForm()
+    
+    return render(request, 'projects/create_comment.html', {'form': form, 'project': project})
