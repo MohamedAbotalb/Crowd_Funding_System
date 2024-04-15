@@ -1,7 +1,6 @@
 from django.utils import timezone
 from django import forms
-
-from .models import Project
+from .models import Project, Donation, Comment, ProjectReport, CommentReport
 
 
 class ProjectForm(forms.ModelForm):
@@ -52,3 +51,53 @@ class ProjectForm(forms.ModelForm):
 
         if start_time and end_time and end_time <= start_time:
             self.add_error("end_time", "End time should be greater than Start time.")
+
+class DonationForm(forms.ModelForm):
+    class Meta:
+        model = Donation
+        fields = ['amount']
+        labels = {
+            'amount': 'Donation Amount (EGP)'
+        }
+        widgets = {
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter donation amount'})
+        }
+
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        if amount <= 0:
+            raise forms.ValidationError("Donation amount should be greater than zero.")
+        return amount
+    
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        labels = {
+            'text': 'Add a comment'
+        }
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Write your comment here'})
+        }
+        
+class ReportProjectForm(forms.ModelForm):
+    class Meta:
+        model = ProjectReport
+        fields = ['reason']
+        labels = {
+            'reason': 'Reason for Report'
+        }
+        widgets = {
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Please provide details about why you are reporting this project.'})
+        }
+        
+class ReportCommentForm(forms.ModelForm):
+    class Meta:
+        model = CommentReport
+        fields = ['reason']
+        labels = {
+            'reason': 'Reason for Report'
+        }
+        widgets = {
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Please provide details about why you are reporting this comment.'})
+        }

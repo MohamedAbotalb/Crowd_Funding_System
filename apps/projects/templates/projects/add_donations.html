@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Add Donation</title>
+  <style>
+    .btn-delete:hover {
+      background-color: #d4602b !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Donation</h5>
+        </div>
+        <form id="donationForm" role="form" method="post" autocomplete="off" action="{% url 'add_donations' project.id %}"
+          data-current-donation="{{ project.current_donation }}" data-total-target="{{ project.total_target }}">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="form-group mb-3">
+              <label for="donation" class="form-label" style="color: #d4602b; margin-bottom: 20px;">Enter The amount you
+                want to donate </label>
+              <input type="text" name="donation" id="donationInput" placeholder="donation amount" class="form-control"
+                onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                value="" required />
+              <p id="error-message" class="text-danger"></p>
+            </div>
+          </div>
+          <div class="modal-footer" style="justify-content: space-between;">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" onclick="validateDonation()" class="btn btn-primary"
+              style="background-color: #de6f3c; border-color: #de6f3c;">Donate</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function validateDonation() {
+      var donationAmount = document.getElementById('donationInput').value;
+      var currentDonation = parseFloat(document.getElementById('donationForm').getAttribute('data-current-donation'));
+      var totalTarget = parseFloat(document.getElementById('donationForm').getAttribute('data-total-target'));
+
+      if (parseFloat(donationAmount) + currentDonation > totalTarget) {
+        document.getElementById('error-message').innerText = "Donation amount cannot exceed the total target.";
+      } else {
+        document.getElementById('error-message').innerText = "";
+        document.getElementById('donationForm').submit();
+      }
+    }
+  </script>
+</body>
+
+</html>
