@@ -1,0 +1,146 @@
+{% extends "layouts/base.html" %}
+
+{% load static %}
+
+{% block title %} Create new project {% endblock %}
+
+{% block styles %}
+
+<style>
+    .glass {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37)
+    }
+</style>
+
+{% endblock %}
+
+{% block navbar %}
+
+{% include 'layouts/navbar.html' %}
+
+{% endblock%}
+
+{% block content %}
+
+<section>
+    <div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-8 col-lg-8 mx-md-auto">
+                    <form action="." class="p-3 m-5 rounded glass" enctype="multipart/form-data" method="POST">
+                        {% csrf_token %}
+                        <h1 class="my-3">Create new project</h1>
+
+                        <!-- Start title -->
+                        <div class="mb-3">
+                            <label class="form-label" for="id_title">Title</label>
+                            <div class="input-group has-validation">
+                                {{ form.title }}
+                            </div>
+                            {% for error in form.title.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <!-- End title -->
+
+                        <!-- Start details -->
+                        <div class="mb-4">
+                            <label class="form-label" for="id_details">Details</label>
+                            <div class="input-group has-validation">
+                                {{ form.details }}
+                            </div>
+                            {% for error in form.details.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <!-- End details -->
+
+                        <div class="d-flex justify-content-between">
+                            <!-- Start start_time -->
+                            <div class="mb-4 me-3 w-50">
+                                <label class="form-label" for="id_start_time">Start Time</label>
+                                <div class="input-group has-validation">
+                                    {{ form.start_time }}
+                                </div>
+                                {% for error in form.start_time.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <!-- End start_time -->
+
+                            <!-- start end_time -->
+                            <div class="mb-4 w-50">
+                                <label class="form-label" for="id_end_time">End Time</label>
+                                <div class="input-group has-validation">
+                                    {{ form.end_time }}
+                                </div>
+                                {% for error in form.end_time.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <!-- End end_time -->
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <!-- Start total_target -->
+                            <div class="mb-4 w-50 me-3">
+                                <label class="form-label" for="id_total_target">Total Target</label>
+                                <div class="input-group has-validation">
+                                    {{ form.total_target }}
+                                </div>
+                                {% for error in form.total_target.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <!-- End total_target -->
+
+                            <!-- Start category -->
+                            <div class="mb-4 w-50">
+                                <label class="form-label" for="id_category">Category</label>
+                                <div class="input-group has-validation">
+                                    <select name="category" id="id_category" class="form-select">
+                                        <option value="" selected disabled>Select category</option>
+                                        {% for op in form.category.field.choices %}
+                                            {% if op.1 != '---------' %}
+                                                <option value="{{ op.0 }}">{{ op.1 }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% for error in form.category.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <!-- End category -->
+                        </div>
+
+                        <!-- Start pictures -->
+                        <div class="form-group mb-4">
+                            <label class="form-label" for="id_pictures">Pictures</label>
+                            <input accept="image/jpeg, image/png, image/jpg" class="form-control" id="id_pictures" multiple name="pictures" type="file">
+                            {% if messages %}
+                                {% for message in messages %}
+                                <p class="text-danger">{{ message }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <!-- End pictures -->
+
+                        <div class="text-center my-3">
+                            <button class="btn btn-primary" type="submit">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="{% static 'projects/js/script.js' %}"></script>
+
+{% endblock %}
