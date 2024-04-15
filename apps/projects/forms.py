@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django import forms
-from .models import Project, Donation, Comment, ProjectReport
+from .models import Project, Donation, Comment, ProjectReport, CommentReport
 
 
 class ProjectForm(forms.ModelForm):
@@ -89,4 +89,15 @@ class ReportProjectForm(forms.ModelForm):
         }
         widgets = {
             'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Please provide details about why you are reporting this project.'})
+        }
+        
+class ReportCommentForm(forms.ModelForm):
+    class Meta:
+        model = CommentReport
+        fields = ['reason']
+        labels = {
+            'reason': 'Reason for Report'
+        }
+        widgets = {
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Please provide details about why you are reporting this comment.'})
         }

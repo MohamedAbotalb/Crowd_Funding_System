@@ -26,6 +26,8 @@
 
     <button onclick="window.location.href='{% url 'report_project' project.slug %}'">Report Project</button>
     
+    <button onclick="window.location.href='{% url 'report_comment' comment.id %}'">Report Comment</button>
+
     <h2>Comments:</h2>
     <ul>
         {% for comment in project.comments.all %}

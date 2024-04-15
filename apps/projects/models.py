@@ -164,3 +164,13 @@ class ProjectReport(models.Model):
 
     def __str__(self):
         return f"Report by {self.user.username} on {self.project.title}"
+
+# ===================== Report Comment Model =====================
+class CommentReport(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report by {self.user.username} on comment: {self.comment.id}"
