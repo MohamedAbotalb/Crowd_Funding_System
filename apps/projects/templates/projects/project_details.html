@@ -23,6 +23,8 @@
     <p>Current Fund: {{ project.current_fund }}</p>
     
     <button onclick="window.location.href='{% url 'create_comment' project.slug %}'">Add Comment</button>
+
+    <button onclick="window.location.href='{% url 'report_project' project.slug %}'">Report Project</button>
     
     <h2>Comments:</h2>
     <ul>
@@ -33,6 +35,7 @@
             <li>No comments yet.</li>
         {% endfor %}
     </ul>
+
 </body>
 </html>
 
