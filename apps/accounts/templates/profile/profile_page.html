@@ -25,13 +25,13 @@
     <div class="col-12 col-md-5">
       <div class="card py-2 text-center">
         <img
-          src="../../../media/{{User.profile_picture}}"
+          src="{{User.profile_picture_url}}"
           class="card-img-top rounded-circle w-50 m-auto"
         />
         <div class="card-title">
-          <h3>{{User.first_name }} {{User.last_name }}</h3>
-          <p>{{User}}</p>
-          <a href="{% url 'edit_profile' %}" class="btn btn-danger">Update profile</a href="edit_profile">
+          <h3>{{User}}</h3>
+          <p>{{User.username}}</p>
+          <a href="{% url 'edit_profile' %}" class="btn btn-danger">Update profile</a>
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@
             <h4>Email</h4>
           </div>
           <div class="col-8">
-          <p>{{User}}</p>
+          <p>{{User.username}}</p>
           </div>
         </div>
     <hr >

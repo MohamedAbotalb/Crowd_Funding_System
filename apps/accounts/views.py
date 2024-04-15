@@ -99,7 +99,7 @@ def login_user(request):
             if user is not None and user.check_password(password):
                 if user.is_active:
                     login(request, user)
-                    return redirect(reverse('profile'))
+                    return redirect(reverse('profile',args=[user.id]))
                 else:
                     # User is not active
                     activation_deadline = user.date_joined + timezone.timedelta(days=1)
@@ -120,18 +120,12 @@ def logout_user(request):
     url = reverse('home')
     return redirect(url)
 
-def user_profile(request):
-    user = get_user(request)
-    user_data = get_object_or_404(CustomUser, pk=user.id)
-    user.phone_number = user_data.phone_number
-    user.profile_picture = user_data.profile_picture
-    user.facebook_profile = user_data.facebook_profile
-    user.birth_date = user_data.birth_date
-    user.country = user_data.country
-    print(user)
-
+def user_profile(request,id):
+    user = get_object_or_404(CustomUser, pk=id)
     return render(request, "profile/profile_page.html",
                   context={"User": user})
+    
+   
 
 
 # @login_required
