@@ -1,5 +1,6 @@
 import os
 
+from django.utils import timezone
 from django.db import models
 from django.urls import reverse
 from django.db.models import Avg
@@ -8,10 +9,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from apps.accounts.models import CustomUser
 from apps.categories.models import Category
+from django.utils.text import slugify
 
-# Create your models here.
 
-
+# ===================== Project Model =====================
 class Project(models.Model):
     STATUS_CHOICES = [
         ('active', 'Active'),
@@ -19,6 +20,7 @@ class Project(models.Model):
     ]
 
     title = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, editable=False, blank=True)
     details = models.TextField()
     total_target = models.IntegerField()
     current_fund = models.IntegerField(default=0)
@@ -29,7 +31,6 @@ class Project(models.Model):
     end_time = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now=True)
     rate = models.IntegerField(default=0, null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
-    pictures = models.ManyToManyField('ProjectPicture', related_name='projects')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     featured = models.BooleanField(default=False)
     featured_at = models.DateTimeField(default=None, null=True)
@@ -37,9 +38,24 @@ class Project(models.Model):
     def __str__(self):
         return f"{self.title}"
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+
+        # Check if current_fund has reached total_target and update status to 'completed'
+        if self.current_fund >= self.total_target and self.status != 'completed':
+            self.status = 'completed'
+
+        # Check if featured field has changed and update featured_at
+        if self.featured and not self.featured_at:
+            self.featured_at = timezone.now()
+        elif not self.featured:
+            self.featured_at = None
+
+        super(Project, self).save(*args, **kwargs)
+
     @classmethod
-    def get_project_by_title(cls, title):
-        return get_object_or_404(cls, title=title)
+    def get_project_by_slug(cls, slug):
+        return get_object_or_404(cls, slug=slug)
 
     @property
     def show_url(self):
@@ -58,7 +74,7 @@ class Project(models.Model):
         return [pic.image.url for pic in self.pictures.all()]
 
     @property
-    def image_url(self):
+    def picture_url(self):
         first_picture = self.pictures.first()
         if first_picture:
             return first_picture.image.url
@@ -84,6 +100,7 @@ class Project(models.Model):
         return self.donation_set.all().count()
 
 
+# ===================== Tag Model =====================
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -103,20 +120,22 @@ class Tag(models.Model):
         return reverse("tag_show", args=[self.name])
 
 
+# ===================== ProjectPicture Model =====================
 def project_picture_upload_path(instance, filename):
     project_directory_name = instance.project.title.replace(' ', '_')
     return os.path.join('project_uploads', project_directory_name, filename)
 
 
 class ProjectPicture(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=project_picture_upload_path)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="pictures")
+    image = models.ImageField(db_column='image', upload_to=project_picture_upload_path)
 
     @property
     def image_url(self):
         return f"/media/{self.image}"
 
 
+# ===================== Donation Model =====================
 class Donation(models.Model):
     amount = models.IntegerField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='donations')
