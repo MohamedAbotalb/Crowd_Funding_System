@@ -122,8 +122,7 @@ def logout_user(request):
 
 def user_profile(request):
     user = get_user(request)
-    print(user.id)
-    user_data = get_object_or_404(CustomUser, pk=2)
+    user_data = get_object_or_404(CustomUser, pk=user.id)
     user.phone_number = user_data.phone_number
     user.profile_picture = user_data.profile_picture
     user.facebook_profile = user_data.facebook_profile

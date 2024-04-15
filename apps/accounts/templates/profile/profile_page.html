@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
  {% load static %}
+ 
+
  <head>
     {% block title %} profile {%endblock %}
     
@@ -13,26 +15,23 @@
 
  </head>
 
-{% include 'layouts/navbar.html %}
+{% include 'layouts/navbar.html' %}
 
    {% block content %}
 
 <!-- User Data -->
 <section class="py-5">
-    {{User}}
   <div class="row align-items-center">
-
     <div class="col-12 col-md-5">
       <div class="card py-2 text-center">
         <img
-          src="{{User.profile_picture}}"
+          src="../../../media/{{User.profile_picture}}"
           class="card-img-top rounded-circle w-50 m-auto"
         />
         <div class="card-title">
           <h3>{{User.first_name }} {{User.last_name }}</h3>
-          <p>{{User.email}}</p>
-          <p>{{User.phone_number}}</p>
-          <button class="btn btn-danger">Update profile</button>
+          <p>{{User}}</p>
+          <a href="{% url 'edit_profile' %}" class="btn btn-danger">Update profile</a href="edit_profile">
         </div>
       </div>
     </div>
@@ -43,7 +42,7 @@
             <h4>Email</h4>
           </div>
           <div class="col-8">
-            <p>{{User.email}}</p>
+          <p>{{User}}</p>
           </div>
         </div>
     <hr >
@@ -52,7 +51,11 @@
             <h4>facebook</h4>
           </div>
           <div class="col-8">
-            <p>{{User.facebook_profile}}</p>
+            {% if User.facebook_profile %}
+            <p>{{ User.facebook_profile }}</p>
+        {% else %}
+            <p>---</p>
+        {% endif %}
           </div>
         </div>
     <hr >
@@ -61,7 +64,11 @@
             <h4>birth_date</h4>
           </div>
           <div class="col-8">
+            {% if User.facebook_profile %}
             <p>{{User.birth_date}}</p>
+        {% else %}
+            <p>---</p>
+        {% endif %}
           </div>
         </div>
     <hr >
@@ -70,16 +77,20 @@
             <h4>country</h4>
           </div>
           <div class="col-8">
+            {% if User.facebook_profile %}
             <p>{{User.country}}</p>
+        {% else %}
+            <p>---</p>
+        {% endif %}
           </div>
         </div>
     <hr >
         <div class="row ps-5">
           <div class="col-4">
-            <h4>id</h4>
+            <h4>phone_number</h4>
           </div>
           <div class="col-8">
-            <p>{{User.id}}</p>
+          <p>{{User.phone_number}}</p>
           </div>
         </div>
       </div>
@@ -93,16 +104,16 @@
 <!--My Donation  -->
 <section class="py-5">
 <div class="owl-carousel my-donations owl-theme">
-    <div class="item "> // for(project of projects)
+    <div class="item "> 
         <div class="card p-2 bg-light " >
             <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
             <div class="card-body">
-              <h5 class="card-title">Card title</h5>// { % project_title %} 
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. <a href="{% projects/project_id%}">...</a></p>// { % project_detail %}
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. <a href="">...</a></p>
               <progress class="w-100"  value="93" max="100"> 93% </progress>
               <div class="d-flex justify-content-between">
-                <p>5565/6456</p> // { % project.donations_p %} / { % project_total_p %}
-                <p>93%</p> // { % project.donations_p * 100 / project_total_p %} %
+                <p>5565/6456</p>
+                <p>93%</p> 
               </div>
             </div>
           </div>
@@ -320,7 +331,7 @@
 
 {% endblock %}
 
-{% include 'layouts/footer.html %}
+{% include 'layouts/footer.html' %}
 
 {%block scripts %}
 <!-- jQuery -->
