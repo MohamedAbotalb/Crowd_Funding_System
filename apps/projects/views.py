@@ -1,10 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render, redirect , get_object_or_404
 from apps.accounts.models import CustomUser
-from .models import Project, ProjectPicture
-from .forms import ProjectForm
+from .models import Project, ProjectPicture, Donation
+from .forms import ProjectForm, DonationForm
 # Create your views here.
 
 
@@ -49,3 +48,39 @@ def project_details(request, slug):
 def projects_list(request):
     projects = Project.objects.all()
     return render(request, 'projects/index.html', {'projects': projects})
+
+@login_required(login_url='login_')
+def add_donations(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    
+    if request.method == 'POST':
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data['amount']
+            
+            if amount <= 0:
+                messages.error(request, "Donation amount should be greater than zero.")
+                return redirect('project_details', slug=slug)
+            
+            if project.status == 'completed':
+                messages.error(request, "This project has already been completed.")
+                return redirect('project_details', slug=slug)
+            
+            if project.status == 'active' and project.current_fund + amount > project.total_target:
+                messages.error(request, "The donation amount exceeds the total target of the project.")
+                return redirect('project_details', slug=slug)
+            
+            # Create a new donation object
+            donation = Donation.objects.create(amount=amount, project=project, user=request.user)
+            
+            # Update the current fund of the project
+            project.current_fund += amount
+            project.save()
+            
+            messages.success(request, f"Thank you for your donation!")
+            
+            return redirect('project_details', slug=slug)
+    else:
+        form = DonationForm()
+    
+    return render(request, 'projects/add_donation.html', {'form': form, 'project': project})

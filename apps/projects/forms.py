@@ -1,7 +1,6 @@
 from django.utils import timezone
 from django import forms
-
-from .models import Project
+from .models import Project, Donation
 
 
 class ProjectForm(forms.ModelForm):
@@ -52,3 +51,21 @@ class ProjectForm(forms.ModelForm):
 
         if start_time and end_time and end_time <= start_time:
             self.add_error("end_time", "End time should be greater than Start time.")
+
+
+class DonationForm(forms.ModelForm):
+    class Meta:
+        model = Donation
+        fields = ['amount']
+        labels = {
+            'amount': 'Donation Amount (EGP)'
+        }
+        widgets = {
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter donation amount'})
+        }
+
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        if amount <= 0:
+            raise forms.ValidationError("Donation amount should be greater than zero.")
+        return amount
