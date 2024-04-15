@@ -43,15 +43,15 @@ class Project(models.Model):
 
     @property
     def show_url(self):
-        return reverse('project_show', args=[self.title])
+        return reverse('project_details', args=[self.title])
 
     @property
     def update_url(self):
-        return reverse('project_update', args=[self.title])
+        return reverse('update_project', args=[self.title])
 
     @property
-    def delete_url(self):
-        return reverse('project_delete', args=[self.title])
+    def cancel_url(self):
+        return reverse('cancel_project', args=[self.title])
 
     @property
     def pictures_urls(self):
