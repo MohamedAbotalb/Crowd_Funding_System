@@ -6,6 +6,11 @@
 
 {% block styles %}
 
+<link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+
+<link href="/static/projects/css/tagsinput.css" rel="stylesheet"/>
+
 <style>
     .glass {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
@@ -14,6 +19,10 @@
         -webkit-backdrop-filter: blur(10px);
         border-radius: 20px;
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37)
+    }
+
+    body {
+        background: #333333;
     }
 </style>
 
@@ -60,9 +69,9 @@
                         </div>
                         <!-- End details -->
 
-                        <div class="d-flex justify-content-between">
+                        <div class="row">
                             <!-- Start start_time -->
-                            <div class="mb-4 me-3 w-50">
+                            <div class="mb-4 col-md-6">
                                 <label class="form-label" for="id_start_time">Start Time</label>
                                 <div class="input-group has-validation">
                                     {{ form.start_time }}
@@ -74,7 +83,7 @@
                             <!-- End start_time -->
 
                             <!-- start end_time -->
-                            <div class="mb-4 w-50">
+                            <div class="mb-4 col-md-6">
                                 <label class="form-label" for="id_end_time">End Time</label>
                                 <div class="input-group has-validation">
                                     {{ form.end_time }}
@@ -86,9 +95,9 @@
                             <!-- End end_time -->
                         </div>
 
-                        <div class="d-flex justify-content-between">
+                        <div class="row">
                             <!-- Start total_target -->
-                            <div class="mb-4 w-50 me-3">
+                            <div class="mb-4 col-md-6">
                                 <label class="form-label" for="id_total_target">Total Target</label>
                                 <div class="input-group has-validation">
                                     {{ form.total_target }}
@@ -100,11 +109,11 @@
                             <!-- End total_target -->
 
                             <!-- Start category -->
-                            <div class="mb-4 w-50">
+                            <div class="mb-4 col-md-6">
                                 <label class="form-label" for="id_category">Category</label>
                                 <div class="input-group has-validation">
-                                    <select name="category" id="id_category" class="form-select">
-                                        <option value="" selected disabled>Select category</option>
+                                    <select class="form-select" id="id_category" name="category">
+                                        <option disabled selected value="">Select category</option>
                                         {% for op in form.category.field.choices %}
                                             {% if op.1 != '---------' %}
                                                 <option value="{{ op.0 }}">{{ op.1 }}</option>
@@ -113,7 +122,7 @@
                                     </select>
                                 </div>
                                 {% for error in form.category.errors %}
-                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                <div class="invalid-feedback d-block">{{ error }}</div>
                                 {% endfor %}
                             </div>
                             <!-- End category -->
@@ -125,21 +134,73 @@
                             <input accept="image/jpeg, image/png, image/jpg" class="form-control" id="id_pictures" multiple name="pictures" type="file">
                             {% if messages %}
                                 {% for message in messages %}
-                                <p class="text-danger">{{ message }}</p>
+                                <p class="text-danger mt-1">{{ message }}</p>
                                 {% endfor %}
                             {% endif %}
                         </div>
                         <!-- End pictures -->
 
+                        <!-- Start tags -->
+                        <div class="form-group mb-4">
+                            <label class="form-label" for="id_tags">Tags</label>
+                            <input data-role="tagsinput" id="id_tags" name="tags" type="text">
+                            {% for error in form.tags.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <!-- End tags -->
+
                         <div class="text-center my-3">
                             <button class="btn btn-primary" type="submit">Create</button>
                         </div>
                     </form>
+
+                    <p>Common Tags:
+                        {% for mt in common_tags %}
+                        <a class="badge badge-info text-decoration-none fs-6 mx-1" href="">#{{mt.name}}</a>
+                        {% endfor %}
+                    </p>
+
+                    <div class="row mb-2 posts">
+                    {% for project in projects %}
+                    <div class="col-md-6">
+                        <div class="cards">
+                            <div class="row no-gutters border rounded  flex-md-row mb-4 shadow-sm h-md-250">
+                                <div class="col p-4 d-flex flex-column position-static">
+                                    <h3 class="my-1"><a href="{% url 'project_details' project.slug %}">{{project}}</a></h3>
+                                    <div style="display:flex">
+                                        {% for tag in project.tags.all %}
+                                        <a href="{% url 'tagged' tag.slug %}" class="mr-1 badge badge-info">#{{ tag }}</a>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="mb-auto">{{project.details}}</p>
+                                    <p class="mb-auto text-muted">{{project.creator}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script crossorigin="anonymous"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+<script crossorigin="anonymous"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<script crossorigin="anonymous"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script src="{% static 'projects/js/tagsinput.js' %}"></script>
 
 <script src="{% static 'projects/js/script.js' %}"></script>
 
