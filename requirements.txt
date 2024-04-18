@@ -11,6 +11,7 @@ Django==5.0.4
 django-cleanup==8.1.0
 django-crispy-forms==2.1
 django-social-auth==0.7.28
+django-taggit==5.0.1
 dnspython==2.6.1
 Flask==3.0.3
 httplib2==0.22.0
