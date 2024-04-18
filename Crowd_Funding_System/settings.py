@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.projects.apps.ProjectsConfig',
     'apps.categories.apps.CategoriesConfig',
     'apps.homepage.apps.HomepageConfig',
+    'taggit',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +145,6 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_FROM')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# Taggit settings
+TAGGIT_CASE_INSENSITIVE = True

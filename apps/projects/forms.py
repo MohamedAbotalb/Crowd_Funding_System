@@ -1,5 +1,7 @@
 from django.utils import timezone
 from django import forms
+from taggit import forms as taggit_forms
+
 from .models import Project, Donation, Comment, ProjectReport, CommentReport
 
 
@@ -26,9 +28,14 @@ class ProjectForm(forms.ModelForm):
         widget=forms.DateInput(attrs={"placeholder": "End Date", "type": "date", "class": "form-control"})
     )
 
+    tags = taggit_forms.TagField(
+        widget=forms.TextInput(attrs={"placeholder": "Tags", "class": "form-control"}),
+        required=False
+    )
+
     class Meta:
         model = Project
-        fields = ('title', 'details', 'end_time', 'total_target', 'category')
+        fields = ('title', 'details', 'end_time', 'total_target', 'category', 'tags')
 
     def clean_title(self):
         title = self.cleaned_data['title']
@@ -52,6 +59,7 @@ class ProjectForm(forms.ModelForm):
         if start_time and end_time and end_time <= start_time:
             self.add_error("end_time", "End time should be greater than Start time.")
 
+
 class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
@@ -68,7 +76,8 @@ class DonationForm(forms.ModelForm):
         if amount <= 0:
             raise forms.ValidationError("Donation amount should be greater than zero.")
         return amount
-    
+
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
@@ -79,7 +88,8 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Write your comment here'})
         }
-        
+
+
 class ReportProjectForm(forms.ModelForm):
     class Meta:
         model = ProjectReport
@@ -90,7 +100,8 @@ class ReportProjectForm(forms.ModelForm):
         widgets = {
             'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Please provide details about why you are reporting this project.'})
         }
-        
+
+
 class ReportCommentForm(forms.ModelForm):
     class Meta:
         model = CommentReport

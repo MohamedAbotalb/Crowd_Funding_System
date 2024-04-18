@@ -1,15 +1,16 @@
 import os
 
 from django.utils import timezone
+from django.utils.text import slugify
 from django.db import models
 from django.urls import reverse
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.core.validators import MaxValueValidator, MinValueValidator
+from taggit.managers import TaggableManager
 
 from apps.accounts.models import CustomUser
 from apps.categories.models import Category
-from django.utils.text import slugify
 
 
 # ===================== Project Model =====================
@@ -26,9 +27,9 @@ class Project(models.Model):
     current_fund = models.IntegerField(default=0)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.SET_DEFAULT, default=None, related_name='projects')
-    tags = models.ManyToManyField('Tag', blank=True, null=True, related_name='projects')
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField()
+    tags = TaggableManager()
     updated_at = models.DateTimeField(auto_now=True)
     rate = models.IntegerField(default=0, null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
@@ -59,15 +60,15 @@ class Project(models.Model):
 
     @property
     def show_url(self):
-        return reverse('project_details', args=[self.title])
+        return reverse('project_details', args=[self.slug])
 
     @property
     def update_url(self):
-        return reverse('update_project', args=[self.title])
+        return reverse('update_project', args=[self.slug])
 
     @property
     def cancel_url(self):
-        return reverse('cancel_project', args=[self.title])
+        return reverse('cancel_project', args=[self.slug])
 
     @property
     def pictures_urls(self):
@@ -100,26 +101,6 @@ class Project(models.Model):
         return self.donation_set.all().count()
 
 
-# ===================== Tag Model =====================
-class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return f"{self.name}"
-
-    @classmethod
-    def get_all_tags(cls):
-        return cls.objects.all()
-
-    @classmethod
-    def get_tag_by_name(cls, name):
-        return get_object_or_404(cls, name=name)
-
-    @property
-    def show_url(self):
-        return reverse("tag_show", args=[self.name])
-
-
 # ===================== ProjectPicture Model =====================
 def project_picture_upload_path(instance, filename):
     project_directory_name = instance.project.title.replace(' ', '_')
@@ -145,6 +126,7 @@ class Donation(models.Model):
     def __str__(self):
         return self.amount
 
+
 # ===================== Comment Model =====================
 class Comment(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -154,7 +136,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.project.title}"
-    
+
+
 # ===================== Report Project Model =====================
 class ProjectReport(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -164,6 +147,7 @@ class ProjectReport(models.Model):
 
     def __str__(self):
         return f"Report by {self.user.username} on {self.project.title}"
+
 
 # ===================== Report Comment Model =====================
 class CommentReport(models.Model):
