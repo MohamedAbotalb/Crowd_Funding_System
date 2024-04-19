@@ -1,5 +1,5 @@
 import os
-from django.contrib.auth import get_user_model
+
 from django.utils import timezone
 from django.utils.text import slugify
 from django.db import models
@@ -8,6 +8,7 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.core.validators import MaxValueValidator, MinValueValidator
 from taggit.managers import TaggableManager
+
 from apps.accounts.models import CustomUser
 from apps.categories.models import Category
 
@@ -169,4 +170,4 @@ class Rating(models.Model):
         unique_together = ('user', 'project')  # Ensure a user can rate a project only once
 
     def __str__(self):
-        return f"Rating {self.value} by {self.user} on {self.project.title}"
+        return f"Rating {self.value} by {self.user} on {self.project}"
