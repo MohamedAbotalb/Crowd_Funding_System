@@ -2,12 +2,274 @@
 
 {% load static %}
 
-{% block content %}
+{% block footer %}
+
+<head>
+  <style>
+    a {
+      text-decoration: none;
+    }
+
+    /* Footer */
+    footer {
+      background: url("{%static 'accounts/images/signup.png'%}")no-repeat;
+      background-size: cover;
+      position: relative;
+      padding-top: 45px;
+    }
+
+    footer::after {
+      background: rgba(34, 37, 51, 0.9) none repeat scroll 0 0;
+      content: "";
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    .footer_top,
+    .footer_bottom {
+      position: relative;
+      z-index: 1;
+      color: #fff;
+    }
+
+    .footer_item {
+      margin-top: 75px;
+    }
+
+    .footer_item>h4 {
+      color: #fff;
+      font-family: "futura_ltbook", sans-serif;
+      font-size: 25px;
+      margin-bottom: 34px;
+      text-transform: inherit;
+    }
+
+    .footer_item .list-unstyled>li a {
+      color: #fff;
+    }
+
+    /* Footer About */
+    .footer_item .logo {
+      margin-bottom: 15px;
+      width: 200px;
+    }
+
+    .list-inline.footer_social_icon {
+      display: flex;
+      justify-content: space-between;
+      margin: 32px 0 0;
+
+    }
+
+    .footer_social_icon a {
+      /* display: inline-block; */
+      line-height: 1;
+      border-radius: 100%;
+      color: #fff;
+      font-size: 20px;
+      height: 45px;
+      padding: 12px;
+      text-align: center;
+      width: 45px;
+    }
+
+    a.social-tw {
+      background: #00acee;
+    }
+
+    a.social-fb {
+      background: #3b5998;
+    }
+
+    a.social-li {
+      background: #0e76a8;
+    }
+
+    a.social-in {
+      background: #3f729b;
+    }
+
+    a.social-yt {
+      background: #c4302b;
+    }
+
+    .footer_social_icon a:hover,
+    .footer_social_icon a:focus {
+      color: #5f75bd;
+      background-color: #fff;
+    }
+
+    /* Footer Explore */
+    .footer_menu .fa {
+      font-size: 10px;
+      margin-right: 18px;
+    }
+
+    .list-unstyled.footer_menu>li {
+      padding: 4px 0;
+    }
+
+    /* Footer Post */
+    .list-unstyled.post,
+    .list-unstyled.footer_contact {
+      margin-top: -14px;
+    }
+
+    .post .date {
+      border: 2px solid #fff;
+      border-radius: 100%;
+      display: block;
+      float: left;
+      font-size: 20px;
+      height: 50px;
+      line-height: 12px;
+      margin-right: 15px;
+      padding: 10px;
+      text-align: center;
+      width: 50px;
+    }
+
+    .footer_item li a:hover .date,
+    .footer_item li a:focus .date {
+      border: 2px solid #aaa;
+    }
+
+    .footer_item li a:hover,
+    .footer_item li a:focus {
+      color: #aaa;
+    }
+
+    .post .date small {
+      font-size: 12px;
+    }
+
+    .list-unstyled.post>li,
+    .list-unstyled.footer_contact>li {
+      padding: 14px 0;
+      overflow: hidden;
+    }
+
+    /* Footer Contact */
+    .footer_contact .fa {
+      margin-right: 25px;
+      text-align: center;
+      width: 15px;
+      float: left;
+      font-size: 18px;
+    }
+
+    .list-unstyled.footer_contact p {
+      overflow: hidden;
+    }
+
+    .footer_bottom {
+      background: #1a1c27 none repeat scroll 0 0;
+      padding: 28px 0 18px;
+      margin-top: 55px;
+    }
+
+    .footer_bottom a {
+      color: #ffcb0f;
+    }
+
+    .footer_bottom a:hover,
+    .footer_bottom a:focus {
+      color: #d7a300;
+    }
+
+ 
+  </style>
+</head>
 
 
-<footer class="text-center my-5">
-    <h4 class="lead">copyrights &copy; Mohamed Abotalb</h4>
+<!-- Footer -->
+<footer class="mt-4">
+  <!-- Footer top -->
+  <div class="container footer_top">
+    <div class="row">
+      <div class="col-lg-7 col-sm-7">
+        <div class="footer_item">
+          <h4>About The Project</h4>
+
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Qui vero pariatur quaerat, minus porro debitis
+            perferendis ipsum tempora laborum natus quae eos. A quos repellendus corporis ullam error nihil dolore.
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est dolorem recusandae aliquid expedita
+            dignissimos eum ratione perferendis unde magnam minus similique error alias atque ipsum nulla debitis eius,
+            asperiores aperiam?
+          </p>
+
+          <ul class="list-inline footer_social_icon">
+            <a class="social-tw" href=""><i class="fab fa-twitter"></i></a>
+            <a class="social-fb" href=""><i class="fab fa-facebook-f"></i></a>
+            <a class="social-li" href=""><i class="fab fa-linkedin-in"></i></a>
+            <a class="social-in" href=""><i class="fab fa-instagram"></i></a>
+            <a class="social-yt" href=""><i class="fab fa-youtube"></i></a>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-2 col-sm-5">
+        <div class="footer_item">
+          <h4>Explore link</h4>
+          <ul class="list-unstyled footer_menu">
+            <li>
+              <a href=""><span class="fa fa-play"></span> Our Applications</a>
+            </li>
+            <li>
+              <a href=""><span class="fa fa-play"></span> Meet our team</a>
+            </li>
+            <li>
+              <a href=""><span class="fa fa-play"></span> About Us</a>
+            </li>
+            <li>
+              <a href=""><span class="fa fa-play"></span> Welcome</a>
+            </li>
+            <li>
+              <a href=""><span class="fa fa-play"></span> Contact Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-sm-5">
+        <div class="footer_item">
+          <h4>Contact us</h4>
+          <ul class="list-unstyled footer_contact">
+            <li>
+              <a href=""><span class="fa fa-map-marker"></span> Dakahlia, Egypt</a>
+            </li>
+            <li>
+              <a href=""><span class="fa fa-envelope"></span> Crowd@gmail.com</a>
+            </li>
+            <li>
+              <a href=""><span class="fa fa-mobile"></span>
+                <p>+20 01289716802</p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer top end -->
+
+  <!-- Footer bottom -->
+  <div class="footer_bottom text-center">
+    <p class="wow fadeInRight">
+      Made with
+      <i class="fa fa-heart"></i>
+      By Crowd
+      <a target="_blank" href=""></a>
+      2023. All Rights Reserved
+    </p>
+  </div>
+  <!-- Footer bottom end -->
 </footer>
+<!-- Footer end -->
+
 
 <script src="{% static 'accounts/js/script.js' %}"></script>
 

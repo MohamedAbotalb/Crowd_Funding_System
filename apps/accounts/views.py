@@ -1,3 +1,4 @@
+from inspect import getmodule
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import auth
@@ -22,7 +23,8 @@ from django.contrib import messages
 from .models import CustomUser
 from .forms import RegistrationForm, LoginForm, ChangePasswordForm, ResetPasswordForm, EditProfileForm
 from .tokens import account_activation_token
-from .models import CustomUser
+from apps.projects.models import Project,Donation
+
 
 
 def home(request):
@@ -99,7 +101,9 @@ def login_user(request):
             if user is not None and user.check_password(password):
                 if user.is_active:
                     login(request, user)
-                    return redirect(reverse('profile',args=[user.id]))
+                    return redirect(reverse('profile', kwargs={'id': user.id}))
+
+                    
                 else:
                     # User is not active
                     activation_deadline = user.date_joined + timezone.timedelta(days=1)
@@ -113,7 +117,7 @@ def login_user(request):
                 form.add_error(None, 'Your email or password is incorrect.')
     else:
         form = LoginForm()
-    return render(request, 'registration/login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form,'user': request.user})
 
 def logout_user(request):
     logout(request)
@@ -122,8 +126,18 @@ def logout_user(request):
 
 def user_profile(request,id):
     user = get_object_or_404(CustomUser, pk=id)
+    donations = Donation.objects.filter(user_id=id).select_related('project')
+    projects = Project.objects.filter(creator_id =id)
+   
+    for project in projects:
+         percentage= project.current_fund *100 /  project.total_target
+         project.percentage = percentage
     return render(request, "profile/profile_page.html",
-                  context={"User": user})
+                  context={"User": user, 
+                           "Donations": donations,
+                            "Projects": projects,
+                           }
+                           )
     
    
 

@@ -1,33 +1,34 @@
 {% extends 'layouts/base.html' %}
- {% load static %}
- 
+{% load static %}
 
- <head>
-    {% block title %} profile {%endblock %}
-    
-     {% block styles %}
-    <!-- Owl carousel css -->
-    <link href="{% static 'accounts/css/owl.carousel.min.css' %}" rel="stylesheet">
-    <link href="{% static 'accounts/css/owl.theme.default.min.css' %}" rel="stylesheet">
-    <link href="{% static 'accounts/css/styles.css' %}" rel="stylesheet">
 
-{% endblock %}
+<head>
+  {% block title %} profile {%endblock %}
 
- </head>
+  {% block styles %}
+  <!-- Owl carousel css -->
+  <link href="{% static 'accounts/css/owl.carousel.min.css' %}" rel="stylesheet">
+  <link href="{% static 'accounts/css/owl.theme.default.min.css' %}" rel="stylesheet">
+  <link href="{% static 'accounts/css/styles.css' %}" rel="stylesheet">
+
+  {% endblock %}
+
+</head>
+
+{% block navbar %}
 
 {% include 'layouts/navbar.html' %}
 
-   {% block content %}
+{% endblock%}
+
+{% block content %}
 
 <!-- User Data -->
 <section class="py-5">
   <div class="row align-items-center">
     <div class="col-12 col-md-5">
       <div class="card py-2 text-center">
-        <img
-          src="{{User.profile_picture_url}}"
-          class="card-img-top rounded-circle w-50 m-auto"
-        />
+        <img src="{{User.profile_picture_url}}" class="card-img-top rounded-circle w-50 m-auto" />
         <div class="card-title">
           <h3>{{User}}</h3>
           <p>{{User.username}}</p>
@@ -42,10 +43,10 @@
             <h4>Email</h4>
           </div>
           <div class="col-8">
-          <p>{{User.username}}</p>
+            <p>{{User.username}}</p>
           </div>
         </div>
-    <hr >
+        <hr>
         <div class="row ps-5">
           <div class="col-4">
             <h4>facebook</h4>
@@ -53,12 +54,12 @@
           <div class="col-8">
             {% if User.facebook_profile %}
             <p>{{ User.facebook_profile }}</p>
-        {% else %}
+            {% else %}
             <p>---</p>
-        {% endif %}
+            {% endif %}
           </div>
         </div>
-    <hr >
+        <hr>
         <div class="row ps-5">
           <div class="col-4">
             <h4>birth_date</h4>
@@ -66,12 +67,12 @@
           <div class="col-8">
             {% if User.facebook_profile %}
             <p>{{User.birth_date}}</p>
-        {% else %}
+            {% else %}
             <p>---</p>
-        {% endif %}
+            {% endif %}
           </div>
         </div>
-    <hr >
+        <hr>
         <div class="row ps-5">
           <div class="col-4">
             <h4>country</h4>
@@ -79,259 +80,91 @@
           <div class="col-8">
             {% if User.facebook_profile %}
             <p>{{User.country}}</p>
-        {% else %}
+            {% else %}
             <p>---</p>
-        {% endif %}
+            {% endif %}
           </div>
         </div>
-    <hr >
+        <hr>
         <div class="row ps-5">
           <div class="col-4">
             <h4>phone_number</h4>
           </div>
           <div class="col-8">
-          <p>{{User.phone_number}}</p>
+            <p>{{User.phone_number}}</p>
           </div>
         </div>
       </div>
     </div>
-    
+
   </div>
 </section>
 <!-- End User Data -->
 
 
-<!--My Donation  -->
+<!-- My Donation  -->
 <section class="py-5">
-<div class="owl-carousel my-donations owl-theme">
-    <div class="item "> 
-        <div class="card p-2 bg-light " >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. <a href="">...</a></p>
-              <progress class="w-100"  value="93" max="100"> 93% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>93%</p> 
-              </div>
-            </div>
+    <h2 class="text-center p-4">My Donations</h2>
+  <div id="my-donations-carousel" class="owl-carousel owl-theme">
+    {% for donation in Donations %}
+    <div class="item">
+      <div class="card p-2 bg-light">
+        <img src="{{donation.project.picture_url}}" style=" height: 300px;" class="card-img-top" alt="project">
+        <div class="card-body">
+          <h5 class="card-title">{{donation.project.title}}</h5>
+          <p class="card-text">{{donation.project.details}}</p>
+          <progress class="w-100" value="{{ donation.project.current_fund }}"
+            max="{{ donation.project.total_target }}"></progress>
+          <div class="d-flex justify-content-between">
+            <p>{{donation.project.current_fund }} / {{ donation.project.total_target}}</p>
           </div>
+        </div>
+      </div>
     </div>
-    <div class="item ">
-        <div class="card p-2 bg-light" >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 bg-light" >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 bg-light" >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 bg-light" >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 bg-light" >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 bg-light" >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 bg-light" >
-            <img src="{% static 'accounts/images/img.jpg'  %}" class="card-img-top" alt="project">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    </div>
-</div>
+    {% endfor %}
+  </div>
 </section>
 <!-- End My Donation  -->
 
 
+
 <!--My Projects  -->
-<section class="py-5 bg-light">
-<div class="text-center">
+<section class="p-5 bg-light">
+  <div class="text-center">
     <h2>My Projects</h2>
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid corporis accusamus quae velit repudiandae hic assumenda. Minus eos laudantium dolorum, libero, ut, earum dicta reiciendis quas aperiam porro neque nisi.</p>
-    <div class="btn btn-success"> Add Project </div>
-</div>
-
-<div class="owl-carousel my-projects owl-theme pt-4">
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid corporis accusamus quae velit repudiandae hic
+      assumenda. Minus eos laudantium dolorum, libero, ut, earum dicta reiciendis quas aperiam porro neque nisi.</p>
+    <a href="{% url 'create_project' %}" class="btn btn-success"> Add Project </a>
+  </div>
+  <div id="my-projects-carousel" class="owl-carousel owl-theme pt-4">
+    {% for project in Projects %}
     <div class="item ">
-        <div class="card p-2  " >
+      <div class="card p-2  ">
+        <img src="{{project.picture_url}}" style=" height: 300px;" class="card-img-top" alt="project">
+        <h5 class="card-title">{{project.title}}</h5>
+        <p class="card-text">{{project.details}}
+        </p>
+        <progress class="w-100" value="{{ project.current_fund }}" max="{{ project.total_target }}"></progress>
+        <div class="d-flex justify-content-between">
+          <p>{{project.current_fund }} / {{ project.total_target}}</p>
+          <p>{{project.percentage}}%</p>
 
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          </div>
-    <div class="item ">
-        <div class="card p-2 " >
-
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 " >
-
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-   
-    </div>
-    <div class="item ">
-        <div class="card p-2 " >
-
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
           
+        </div>
+      </div>
     </div>
-    <div class="item ">
-        <div class="card p-2 " >
-
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          
-    </div>
-    <div class="item ">
-        <div class="card p-2 " >
-
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-       
-    </div>
-    <div class="item ">
-        <div class="card p-2 " >
-
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            
-          </div>
-    </div>
-    <div class="item ">
-        <div class="card p-2 " >
-
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <progress class="w-100" id="file" value="32" max="100"> 32% </progress>
-              <div class="d-flex justify-content-between">
-                <p>5565/6456</p>
-                <p>23%</p>
-              </div>
-            </div>
-          
-    </div>
-</div>
+    {% endfor %}
+  </div>
 
 </section>
 <!-- End My Projects  -->
 
 {% endblock %}
 
+{% block footer %}
 {% include 'layouts/footer.html' %}
+{% endblock%}
+
 
 {%block scripts %}
 <!-- jQuery -->
@@ -341,50 +174,38 @@
 <script src="{% static 'accounts/js/owl.carousel.min.js' %}"></script>
 
 <script>
-    $(document).ready(function(){
-        $('.my-donations').owlCarousel({
-            loop:true,
-            margin:30,
-            nav:true,
-            responsive:{
-                0:{
-                    items:1
-                },
-                600:{
-                    items:3
-                }
-            }
-        });
-         $('.my-donations').owlCarousel({
-            loop:true,
-            margin:30,
-            nav:true,
-            responsive:{
-                0:{
-                    items:1
-                },
-                600:{
-                    items:3
-                }
-            }
-        });
-        $('.my-projects').owlCarousel({
-            loop:true,
-            margin:30,
-            nav:false,
-            dots:false,
-            responsive:{
-                0:{
-                    items:1
-                },
-                600:{
-                    items:3
-                }
-            }
-        });
+  $(document).ready(function () {
+    $('#my-donations-carousel').owlCarousel({
+      loop: true,
+      margin: 30,
+      nav: true,
+      dots: true,
+      responsive: {
+        0: {
+          items: 1
+        },
+        600: {
+          items: 3
+        }
+      }
     });
+    $('#my-projects-carousel').owlCarousel({
+      loop: true,
+      margin: 30,
+      nav: false,
+      dots: false,
+      responsive: {
+        0: {
+          items: 1
+        },
+        600: {
+          items: 3
+        }
+      }
+    });
+  });
 
-    
+
 </script>
 
 
