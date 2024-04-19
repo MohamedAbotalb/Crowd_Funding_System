@@ -159,15 +159,14 @@ class CommentReport(models.Model):
         return f"Report by {self.user.username} on comment: {self.comment.id}"
 
 
-User = get_user_model()
-class Rate(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='project_rates')
+class Rating(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='ratings')
     value = models.FloatField(validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])  
-    rate_date = models.DateTimeField(default=timezone.now)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    
     class Meta:
         unique_together = ('user', 'project')  # Ensure a user can rate a project only once
 
     def __str__(self):
-        return f"Rating {self.value} by {self.user.username} on {self.project.title}"
+        return f"Rating {self.value} by {self.user} on {self.project.title}"
