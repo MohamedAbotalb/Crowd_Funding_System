@@ -1,5 +1,5 @@
 import os
-
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.utils.text import slugify
 from django.db import models
@@ -8,7 +8,6 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.core.validators import MaxValueValidator, MinValueValidator
 from taggit.managers import TaggableManager
-
 from apps.accounts.models import CustomUser
 from apps.categories.models import Category
 
@@ -31,7 +30,7 @@ class Project(models.Model):
     end_time = models.DateTimeField()
     tags = TaggableManager()
     updated_at = models.DateTimeField(auto_now=True)
-    rate = models.IntegerField(default=0, null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate = models.FloatField(default=0, null=True, validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     featured = models.BooleanField(default=False)
     featured_at = models.DateTimeField(default=None, null=True)
@@ -158,3 +157,16 @@ class CommentReport(models.Model):
 
     def __str__(self):
         return f"Report by {self.user.username} on comment: {self.comment.id}"
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='ratings')
+    value = models.FloatField(validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])  
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'project')  # Ensure a user can rate a project only once
+
+    def __str__(self):
+        return f"Rating {self.value} by {self.user} on {self.project.title}"
