@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Tag | {{ tag }} {% endblock %}
+
+{% block navbar %}
+{% include 'layouts/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="row mb-2">
+    {% for project in projects %}
+    <div class="col-md-4 mt-4">
+        <div class="cards">
+            <div class="border rounded flex-md-row mb-4 shadow-sm h-md-250">
+                <div class="p-4 d-flex flex-column position-static">
+                    <img alt="" src="{{ project.picture_url }}">
+                    <h3 class="my-1"><a href="{% url 'project_details' project.slug %}">{{ project.title }}</a></h3>
+                    <div style="display:flex">
+                        {% for tag in project.tags.all %}
+                        <a class="mr-1 badge badge-info" href="{% url 'tagged' tag.slug %}">#{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                    <p class="mb-auto text-muted">{{ project.creator }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
