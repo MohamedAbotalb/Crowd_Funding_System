@@ -62,6 +62,27 @@ def tagged(request, slug):
     return render(request, '/projects/tagged.html', {'tag': tag, 'projects': projects})
 
 
+@login_required(login_url='login_')
+def cancel_project(request, slug):
+    project = Project.get_project_by_slug(slug)
+    current_fund = project.current_fund
+    recipient_project = Project.objects.filter(category=project.category).exclude(pk=project.pk).first()
+
+    # add the current fund of that project to another project in the same category
+    if recipient_project:
+        recipient_project.current_fund += current_fund
+        recipient_project.save()
+
+    else:
+        # If no project in the same category, transfer the funds to any available project
+        recipient_project = Project.objects.exclude(pk=project.pk).first()
+        recipient_project.current_fund += current_fund
+        recipient_project.save()
+
+    project.delete()
+    return redirect('/')
+
+
 def project_details(request, slug):
     project = get_object_or_404(Project, slug=slug)
     donation_form = DonationForm()
@@ -120,6 +141,7 @@ def project_details(request, slug):
         'report_comment_form': report_comment_form
     })
 
+
 def add_donation(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -134,6 +156,7 @@ def add_donation(request, slug):
     else:
         donation_form = DonationForm()
     return render(request, 'add_donation.html', {'donation_form': donation_form, 'project': project})
+
 
 def add_comment(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -150,6 +173,7 @@ def add_comment(request, slug):
         comment_form = CommentForm()
     return render(request, 'add_comment.html', {'comment_form': comment_form, 'project': project})
 
+
 def report_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -164,6 +188,7 @@ def report_project(request, slug):
     else:
         report_project_form = ReportProjectForm()
     return render(request, 'report_project.html', {'report_project_form': report_project_form, 'project': project})
+
 
 def report_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
