@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Report Project</title>
-</head>
-<body>
-    <h1>Report Project</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit Report</button>
-    </form>
-</body>
-</html>
+{% extends "layouts/base.html" %}
+
+{% block content %}
+  <h2>Report Project: {{ project.title }}</h2>
+  <form action="{% url 'report_project' slug=project.slug %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_reason">Reason for Report:</label>
+      {{ report_project_form.reason }}
+      {% for error in report_project_form.reason.errors %}
+        <span class="text-danger">{{ error }}</span><br>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Report Project</button>
+  </form>
+{% endblock %}
