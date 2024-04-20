@@ -68,7 +68,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <!-- Add Comment Form -->
+          <!-- Comment Form -->
           <form action="{% url 'add_comment' slug=project.slug %}" method="post">
             {% csrf_token %}
             <textarea name="text" rows="3" placeholder="Write your comment here" required></textarea>
@@ -110,7 +110,7 @@
             <textarea name="reason" rows="3" placeholder="Please provide details about why you are reporting this comment." required></textarea>
             <button type="submit">Report Comment</button>
         </form>
-        <!-- Add Comment Reply Form -->
+        <!-- Comment Reply Form -->
         <form action="{% url 'add_comment_reply' slug=project.slug parent_comment_id=comment.id %}" method="post">
             {% csrf_token %}
             <textarea name="text" rows="3" placeholder="Write your reply here" required></textarea>
