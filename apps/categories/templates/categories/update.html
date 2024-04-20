@@ -1,0 +1,20 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block title %} Add new book from django forms {% endblock %}
+
+{% block content %}
+
+<div class="mx-auto col-md-6">
+    <h1 class="my-4 ">Update Category</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" class="btn btn-primary mt-4">
+    </form>
+</div>
+
+<script src="{% static 'categories/js/script.js' %}"></script>
+
+{% endblock %}
