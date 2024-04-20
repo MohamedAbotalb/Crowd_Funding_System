@@ -11,34 +11,122 @@
 {% block content %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en">    
 <head>
     <meta charset="UTF-8">
-    <title>Project Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.title }}</title>
 </head>
 <body>
     <h1>{{ project.title }}</h1>
     <p>{{ project.details }}</p>
     <p>Total Target: {{ project.total_target }}</p>
-    <p>Current Fund: {{ project.current_fund }}</p>
-    
-    <button onclick="window.location.href='{% url 'create_comment' project.slug %}'">Add Comment</button>
+    <p>Start Date: {{ project.start_time }}</p>
 
-    <button onclick="window.location.href='{% url 'report_project' project.slug %}'">Report Project</button>
-    
-    <button onclick="window.location.href='{% url 'report_comment' comment.id %}'">Report Comment</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#donationModal">
+    Donate
+</button>
 
-    <h2>Comments:</h2>
-    <ul>
-        {% for comment in project.comments.all %}
-            <li>{{ comment.text }}</li>
-            <small>By: {{ comment.user.username }} | Date: {{ comment.created_at }}</small>
-        {% empty %}
-            <li>No comments yet.</li>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal">
+    Add Comment
+</button>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reportProjectModal">
+    Report Project
+</button>
+
+    <!-- Donation Form Modal -->
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="donationModalLabel">Donate to {{ project.title }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Donation Form -->
+          <form action="{% url 'add_donation' slug=project.slug %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="amount" placeholder="Enter donation amount" required>
+            <button type="submit">Donate</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+    <!-- Add Comment Form Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="commentModalLabel">Add Comment to {{ project.title }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Add Comment Form -->
+          <form action="{% url 'add_comment' slug=project.slug %}" method="post">
+            {% csrf_token %}
+            <textarea name="text" rows="3" placeholder="Write your comment here" required></textarea>
+            <button type="submit">Add Comment</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Report Project Form Modal -->
+<div class="modal fade" id="reportProjectModal" tabindex="-1" role="dialog" aria-labelledby="reportProjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reportProjectModalLabel">Report Project: {{ project.title }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'report_project' slug=project.slug %}" method="post">
+            {% csrf_token %}
+            <textarea name="reason" rows="3" placeholder="Please provide details about why you are reporting this project." required></textarea>
+            <button type="submit">Report Project</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Display Comments -->
+    <h2>Comments</h2>
+    {% for comment in project.comments.all %}
+        <p>{{ comment.text }}</p>
+        <!-- Report Comment Form -->
+        <form action="{% url 'report_comment' comment_id=comment.id %}" method="post">
+            {% csrf_token %}
+            <textarea name="reason" rows="3" placeholder="Please provide details about why you are reporting this comment." required></textarea>
+            <button type="submit">Report Comment</button>
+        </form>
+        <!-- Add Comment Reply Form -->
+        <form action="{% url 'add_comment_reply' slug=project.slug parent_comment_id=comment.id %}" method="post">
+            {% csrf_token %}
+            <textarea name="text" rows="3" placeholder="Write your reply here" required></textarea>
+            <button type="submit">Add Reply</button>
+        </form>
+        <!-- Display Comment Replies -->
+        {% for reply in comment.replies.all %}
+            <p>{{ reply.text }}</p>
         {% endfor %}
-    </ul>
-
+    {% endfor %}
 </body>
 </html>
 
+{% block scripts %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-6v3RvkE2F/CVtfjwQNyAKDuyfWsRM+BOUDLJLm9LGPZfBNwgV/Jy8jsRyYPkCkzs" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shCk+2LY5SJ7jI12Pmzygme0ifOqF5pepuXs2" crossorigin="anonymous"></script>
 {% endblock %}
