@@ -167,7 +167,7 @@ class Rating(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ('user', 'project')  # Ensure a user can rate a project only once
+        unique_together = ('user', 'project') 
 
     def __str__(self):
         return f"Rating {self.value} by {self.user} on {self.project}"
