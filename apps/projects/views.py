@@ -5,9 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from taggit.models import Tag
 
-from .models import Project, ProjectPicture, Donation, Comment, ProjectReport, CommentReport
-from .forms import ProjectForm, DonationForm, CommentForm, ReportProjectForm, ReportCommentForm
+from .models import Project, ProjectPicture, Donation, Comment, ProjectReport, CommentReport,Reply
+from .forms import ProjectForm, DonationForm, CommentForm, ReportProjectForm, ReportCommentForm, ReplyCommentForm
 from apps.accounts.models import CustomUser
+from django.http import JsonResponse
+from django.db.models import F
 
 
 @login_required(login_url='login_')
@@ -82,125 +84,68 @@ def cancel_project(request, slug):
     project.delete()
     return redirect('/')
 
-
+@login_required(login_url='login_')
 def project_details(request, slug):
     project = get_object_or_404(Project, slug=slug)
+    comments = project.comments.all()
     donation_form = DonationForm()
     comment_form = CommentForm()
     report_project_form = ReportProjectForm()
     report_comment_form = ReportCommentForm()
+    reply_comment_form = ReplyCommentForm()
 
     if request.method == 'POST':
-        if 'donate' in request.POST:
+        if 'donate_button' in request.POST:
             donation_form = DonationForm(request.POST)
             if donation_form.is_valid():
                 donation = donation_form.save(commit=False)
                 donation.project = project
                 donation.user = request.user
                 donation.save()
+                project.current_fund = F('current_fund') + donation.amount
+                project.save()
                 messages.success(request, 'Thank you for your donation!')
                 return redirect('project_details', slug=slug)
-
-        elif 'comment' in request.POST:
-            comment_form = CommentForm(request.POST)
-            if comment_form.is_valid():
-                comment = comment_form.save(commit=False)
-                comment.project = project
-                comment.user = request.user
-                comment.save()
-                messages.success(request, 'Your comment has been added!')
-                return redirect('project_details', slug=slug)
-
-        elif 'report_project' in request.POST:
+        elif 'report_project_button' in request.POST:
             report_project_form = ReportProjectForm(request.POST)
             if report_project_form.is_valid():
                 report = report_project_form.save(commit=False)
                 report.project = project
                 report.user = request.user
                 report.save()
-                messages.success(request, 'Thank you for reporting this project!')
+                messages.success(request, 'Project reported successfully!')
                 return redirect('project_details', slug=slug)
-
-        elif 'report_comment' in request.POST:
+        elif 'comment_button' in request.POST:
+            comment_form = CommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.project = project
+                comment.user = request.user
+                comment.save()
+                messages.success(request, 'Comment added successfully!')
+                return redirect('project_details', slug=slug)
+        elif 'report_comment_button' in request.POST:
             report_comment_form = ReportCommentForm(request.POST)
             if report_comment_form.is_valid():
+                report = report_comment_form.save(commit=False)
                 comment_id = request.POST.get('comment_id')
                 comment = get_object_or_404(Comment, id=comment_id)
-                report = report_comment_form.save(commit=False)
                 report.comment = comment
                 report.user = request.user
                 report.save()
-                messages.success(request, 'Thank you for reporting this comment!')
+                messages.success(request, 'Comment reported successfully!')
+                return redirect('project_details', slug=slug)
+        elif 'reply_comment_button' in request.POST:
+            reply_comment_form = ReplyCommentForm(request.POST)
+            if reply_comment_form.is_valid():
+                reply = reply_comment_form.save(commit=False)
+                comment_id = request.POST.get('comment_id')
+                comment = get_object_or_404(Comment, id=comment_id)
+                reply.project = project
+                reply.user = request.user
+                reply.parent = comment
+                reply.save()
+                messages.success(request, 'Reply added successfully!')
                 return redirect('project_details', slug=slug)
 
-    return render(request, 'project_details.html', {
-        'project': project,
-        'donation_form': donation_form,
-        'comment_form': comment_form,
-        'report_project_form': report_project_form,
-        'report_comment_form': report_comment_form
-    })
-
-
-def add_donation(request, slug):
-    project = get_object_or_404(Project, slug=slug)
-    if request.method == 'POST':
-        donation_form = DonationForm(request.POST)
-        if donation_form.is_valid():
-            donation = donation_form.save(commit=False)
-            donation.project = project
-            donation.user = request.user
-            donation.save()
-            messages.success(request, 'Thank you for your donation!')
-            return redirect('project_details', slug=slug)
-    else:
-        donation_form = DonationForm()
-    return render(request, 'add_donation.html', {'donation_form': donation_form, 'project': project})
-
-
-def add_comment(request, slug):
-    project = get_object_or_404(Project, slug=slug)
-    if request.method == 'POST':
-        comment_form = CommentForm(request.POST)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.project = project
-            comment.user = request.user
-            comment.save()
-            messages.success(request, 'Your comment has been added!')
-            return redirect('project_details', slug=slug)
-    else:
-        comment_form = CommentForm()
-    return render(request, 'add_comment.html', {'comment_form': comment_form, 'project': project})
-
-
-def report_project(request, slug):
-    project = get_object_or_404(Project, slug=slug)
-    if request.method == 'POST':
-        report_project_form = ReportProjectForm(request.POST)
-        if report_project_form.is_valid():
-            report = report_project_form.save(commit=False)
-            report.project = project
-            report.user = request.user
-            report.save()
-            messages.success(request, 'Thank you for reporting this project!')
-            return redirect('project_details', slug=slug)
-    else:
-        report_project_form = ReportProjectForm()
-    return render(request, 'report_project.html', {'report_project_form': report_project_form, 'project': project})
-
-
-def report_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
-    if request.method == 'POST':
-        report_comment_form = ReportCommentForm(request.POST)
-        if report_comment_form.is_valid():
-            report = report_comment_form.save(commit=False)
-            report.comment = comment
-            report.user = request.user
-            report.save()
-            messages.success(request, 'Thank you for reporting this comment!')
-            return redirect('project_details', slug=comment.project.slug)
-    else:
-        report_comment_form = ReportCommentForm()
-    return render(request, 'report_comment.html', {'report_comment_form': report_comment_form, 'comment': comment})
+    return render(request, 'projects/project_details.html', {'project': project, 'comments': comments, 'donation_form': donation_form, 'comment_form': comment_form, 'report_project_form': report_project_form, 'report_comment_form': report_comment_form, 'reply_comment_form': reply_comment_form})

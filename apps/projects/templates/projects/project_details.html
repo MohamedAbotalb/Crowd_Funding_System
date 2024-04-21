@@ -2,131 +2,86 @@
 
 {% load static %}
 
-{% block navbar %}
+{% block body-content %}
+    <!-- Donate Button -->
+        <button type="button" class="btn btn-success" id="donateButton" data-toggle="modal" data-target="#exampleModal">Donate</button>
+        {% include 'add_donation.html' %}
+    <!-- Report Project Button -->
+        <button type="button" class="btn btn-danger" id="reportProjectButton" data-toggle="modal" data-target="#reportProjectModal">Report Project</button>
+        {% include 'report_project.html' %}
+    <!-- Add Comment Button -->
+         <button type="button" class="btn btn-primary" id="addCommentButton" data-toggle="modal" data-target="#addCommentModal">Add Comment</button>
+        {% include 'add_comment.html' %}
 
-{% include 'layouts/navbar.html' %}
 
-{% endblock%}
-
-{% block content %}
-
-<!DOCTYPE html>
-<html lang="en">    
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ project.title }}</title>
-</head>
-<body>
-    <h1>{{ project.title }}</h1>
-    <p>{{ project.details }}</p>
-    <p>Total Target: {{ project.total_target }}</p>
-    <p>Start Date: {{ project.start_time }}</p>
-
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#donationModal">
-    Donate
-</button>
-
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal">
-    Add Comment
-</button>
-
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reportProjectModal">
-    Report Project
-</button>
-
-    <!-- Donation Form Modal -->
-<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="donationModalLabel">Donate to {{ project.title }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Donation Form -->
-          <form action="{% url 'add_donation' slug=project.slug %}" method="post">
-            {% csrf_token %}
-            <input type="number" name="amount" placeholder="Enter donation amount" required>
-            <button type="submit">Donate</button>
-        </form>
-        </div>
-      </div>
+   <!-- Comments Section -->
+<div class="row mt-4">
+    <div class="col-md-8">
+        <h3>Comments ({{ comments|length }}):</h3>
+        <ul class="list-unstyled mt-4">
+            {% if comments %}
+                {% for comment in comments %}
+                    <li>
+                        <div class="comment d-flex">
+                            <img src="{{ comment.user.profile_picture_url }}" alt="{{ comment.user.username }}'s photo" class="rounded-circle" width="50" height="50">
+                            <div class="col-md-8 mx-3">
+                                <h6 class="comment-header">{{ comment.user }}</h6>
+                                <p class="comment-time"><small>{{ comment.created_at }}</small></p>
+                                <p class="comment-content">{{ comment.text }}</p>
+                                <!-- Reply Button -->
+                                <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#replyModal{{ comment.id }}">Reply</button>
+                                <!-- Report Comment Button -->
+                                <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#reportCommentModal{{ comment.id }}">Report</button>
+                                
+                                <!-- Replies -->
+                                {% if comment.replies.all %}
+                                    <ul>
+                                        {% for reply in comment.replies.all %}
+                                            <li>
+                                                <p>{{ reply.text }}</p>
+                                                <p><small>Reply by {{ reply.user }} on {{ reply.created_at }}</small></p>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Reply Modal -->
+                        {% include 'replay_comment.html' %}
+                        <!-- Report Comment Modal -->
+                        {% include 'report_comment.html' %}
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>No comments yet.</li>
+            {% endif %}
+        </ul>
     </div>
-  </div>
-    
-    <!-- Add Comment Form Modal -->
-<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="commentModalLabel">Add Comment to {{ project.title }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Comment Form -->
-          <form action="{% url 'add_comment' slug=project.slug %}" method="post">
-            {% csrf_token %}
-            <textarea name="text" rows="3" placeholder="Write your comment here" required></textarea>
-            <button type="submit">Add Comment</button>
-        </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-    <!-- Report Project Form Modal -->
-<div class="modal fade" id="reportProjectModal" tabindex="-1" role="dialog" aria-labelledby="reportProjectModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="reportProjectModalLabel">Report Project: {{ project.title }}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form action="{% url 'report_project' slug=project.slug %}" method="post">
-            {% csrf_token %}
-            <textarea name="reason" rows="3" placeholder="Please provide details about why you are reporting this project." required></textarea>
-            <button type="submit">Report Project</button>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#donateButton').click(function() {
+            $('#donationModal').modal('show');
+        });
 
-    <!-- Display Comments -->
-    <h2>Comments</h2>
-    {% for comment in project.comments.all %}
-        <p>{{ comment.text }}</p>
-        <!-- Report Comment Form -->
-        <form action="{% url 'report_comment' comment_id=comment.id %}" method="post">
-            {% csrf_token %}
-            <textarea name="reason" rows="3" placeholder="Please provide details about why you are reporting this comment." required></textarea>
-            <button type="submit">Report Comment</button>
-        </form>
-        <!-- Comment Reply Form -->
-        <form action="{% url 'add_comment_reply' slug=project.slug parent_comment_id=comment.id %}" method="post">
-            {% csrf_token %}
-            <textarea name="text" rows="3" placeholder="Write your reply here" required></textarea>
-            <button type="submit">Add Reply</button>
-        </form>
-        <!-- Display Comment Replies -->
-        {% for reply in comment.replies.all %}
-            <p>{{ reply.text }}</p>
-        {% endfor %}
-    {% endfor %}
-</body>
-</html>
+        $('#reportProjectButton').click(function() {
+            $('#reportProjectModal').modal('show');
+        });
 
-{% block scripts %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-6v3RvkE2F/CVtfjwQNyAKDuyfWsRM+BOUDLJLm9LGPZfBNwgV/Jy8jsRyYPkCkzs" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shCk+2LY5SJ7jI12Pmzygme0ifOqF5pepuXs2" crossorigin="anonymous"></script>
+        $('.reply-button').click(function() {
+            let commentId = $(this).data('comment-id');
+            $('#replyModal' + commentId).modal('show');
+        });
+
+        $('.report-comment-button').click(function() {
+            let commentId = $(this).data('comment-id');
+            $('#reportCommentModal' + commentId).modal('show');
+        });
+
+        $('#addCommentButton').click(function() {
+            $('#addCommentModal').modal('show');
+        });
+    });
+</script>
 {% endblock %}
