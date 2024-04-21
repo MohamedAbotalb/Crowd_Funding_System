@@ -132,11 +132,28 @@ class Comment(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
+    created_at = models.DateTimeField(auto_now_add= True)
+    
     def __str__(self):
         return f"Comment by {self.user.username} on {self.project.title}"
 
+class Reply(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Reply by {self.user.username} on {self.comment.project.title}"
+    
+class CommentReport(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report by {self.user.username} on comment: {self.comment.id}"
 
 # ===================== Report Project Model =====================
 class ProjectReport(models.Model):
@@ -148,18 +165,7 @@ class ProjectReport(models.Model):
     def __str__(self):
         return f"Report by {self.user.username} on {self.project.title}"
 
-
-# ===================== Report Comment Model =====================
-class CommentReport(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    reason = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Report by {self.user.username} on comment: {self.comment.id}"
-
-
+# ===================== Rating Model =====================
 class Rating(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='ratings')
