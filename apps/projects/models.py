@@ -171,3 +171,16 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"Rating {self.value} by {self.user} on {self.project}"
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+class ProjectTag(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.project.title} - {self.tag.name}"
