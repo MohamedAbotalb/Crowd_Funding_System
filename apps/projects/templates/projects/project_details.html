@@ -1,77 +1,218 @@
-{% extends "layouts/base.html" %}
-
+{% extends 'layouts/base.html' %}
 {% load static %}
+
+{% block title %}{{ section.title }}{% endblock %}
+{% block styles %}
+<style>
+   .pro_slide {
+    height: 350px;
+   }
+   /* Hide Radio button */
+   .rate > input{
+     display: none;
+   }
+  
+   .rate{
+     display: inline-block;;
+     border: 0;
+   }
+
+   .rate > label{
+     float: right;
+   }
+
+   /* Showing the stars */
+   .rate > label:before{
+     display: inline-block;
+     font-size: 1.1rem;
+     font-family: FontAwesome;
+     content: "\f005";
+     margin:0;
+     padding:0.3rem .2rem;
+     cursor: pointer;
+   }
+
+   /* Half star */
+   .rate .half:before{
+     content: "\f089";
+     position: absolute;
+     padding-right: 0;
+   }
+
+   /* Click and hover */
+   input:checked ~ label, label:hover ~ label{
+     color: #ffb503;
+   }
+
+   /* hover hightlight */
+   input:checked + label:hover, input:checked ~ label:hover,input:checked ~ label:hover ~ label,
+   label:hover ~ input:checked ~ label{
+     color: #cc9000;
+   }
+
+   .rating-star i{
+     color: #ffb503 !important;
+   }
+
+   ul.thumb{
+     margin:0 auto;
+     padding: 0;
+     float: left;
+   }
+
+   ul.thumb li{
+     list-style: none;
+     margin: 10px;
+   }
+
+   ul.thumb li img{
+     width: 80px;
+     height: 80px;
+     border: 1px solid grey;
+   }
+</style>
+{% endblock %}
+{% block navbar %} 
+{% include 'layouts/navbar.html' %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
-    <!-- Donate Button -->
-    <button type="button" class="btn btn-success" id="donateButton" data-bs-toggle="modal" data-bs-target="#donationModal">Donate</button>
+  <div class="row mt-3">
+    <div class="text-center mb-2">
+      <h3>{{ project.title }}</h3>
+    </div>
+    <div class="row mt-4">
+        <div class="d-flex">
+        <div class="me-5 col-7">
+            <div>
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            {% for picture in project.pictures.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img src="{{ picture.image.url }}" class="d-block w-100" style="height:250px ;" alt="Project Image">
+            </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+      <div class="col-12 mt-4" style="height: 45px;">
+        {% if project.creator.profile_picture %}
+          <img src="{{ project.creator.profile_picture.url }}" alt="Creator's Profile Picture" style="width: 50px; height: 40px; border-radius: 50%;"  >
+        {% else %}
+          <!-- Default placeholder image or fallback -->
+          <img src="{% static 'placeholder.jpg' %}" alt="Default Profile Picture" >
+        {% endif %}
+        <span class="ms-1">{{project.creator }} create {{project.title}} project</span>
+      </div>
+      <hr>
+      <div>
+        <h5>Project description</h5>
+        <p>{{ project.details }}</p>
+      </div>
+        </div>
+        <div class=" col-5">
+      <div class="card" >
+        <div class="card-body">
+          <span class="card-title mb-2 fs-5 ">{{ project.current_fund }}</span>
+          <span class="card-subtitle mb-2 text-muted">raised of {{ project.total_target}} target</span>
+          <!-- Progress bar -->
+            <div class="progress">
+            <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="{{ project.current_fund }}" aria-valuemin="0" aria-valuemax="{{ project.total_target }}" style="width: {{current_fund_percentage}}%"></div>
+            </div>
+            <p class="text-end mb-0">{{current_fund_percentage}}%</p>
+          <!-- ****days left**** -->
+          <div class="mb-2 d-flex ">
+            <div class="fs-4 me-3 ">
+               <i class="fa-regular fa-clock fa-spin"></i>
+            </div>
+            <div>
+            <span class="card-title d-block mb-0 "> {{ days_left }}</span>
+            <span class="card-title text-muted">Days left</span>
+            </div>
+          </div>
+          <div class="mb-2 d-flex ">
+            <div class="fs-4 me-3 ">
+               <i class="fa-solid fa-arrow-up-right-dots"></i>
+            </div>
+            <div>
+            <span class="card-title fs-5">{{num_donors}} </span>
+            <span class=" card-title">people have just made<br> a donation</span>
+            </div>
+          </div>
+          <div class="mb-2 d-flex ">
+            <div class="fs-4 me-3 ">
+               <i class="fa-solid fa-hand-holding-heart"></i>
+            </div>
+            <div>
+            <span class="card-title  d-block "> {{ first_donation.user }}<span>
+            <span class=" card-title  d-block">{{ first_donation.amount }} $ <span class="card-subtitle text-muted">.First donation</span></span>
+            </div>
+          </div>
+          <div class="mb-2 d-flex ">
+            <div class="fs-4 me-3 ">
+               <i class="fa-solid fa-hand-holding-heart"></i>
+            </div>
+            <div>
+            <span class="card-title d-block "> {{ last_donation.user }}<span>
+            <span class=" card-title  d-block">{{ last_donation.amount }} $ <span class="card-subtitle text-muted">.Last donation</span></span>
+            </div>
+          </div>
+           <div class="mb-2 d-flex ">
+            <div class="fs-4 me-3 ">
+               <i class="fa-solid fa-hand-holding-heart"></i>
+            </div>
+            <div>
+            <span class="card-title  d-block "> {{ top_donation_user }}<span>
+            <span class=" card-title d-block">{{ top_donation}} $ <span class="card-subtitle text-muted">.Top donation</span></span>
+            </div>
+          </div>
+            <div class="mb-3">
+                <span class="card-title mb-4 fs-5 " id="average-rating"> {{ average_rating }}</span>
+                <span class="card-subtitle mb-2 text-muted">average rating</span>
+            </div>
+          <!-- rating stars**** -->
+          <form id="ratingForm" action="{% url 'rate_project' slug=project.slug %}" method="POST" class="d-flex ">
+            {% csrf_token %}
+            <div class="rate me-3">
+              <input type="radio" name="rating" id="rating10" value="5" {% if user_rating == 5 %}checked{% endif %} required /><label for="rating10" title="5"></label>
+              <input type="radio" name="rating" id="rating9" value="4.5" {% if user_rating == 4.5 %}checked{% endif %} required /><label for="rating9" title="4.5" class="half"></label>
+              <input type="radio" name="rating" id="rating8" value="4" {% if user_rating == 4 %}checked{% endif %} required /><label for="rating8" title="4"></label>
+              <input type="radio" name="rating" id="rating7" value="3.5" {% if user_rating == 3.5 %}checked{% endif %} required /><label for="rating7" title="3.5" class="half"></label>
+              <input type="radio" name="rating" id="rating6" value="3" {% if user_rating == 3 %}checked{% endif %} required /><label for="rating6" title="3"></label>
+              <input type="radio" name="rating" id="rating5" value="2.5" {% if user_rating == 2.5 %}checked{% endif %} required /><label for="rating5" title="2.5" class="half"></label>
+              <input type="radio" name="rating" id="rating4" value="2" {% if user_rating == 2 %}checked{% endif %} required /><label for="rating4" title="2"></label>
+              <input type="radio" name="rating" id="rating3" value="1.5" {% if user_rating == 1.5 %}checked{% endif %} required /><label for="rating3" title="1.5" class="half"></label>
+              <input type="radio" name="rating" id="rating2" value="1" {% if user_rating == 1 %}checked{% endif %} required /><label for="rating2" title="1"></label>
+              <input type="radio" name="rating" id="rating1" value="0.5" {% if user_rating == 0.5 %}checked{% endif %} required /><label for="rating1" title="0.5" class="half"></label>
+            </div>
+            <button type="submit" class="btn btn-warning ">Rate</button>
+          </form>
+          {% if allow_cancel %}
+          <div class="text-end">
+            <button type="button" class="btn btn-danger">Cancel Project</button>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+                <!-- Donate Button -->
+        <button type="button" class="btn btn-success" id="donateButton" data-toggle="modal" data-target="#exampleModal">Donate</button>
+        {% include 'add_donation.html' %}
     <!-- Report Project Button -->
-    <button type="button" class="btn btn-danger" id="reportProjectButton" data-bs-toggle="modal" data-bs-target="#reportProjectModal">Report Project</button>
+        <button type="button" class="btn btn-danger" id="reportProjectButton" data-toggle="modal" data-target="#reportProjectModal">Report Project</button>
+        {% include 'report_project.html' %}
     <!-- Add Comment Button -->
-    <button type="button" class="btn btn-primary" id="addCommentButton" data-bs-toggle="modal" data-bs-target="#commentModal">Add Comment</button>
+         <button type="button" class="btn btn-primary" id="addCommentButton" data-toggle="modal" data-target="#addCommentModal">Add Comment</button>
+        {% include 'add_comment.html' %}
 
- <!-- Donation Form Modal -->
- <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="donationModalLabel">Donate to {{ project.title }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="{% url 'add_donation' slug=project.slug %}" method="post">
-                    {% csrf_token %}
-                    <input type="number" name="amount" class="form-control" placeholder="Enter donation amount"
-                        required>
-                    <button type="submit" class="btn btn-primary">Donate</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add Comment Form Modal -->
-<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Add Comment to {{ project.title }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="" method="post">
-                    {% csrf_token %}
-                    <textarea name="text" class="form-control" rows="3"
-                        placeholder="Write your comment here" required></textarea>
-                    <button type="submit" class="btn btn-primary">Add Comment</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Report Project Form Modal -->
-<div class="modal fade" id="reportProjectModal" tabindex="-1" aria-labelledby="reportProjectModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="reportProjectModalLabel">Report Project: {{ project.title }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/" method="post">
-                    {% csrf_token %}
-                    <textarea name="reason" class="form-control" rows="3"
-                        placeholder="Please provide details about why you are reporting this project."
-                        required></textarea>
-                    <button type="submit" class="btn btn-primary">Report Project</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
    <!-- Comments Section -->
 <div class="row mt-4">
@@ -118,6 +259,128 @@
         </ul>
     </div>
 </div>
+        </div>
+      </div> 
+      {% if messages %}
+      <div class="alert alert-success" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+      </div>
+      {% endif %} 
+    </div>
+        </div>
+    </div>
+  </div>
+  <br>
+  <hr >
+  <h4 class="mt-4 mb-3">Related Projects</h4>
+  <div class="row">
+    {% for related_project in related_projects %}
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="{% if related_project.pictures.first %}{{ related_project.pictures.first.image.url }}{% else %}{% static 'placeholder.jpg' %}{% endif %}" class="card-img-top" alt="Project Image">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div>
+              {% if project.creator.profile_picture %}
+                <img src="{{  related_project.creator.profile_picture.url }}" alt="Creator's Profile Picture" style="width: 35px; height: 35px; border-radius: 50%;"  >
+              {% else %}
+                <!-- Default placeholder image or fallback -->
+                <img src="{% static 'placeholder.jpg' %}" alt="Default Profile Picture" >
+              {% endif %}
+            </div>
+            <div class="ms-3">
+                <h6 class="mb-0">{{ related_project.title }}</h6>
+                <span class=" text-muted ">{{ related_project.creator }}</span>
+                <span class="card-subtitle text-muted fs-6 d-block my-1"><i class="fa-regular fa-clock fa-spin"></i> {{ related_project.days_left }} days left</span>
+            </div>
+          </div>
+          <a href="{% url 'project_details' slug=related_project.slug %}" class="btn btn-success mt-1">Show project</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
+<script>
+  // Function to save user rating to local storage
+  function saveUserRating(rating) {
+    localStorage.setItem('user_rating', rating);
+  }
+
+  // Function to get user rating from local storage
+  function getUserRating() {
+    return localStorage.getItem('user_rating');
+  }
+
+  // Check if user has previously rated and set the stars accordingly
+  var userRating = parseFloat("{{ user_rating|default:'null' }}");
+    console.log("{{ user_rating}}");
+  if (!isNaN(userRating)) {
+    var stars = document.querySelectorAll('.rate input[type="radio"]');
+    stars.forEach(function(star) {
+      if (parseFloat(star.value) === userRating) {
+        star.checked = true;
+      } else {
+        star.checked = false;
+      }
+    });
+  }
+
+  // Handle form submission
+  document.getElementById("ratingForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    var form = this;
+    var formData = new FormData(form);
+
+    // Send AJAX request to rate the project
+    fetch(form.action, {
+      method: form.method,
+      body: formData,
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Update user's rating and stars display
+      var userRating = data.rating_value;
+      saveUserRating(userRating);
+      var stars = document.querySelectorAll('.rate input[type="radio"]');
+      stars.forEach(function(star) {
+        if (parseFloat(star.value) === parseFloat(userRating)) {
+          star.checked = true;
+        } else {
+          star.checked = false;
+        }
+      });
+    })
+    .catch(error => console.error('Error:', error));
+  });
+
+  $(document).ready(function() {
+        $('#donateButton').click(function() {
+            $('#donationModal').modal('show');
+        });
+
+        $('#reportProjectButton').click(function() {
+            $('#reportProjectModal').modal('show');
+        });
+
+        $('.reply-button').click(function() {
+            let commentId = $(this).data('comment-id');
+            $('#replyModal' + commentId).modal('show');
+        });
+
+        $('.report-comment-button').click(function() {
+            let commentId = $(this).data('comment-id');
+            $('#reportCommentModal' + commentId).modal('show');
+        });
+
+        $('#addCommentButton').click(function() {
+            $('#addCommentModal').modal('show');
+        });
+    });
+</script>
 {% endblock %}
-    
