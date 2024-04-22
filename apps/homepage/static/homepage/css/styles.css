@@ -1,0 +1,57 @@
+
+.overlay{
+    background-color: rgba(0, 0, 0, 0.500);
+    height: 100%;
+}
+.btn{
+    box-shadow: none !important;
+}
+.white-div{
+    background: white;
+    content: "";
+    width: 50px;
+    height: 160px;
+    left: -75px;
+    top: -60px;
+    opacity: 0.1;
+    transform: rotate(35deg);
+    transition: all .8s;    
+}
+.blue-btn:hover .white-div{
+    transform: translatex(350px) rotate(35deg);
+}
+.blue-div{
+    background: #0a58ca;
+    content: "";
+    width: 50px;
+    height: 160px;
+    left: -75px;
+    top: -60px;
+    opacity: 0.1;
+    transform: rotate(35deg);
+    transition: all .8s;    
+}
+.white-btn:hover .blue-div{
+    transform: translatex(350px) rotate(35deg);
+}
+
+.carousel-caption{
+    bottom: 35% !important;
+}
+.carousel-caption button{
+    width: 200px;
+    margin: 10px;
+}
+.carousel-caption button:focus{
+    box-shadow: none !important;
+}
+
+.carousel-caption button:hover{
+    box-shadow: none;
+    background-color:#0a58ca !important;
+    border-color: #0c65ed !important;
+}
+
+.carousel-control-prev span, .carousel-control-next span{
+    color: white !important;;
+}
