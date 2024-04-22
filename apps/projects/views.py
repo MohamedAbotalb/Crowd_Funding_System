@@ -1,5 +1,6 @@
 import re
 from django.db.models import Avg, Max
+from django.http import JsonResponse
 from .models import Project, Rating
 from django.utils import timezone
 from django.contrib import messages
@@ -9,8 +10,6 @@ from taggit.models import Tag
 from .models import Project, ProjectPicture, Donation, Comment, ProjectReport, CommentReport,Reply
 from .forms import ProjectForm, DonationForm, CommentForm, ReportProjectForm, ReportCommentForm, ReplyCommentForm
 from apps.accounts.models import CustomUser
-from django.http import JsonResponse
-from django.db.models import F
 
 
 @login_required(login_url='login_')
@@ -48,6 +47,7 @@ def create_project(request):
         form = ProjectForm()
     return render(request, 'projects/create_project.html', {'form': form})
 
+
 def rate_project(request, slug):
     if request.method == 'POST':
         project = get_object_or_404(Project, slug=slug)
@@ -76,8 +76,8 @@ def rate_project(request, slug):
         # Return a JSON response indicating failure
         return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
 
+
 def project_details(request, slug):
-    print("naglaa")
     project = get_object_or_404(Project, slug=slug)
     # Calculate days left until end time
     end_datetime = project.end_time
@@ -143,7 +143,6 @@ def project_details(request, slug):
     return render(request, 'projects/project_details.html', context)
 
 
-
 def projects_list(request):
     projects = Project.objects.all()
     return render(request, 'projects/index.html', {'projects': projects})
@@ -175,68 +174,71 @@ def cancel_project(request, slug):
     project.delete()
     return redirect('/')
 
-@login_required(login_url='login_')
-def project_comments(request, slug):
+
+def add_donation(request, slug):
     project = get_object_or_404(Project, slug=slug)
-    comments = project.comments.all()
-    donation_form = DonationForm()
-    comment_form = CommentForm()
-    report_project_form = ReportProjectForm()
-    report_comment_form = ReportCommentForm()
-    reply_comment_form = ReplyCommentForm()
-
     if request.method == 'POST':
-        if 'donate_button' in request.POST:
-            donation_form = DonationForm(request.POST)
-            if donation_form.is_valid():
-                donation = donation_form.save(commit=False)
-                donation.project = project
-                donation.user = request.user
-                donation.save()
-                project.current_fund = F('current_fund') + donation.amount
-                project.save()
-                messages.success(request, 'Thank you for your donation!')
-                return redirect('project_details', slug=slug)
-        elif 'report_project_button' in request.POST:
-            report_project_form = ReportProjectForm(request.POST)
-            if report_project_form.is_valid():
-                report = report_project_form.save(commit=False)
-                report.project = project
-                report.user = request.user
-                report.save()
-                messages.success(request, 'Project reported successfully!')
-                return redirect('project_details', slug=slug)
-        elif 'comment_button' in request.POST:
-            comment_form = CommentForm(request.POST)
-            if comment_form.is_valid():
-                comment = comment_form.save(commit=False)
-                comment.project = project
-                comment.user = request.user
-                comment.save()
-                messages.success(request, 'Comment added successfully!')
-                return redirect('project_details', slug=slug)
-        elif 'report_comment_button' in request.POST:
-            report_comment_form = ReportCommentForm(request.POST)
-            if report_comment_form.is_valid():
-                report = report_comment_form.save(commit=False)
-                comment_id = request.POST.get('comment_id')
-                comment = get_object_or_404(Comment, id=comment_id)
-                report.comment = comment
-                report.user = request.user
-                report.save()
-                messages.success(request, 'Comment reported successfully!')
-                return redirect('project_details', slug=slug)
-        elif 'reply_comment_button' in request.POST:
-            reply_comment_form = ReplyCommentForm(request.POST)
-            if reply_comment_form.is_valid():
-                reply = reply_comment_form.save(commit=False)
-                comment_id = request.POST.get('comment_id')
-                comment = get_object_or_404(Comment, id=comment_id)
-                reply.project = project
-                reply.user = request.user
-                reply.parent = comment
-                reply.save()
-                messages.success(request, 'Reply added successfully!')
-                return redirect('project_details', slug=slug)
+        donation_form = DonationForm(request.POST)
+        if donation_form.is_valid():
+            donation = donation_form.save(commit=False)
+            print(donation_form.cleaned_data['amount'])
+            donation.project = project
+            user_instance = CustomUser.objects.get(pk=request.user.pk)
+            donation.user = user_instance           
+            donation.save()
+            messages.success(request, 'Thank you for your donation!')
+            return redirect('projects/project_details', slug=slug)
+    else:
+        donation_form = DonationForm()
+    return render(request, 'projects/add_donation.html', {'donation_form': donation_form, 'project': project})
 
-    return render(request, 'projects/project_details.html', {'project': project, 'comments': comments, 'donation_form': donation_form, 'comment_form': comment_form, 'report_project_form': report_project_form, 'report_comment_form': report_comment_form, 'reply_comment_form': reply_comment_form})
+
+def add_comment(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.project = project
+            user_instance = CustomUser.objects.get(pk=request.user.pk)
+            comment.user =  user_instance
+            comment.save()
+            messages.success(request, 'Your comment has been added!')
+            return redirect('projects/project_details', slug=slug)
+    else:
+        comment_form = CommentForm()
+    return render(request, 'projects/add_comment.html', {'comment_form': comment_form, 'project': project})
+
+
+def report_project(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    if request.method == 'POST':
+        report_project_form = ReportProjectForm(request.POST)
+        if report_project_form.is_valid():
+            report = report_project_form.save(commit=False)
+            report.project = project
+            user_instance = CustomUser.objects.get(pk=request.user.pk)
+            report.user = user_instance
+            report.save()
+            messages.success(request, 'Thank you for reporting this project!')
+            return redirect('projects/project_details', slug=slug)
+    else:
+        report_project_form = ReportProjectForm()
+    return render(request, 'projects/report_project.html', {'report_project_form': report_project_form, 'project': project})
+
+
+def report_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == 'POST':
+        report_comment_form = ReportCommentForm(request.POST)
+        if report_comment_form.is_valid():
+            report = report_comment_form.save(commit=False)
+            report.comment = comment
+            user_instance = CustomUser.objects.get(pk=request.user.pk)
+            report.user = user_instance
+            report.save()
+            messages.success(request, 'Thank you for reporting this comment!')
+            return redirect('projects/project_details', slug=comment.project.slug)
+    else:
+        report_comment_form = ReportCommentForm()
+    return render(request, 'projects/report_comment.html', {'report_comment_form': report_comment_form, 'comment': comment})

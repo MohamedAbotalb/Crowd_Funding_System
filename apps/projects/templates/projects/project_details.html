@@ -203,15 +203,63 @@
           {% endif %}
         </div>
         <div class="card-footer">
-          <button type="button" class="btn btn-success" id="donateButton" data-toggle="modal" data-target="#exampleModal">Donate</button>
-        {% include 'projects/add_donation.html' %}
-         <!-- Report Project Button -->
+                <!-- Donate Button -->
+        <button type="button" class="btn btn-success" id="donateButton" data-toggle="modal" data-target="#exampleModal">Donate</button>
+        {% include 'add_donation.html' %}
+    <!-- Report Project Button -->
         <button type="button" class="btn btn-danger" id="reportProjectButton" data-toggle="modal" data-target="#reportProjectModal">Report Project</button>
-        {% include 'projects/report_project.html' %}
+        {% include 'report_project.html' %}
     <!-- Add Comment Button -->
          <button type="button" class="btn btn-primary" id="addCommentButton" data-toggle="modal" data-target="#addCommentModal">Add Comment</button>
-        {% include 'projects/add_comment.html' %}
-      </div>
+        {% include 'add_comment.html' %}
+
+
+   <!-- Comments Section -->
+<div class="row mt-4">
+    <div class="col-md-8">
+        <h3>Comments ({{ comments|length }}):</h3>
+        <ul class="list-unstyled mt-4">
+            {% if comments %}
+                {% for comment in comments %}
+                    <li>
+                        <div class="comment d-flex">
+                            <img src="{{ comment.user.profile_picture_url }}" alt="{{ comment.user.username }}'s photo" class="rounded-circle" width="50" height="50">
+                            <div class="col-md-8 mx-3">
+                                <h6 class="comment-header">{{ comment.user }}</h6>
+                                <p class="comment-time"><small>{{ comment.created_at }}</small></p>
+                                <p class="comment-content">{{ comment.text }}</p>
+                                <!-- Reply Button -->
+                                <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#replyModal{{ comment.id }}">Reply</button>
+                                <!-- Report Comment Button -->
+                                <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#reportCommentModal{{ comment.id }}">Report</button>
+                                
+                                <!-- Replies -->
+                                {% if comment.replies.all %}
+                                    <ul>
+                                        {% for reply in comment.replies.all %}
+                                            <li>
+                                                <p>{{ reply.text }}</p>
+                                                <p><small>Reply by {{ reply.user }} on {{ reply.created_at }}</small></p>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Reply Modal -->
+                        {% include 'replay_comment.html' %}
+                        <!-- Report Comment Modal -->
+                        {% include 'report_comment.html' %}
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>No comments yet.</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+        </div>
       </div> 
       {% if messages %}
       <div class="alert alert-success" role="alert">
@@ -222,9 +270,6 @@
       {% endif %} 
     </div>
         </div>
-       
-      
-      
     </div>
   </div>
   <br>
@@ -313,5 +358,29 @@
     })
     .catch(error => console.error('Error:', error));
   });
+
+  $(document).ready(function() {
+        $('#donateButton').click(function() {
+            $('#donationModal').modal('show');
+        });
+
+        $('#reportProjectButton').click(function() {
+            $('#reportProjectModal').modal('show');
+        });
+
+        $('.reply-button').click(function() {
+            let commentId = $(this).data('comment-id');
+            $('#replyModal' + commentId).modal('show');
+        });
+
+        $('.report-comment-button').click(function() {
+            let commentId = $(this).data('comment-id');
+            $('#reportCommentModal' + commentId).modal('show');
+        });
+
+        $('#addCommentButton').click(function() {
+            $('#addCommentModal').modal('show');
+        });
+    });
 </script>
 {% endblock %}
