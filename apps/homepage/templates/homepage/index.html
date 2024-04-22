@@ -76,9 +76,9 @@
         <div class="categories">
         
             <div class="d-flex p-3 justify-content-center">
-                <a class="btn btn-outline-success rounded-circle me-3">All</a>
+                <a class="btn btn-outline-success rounded-circle me-3" onclick="getProjectsByCategoryId(null)">All</a>
                 {% for category in categories %}
-                <button class="btn btn-outline-success rounded-circle me-3">{{ category.name }}</button>
+                <button class="btn btn-outline-success rounded-circle me-3" onclick="getProjectsByCategoryId({{ category.id }})">{{ category.name }}</button>
                 {% endfor %}
             </div>
         
@@ -315,6 +315,50 @@
                 }
             })
         });
+
+
+        function getProjectsByCategoryId(id) {
+    let url = '/api/projects/';
+    if (id) {
+        url += `?category_id=${id}`;
+    }
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error fetching projects');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const projects = data.projects;
+            const carousel = document.getElementById('all-projects-carousel');
+            carousel.innerHTML = '';
+            projects.forEach(project => {
+                const item = document.createElement('div');
+                item.classList.add('item');
+                item.innerHTML = `
+                    <div class="card p-2 bg-light">
+                        <img src="${project.picture_url}" style="height: 300px; width: 100%;" class="card-img-top" alt="project">
+                        <div class="card-body">
+                            <h5 class="card-title">${project.title}</h5>
+                            <p class="card-text">${project.details}</p>
+                            <progress class="w-100" value="${project.current_fund}" max="${project.total_target}"></progress>
+                            <div class="d-flex justify-content-between">
+                                <p>${project.current_fund} / ${project.total_target}</p>
+                                <p>${project.percentage}%</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                carousel.appendChild(item);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching projects:', error.message);
+        });
+}
+
 
 
     </script>

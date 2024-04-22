@@ -33,6 +33,20 @@ def home_page(request):
                                                             'categories':categories,
                                                             'categories_projects':categories_projects,
                                                             })
+
+def get_projects_by_category_id(request):
+    category_id = request.GET.get('category_id')
+    if category_id:
+        projects = Project.objects.filter(category_id=category_id)
+    else:
+        projects = Project.objects.all()
+
+    data = [{'id': project.id, 'title': project.title, 'details': project.details, 
+             'picture_url': project.picture_url, 'current_fund': project.current_fund, 
+             'total_target': project.total_target} 
+            for project in projects]
+
+    return JsonResponse({'projects': data})
     
 
 
