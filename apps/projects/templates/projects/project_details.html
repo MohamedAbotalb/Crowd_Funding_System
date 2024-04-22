@@ -203,62 +203,122 @@
           {% endif %}
         </div>
         <div class="card-footer">
+            <div class="container">
                 <!-- Donate Button -->
-        <button type="button" class="btn btn-success" id="donateButton" data-toggle="modal" data-target="#exampleModal">Donate</button>
-        {% include 'add_donation.html' %}
-    <!-- Report Project Button -->
-        <button type="button" class="btn btn-danger" id="reportProjectButton" data-toggle="modal" data-target="#reportProjectModal">Report Project</button>
-        {% include 'report_project.html' %}
-    <!-- Add Comment Button -->
-         <button type="button" class="btn btn-primary" id="addCommentButton" data-toggle="modal" data-target="#addCommentModal">Add Comment</button>
-        {% include 'add_comment.html' %}
-
-
-   <!-- Comments Section -->
-<div class="row mt-4">
-    <div class="col-md-8">
-        <h3>Comments ({{ comments|length }}):</h3>
-        <ul class="list-unstyled mt-4">
-            {% if comments %}
-                {% for comment in comments %}
-                    <li>
-                        <div class="comment d-flex">
-                            <img src="{{ comment.user.profile_picture_url }}" alt="{{ comment.user.username }}'s photo" class="rounded-circle" width="50" height="50">
-                            <div class="col-md-8 mx-3">
-                                <h6 class="comment-header">{{ comment.user }}</h6>
-                                <p class="comment-time"><small>{{ comment.created_at }}</small></p>
-                                <p class="comment-content">{{ comment.text }}</p>
-                                <!-- Reply Button -->
-                                <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#replyModal{{ comment.id }}">Reply</button>
-                                <!-- Report Comment Button -->
-                                <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#reportCommentModal{{ comment.id }}">Report</button>
-                                
-                                <!-- Replies -->
-                                {% if comment.replies.all %}
-                                    <ul>
-                                        {% for reply in comment.replies.all %}
-                                            <li>
-                                                <p>{{ reply.text }}</p>
-                                                <p><small>Reply by {{ reply.user }} on {{ reply.created_at }}</small></p>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </div>
+                <button type="button" class="btn btn-success" id="donateButton" data-bs-toggle="modal" data-bs-target="#donationModal">Donate</button>
+                <!-- Report Project Button -->
+                <button type="button" class="btn btn-danger" id="reportProjectButton" data-bs-toggle="modal" data-bs-target="#reportProjectModal">Report Project</button>
+                <!-- Add Comment Button -->
+                <button type="button" class="btn btn-primary" id="addCommentButton" data-bs-toggle="modal" data-bs-target="#commentModal">Add Comment</button>
+            
+             <!-- Donation Form Modal -->
+             <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="donationModalLabel">Donate to {{ project.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <hr>
-                        <!-- Reply Modal -->
-                        {% include 'replay_comment.html' %}
-                        <!-- Report Comment Modal -->
-                        {% include 'report_comment.html' %}
-                    </li>
-                {% endfor %}
-            {% else %}
-                <li>No comments yet.</li>
-            {% endif %}
-        </ul>
-    </div>
-</div>
+                        <div class="modal-body">
+                            <form action="{% url 'add_donation' slug=project.slug %}" method="post">
+                                {% csrf_token %}
+                                <input type="number" name="amount" class="form-control" placeholder="Enter donation amount"
+                                    required>
+                                <button type="submit" class="btn btn-primary">Donate</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Comment Form Modal -->
+            <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="commentModalLabel">Add Comment to {{ project.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <textarea name="text" class="form-control" rows="3"
+                                    placeholder="Write your comment here" required></textarea>
+                                <button type="submit" class="btn btn-primary">Add Comment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Report Project Form Modal -->
+            <div class="modal fade" id="reportProjectModal" tabindex="-1" aria-labelledby="reportProjectModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reportProjectModalLabel">Report Project: {{ project.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/" method="post">
+                                {% csrf_token %}
+                                <textarea name="reason" class="form-control" rows="3"
+                                    placeholder="Please provide details about why you are reporting this project."
+                                    required></textarea>
+                                <button type="submit" class="btn btn-primary">Report Project</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+               <!-- Comments Section -->
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <h3>Comments ({{ comments|length }}):</h3>
+                    <ul class="list-unstyled mt-4">
+                        {% if comments %}
+                            {% for comment in comments %}
+                                <li>
+                                    <div class="comment d-flex">
+                                        <img src="{{ comment.user.profile_picture_url }}" alt="{{ comment.user.username }}'s photo" class="rounded-circle" width="50" height="50">
+                                        <div class="col-md-8 mx-3">
+                                            <h6 class="comment-header">{{ comment.user }}</h6>
+                                            <p class="comment-time"><small>{{ comment.created_at }}</small></p>
+                                            <p class="comment-content">{{ comment.text }}</p>
+                                            <!-- Reply Button -->
+                                            <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#replyModal{{ comment.id }}">Reply</button>
+                                            <!-- Report Comment Button -->
+                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#reportCommentModal{{ comment.id }}">Report</button>
+                                            
+                                            <!-- Replies -->
+                                            {% if comment.replies.all %}
+                                                <ul>
+                                                    {% for reply in comment.replies.all %}
+                                                        <li>
+                                                            <p>{{ reply.text }}</p>
+                                                            <p><small>Reply by {{ reply.user }} on {{ reply.created_at }}</small></p>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <!-- Reply Modal -->
+                                    {% include 'replay_comment.html' %}
+                                    <!-- Report Comment Modal -->
+                                    {% include 'report_comment.html' %}
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li>No comments yet.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
         </div>
       </div> 
       {% if messages %}
