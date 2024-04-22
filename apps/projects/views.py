@@ -157,7 +157,9 @@ def tagged(request, slug):
 @login_required(login_url='login_')
 def cancel_project(request, slug):
     project = Project.get_project_by_slug(slug)
+    print(project)
     current_fund = project.current_fund
+    print(current_fund)
     recipient_project = Project.objects.filter(category=project.category).exclude(pk=project.pk).first()
 
     # add the current fund of that project to another project in the same category
