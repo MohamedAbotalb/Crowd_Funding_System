@@ -1,8 +1,7 @@
 from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.contrib.auth import get_user_model , login, logout
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
@@ -16,10 +15,6 @@ from .models import CustomUser
 from .forms import RegistrationForm, LoginForm, ChangePasswordForm, ResetPasswordForm, EditProfileForm
 from .tokens import account_activation_token
 from apps.projects.models import Project, Donation
-
-
-def home(request):
-    return render(request, 'home.html')
 
 
 def send_email_activation(request, user, to_email):
@@ -114,27 +109,30 @@ def login_user(request):
 
 @login_required(login_url='login_')
 def logout_user(request):
-    url = reverse('home')
-    return redirect(url)
+    logout(request)
+    return redirect('/')
 
 
 @login_required(login_url='login_')
 def user_profile(request, id):
     user = get_object_or_404(CustomUser, pk=id)
-    user.country = dict(countries)[user.country]
     donations = Donation.objects.filter(user_id=id).select_related('project')
     projects = Project.objects.filter(creator_id=id,status='active')
+
+    if user.country:
+        country_name = dict(countries).get(user.country, user.country)
+    else:
+        country_name = None
+    user.country = country_name
 
     for project in projects:
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = percentage
-     
-  
 
-    if(request.user.id == id):
-        url="profile/profile_page.html"
+    if request.user.id == id:
+        url = "profile/profile_page.html"
     else:
-        url="profile/profile_page2.html"      
+        url = "profile/profile_page2.html"
 
     return render(request, url,
                   context={"User": user, "Donations": donations, "Projects": projects})
@@ -248,7 +246,7 @@ def delete_account(request):
         if confirmation == 'Delete':
             user.delete()
             messages.success(request, 'Your account has been deleted successfully.')
-            return redirect('home')
+            return redirect('/')
         else:
             messages.error(request, 'Incorrect password. Please try again.')
-    return render(request, 'delete_account.html')
+    return render(request, 'profile/edit_profile.html')
