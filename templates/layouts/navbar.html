@@ -14,7 +14,7 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item mx-4 ">
-                    <a aria-current="page" class="nav-link active" href="#">Home</a>
+                    <a aria-current="page" class="nav-link active" href="/">Home</a>
                 </li>
                 <li class="nav-item mx-4">
                     <a aria-current="page" class="nav-link" href="#">Contact Us</a>
@@ -23,13 +23,13 @@
                     <a aria-current="page" class="nav-link" href="#">About Us</a>
                 </li>
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link" href="{% url 'search'%}">     <i class="fa-solid fa-magnifying-glass fa-beat-fade"></i> search</a>
+                    <a aria-current="page" class="nav-link" href="{% url 'search'%}"><i class="fa-solid fa-magnifying-glass fa-beat-fade"></i> search</a>
                 </li>
             </ul>
             {% if user.id %}
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link active text-capitalize" href="{% url 'profile' user.id %}" style="color: #13ADB7;">{{ user.first_name }} {{ user.last_name }}</a>
+                    <a aria-current="page" class="nav-link active text-capitalize" href="{% url 'profile' user.id %}">{{ user.first_name }} {{ user.last_name }}</a>
                 </li>
                 <li class="nav-item mx-4">
                     <form action="{% url 'logout' %}" method="post" style="background-color: #13ADB7;" class=" btn ">
