@@ -4,14 +4,13 @@
 {% block title %} Tag | {{ tag }} {% endblock %}
 
 {% block navbar %}
-{% include 'layouts/navbar.html' %}
+{% include 'layouts/navbar-2.html' %}
 {% endblock %}
 
 {% block content %}
 <div class="row mb-2">
     <h3 class="text-center">projects has tag ({{tag}})</h1>
     {% for project in projects %}
-    
     <div class="item col-3">
                         <div class="card p-2 bg-light">
                             <img src="{{project.picture_url}}" style=" height: 200px; width: 100%;" class="card-img-top"

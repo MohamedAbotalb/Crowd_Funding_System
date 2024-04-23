@@ -5,7 +5,7 @@
   {% block styles %}
   <style>
     body{
-         background-color: #c1e9e5;
+       background-color: #c1e9e5;
 }
     .pro_slide {
       height: 350px;
@@ -79,7 +79,7 @@
   </style>
   {% endblock %}
   {% block navbar %} 
-  {% include 'layouts/navbar-2.html' %}
+  {% include 'layouts/navbar.html' %}
   {% endblock %}
 
   {% block content %}
@@ -141,7 +141,7 @@
         </div>
         <hr>
           <!-- Add Comment Button -->
-          <button type="button" class="btn btn-primary" id="addCommentButton" data-bs-toggle="modal" data-bs-target="#commentModal">Add Comment</button>
+          <button type="button" class="btn text-white" style="background-color: #13ADB7;" id="addCommentButton" data-bs-toggle="modal" data-bs-target="#commentModal">Add Comment</button>
           <!-- Comments Section -->
         <div class="row mt-4">
           <div class="col-md-12">
@@ -296,22 +296,24 @@
               </div>
              {% endif %}
             <!-- rating stars**** -->
-            <form id="ratingForm" action="{% url 'rate_project' project.slug %}" method="POST" class="d-flex ">
-              {% csrf_token %}
-              <div class="rate me-3">
-                <input type="radio" name="rating" id="rating10" value="5" {% if user_rating == 5 %}checked{% endif %} required /><label for="rating10" title="5"></label>
-                <input type="radio" name="rating" id="rating9" value="4.5" {% if user_rating == 4.5 %}checked{% endif %} required /><label for="rating9" title="4.5" class="half"></label>
-                <input type="radio" name="rating" id="rating8" value="4" {% if user_rating == 4 %}checked{% endif %} required /><label for="rating8" title="4"></label>
-                <input type="radio" name="rating" id="rating7" value="3.5" {% if user_rating == 3.5 %}checked{% endif %} required /><label for="rating7" title="3.5" class="half"></label>
-                <input type="radio" name="rating" id="rating6" value="3" {% if user_rating == 3 %}checked{% endif %} required /><label for="rating6" title="3"></label>
-                <input type="radio" name="rating" id="rating5" value="2.5" {% if user_rating == 2.5 %}checked{% endif %} required /><label for="rating5" title="2.5" class="half"></label>
-                <input type="radio" name="rating" id="rating4" value="2" {% if user_rating == 2 %}checked{% endif %} required /><label for="rating4" title="2"></label>
-                <input type="radio" name="rating" id="rating3" value="1.5" {% if user_rating == 1.5 %}checked{% endif %} required /><label for="rating3" title="1.5" class="half"></label>
-                <input type="radio" name="rating" id="rating2" value="1" {% if user_rating == 1 %}checked{% endif %} required /><label for="rating2" title="1"></label>
-                <input type="radio" name="rating" id="rating1" value="0.5" {% if user_rating == 0.5 %}checked{% endif %} required /><label for="rating1" title="0.5" class="half"></label>
-              </div>
-              <button type="submit" class="btn btn-warning ">Rate</button>
-            </form>
+            {% if request.user.is_authenticated %}
+              <form id="ratingForm" action="{% url 'rate_project' project.slug %}" method="POST" class="d-flex ">
+                {% csrf_token %}
+                <div class="rate me-3">
+                  <input type="radio" name="rating" id="rating10" value="5" {% if user_rating == 5 %}checked{% endif %} required /><label for="rating10" title="5"></label>
+                  <input type="radio" name="rating" id="rating9" value="4.5" {% if user_rating == 4.5 %}checked{% endif %} required /><label for="rating9" title="4.5" class="half"></label>
+                  <input type="radio" name="rating" id="rating8" value="4" {% if user_rating == 4 %}checked{% endif %} required /><label for="rating8" title="4"></label>
+                  <input type="radio" name="rating" id="rating7" value="3.5" {% if user_rating == 3.5 %}checked{% endif %} required /><label for="rating7" title="3.5" class="half"></label>
+                  <input type="radio" name="rating" id="rating6" value="3" {% if user_rating == 3 %}checked{% endif %} required /><label for="rating6" title="3"></label>
+                  <input type="radio" name="rating" id="rating5" value="2.5" {% if user_rating == 2.5 %}checked{% endif %} required /><label for="rating5" title="2.5" class="half"></label>
+                  <input type="radio" name="rating" id="rating4" value="2" {% if user_rating == 2 %}checked{% endif %} required /><label for="rating4" title="2"></label>
+                  <input type="radio" name="rating" id="rating3" value="1.5" {% if user_rating == 1.5 %}checked{% endif %} required /><label for="rating3" title="1.5" class="half"></label>
+                  <input type="radio" name="rating" id="rating2" value="1" {% if user_rating == 1 %}checked{% endif %} required /><label for="rating2" title="1"></label>
+                  <input type="radio" name="rating" id="rating1" value="0.5" {% if user_rating == 0.5 %}checked{% endif %} required /><label for="rating1" title="0.5" class="half"></label>
+                </div>
+                <button type="submit" class="btn btn-warning ">Rate</button>
+              </form>
+            {% endif %}
             {% if request.user.is_authenticated %} 
               {% if request.user.id != project.creator.id %} 
               <!-- Report Project Button -->
@@ -356,7 +358,7 @@
           <div class="card-footer">
               {% comment %} <div class="container">  {% endcomment %}
                   <!-- Donate Button -->
-                  <button type="button" class="btn btn-success w-100" id="donateButton" data-bs-toggle="modal" data-bs-target="#donationModal">Donate</button>
+                  <button type="button" class="btn w-100 text-white" id="donateButton" style="background-color: #13ADB7;"data-bs-toggle="modal" data-bs-target="#donationModal">Donate</button>
                 <!-- Donation Form Modal -->
                 <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true" data-bs-backdrop="static">
                   <div class="modal-dialog modal-dialog-centered">
@@ -457,7 +459,7 @@
                   <span class="card-subtitle text-muted fs-6 d-block my-1"><i class="fa-regular fa-clock fa-spin"></i> {{ related_project.days_left }} days left</span>
               </div>
             </div>
-            <a href="{% url 'project_details' slug=related_project.slug %}" class="btn btn-success mt-1">Show project</a>
+            <a href="{% url 'project_details' slug=related_project.slug %}" class="btn  mt-1 text-white " style="background-color: #13ADB7;">Show project</a>
           </div>
         </div>
       </div>
