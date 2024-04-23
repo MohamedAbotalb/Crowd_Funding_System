@@ -4,7 +4,6 @@
 
 {% block title %}{{ section.title }}{% endblock %}
 {% block styles %}
-<!-- <link rel="stylesheet" href="{% static 'accounts/css/signup.css' %}"> -->
 
 <style>
     body {
@@ -18,9 +17,9 @@
     }
 
     .btnsign:hover {
-         color: aliceblue;
-    background-color:#3dd0d8 ;
-    border-color: #3dd0d8;
+        color: aliceblue;
+        background-color:#3dd0d8 ;
+        border-color: #3dd0d8;
     }
 
     .glass {
@@ -39,18 +38,13 @@
     <div class="hero-body">
         <div class="container">
             <div class="row justify-content-center">
-                <h1 class="text-center py-5 " style="color: #012555;">Register</h1>
                      <div class="col-12 col-md-8 col-lg-6">
                     <form action="." class="p-3 m-5 rounded-3 glass" enctype="multipart/form-data" method="POST">
                         {% csrf_token %}
-                        <!-- <h1 class="text-center mb-4 fs-2">Sign up</h1> -->
-                        <div class="text-center ">
-                            <!-- <img class=" mb-3"  src="{% static 'accounts/images/signup.png' %}" alt=""> -->
-                        </div>
-
-                        <div class="d-flex mt-3">
-                            <div class="mb-3 me-3">
-                                <!-- <label class="form-label" for="username">First name</label> -->
+                       <h2 class="text-center py-3" style="color: #012555;">Register</h2>
+                        <div class="d-flex">
+                            <div class="me-3">
+                                 <label class="form-label" for="username">First name</label>
                                 <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fas fa-user-circle"></i>
@@ -62,8 +56,8 @@
                                 {% endfor %}
                             </div>
 
-                            <div class="mb-4">
-                                <!-- <label class="form-label" for="username">Last name</label> -->
+                            <div class="">
+                                 <label class="form-label" for="username">Last name</label>
                                 <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fas fa-user-circle"></i>
@@ -75,8 +69,8 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <!-- <label class="form-label" for="username">Email</label> -->
+                        <div class="">
+                             <label class="form-label" for="username">Email</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-envelope"></i>
@@ -88,8 +82,8 @@
                             {% endfor %}
                         </div>
                         <div class="d-flex ">
-                            <div class="mb-4 me-3">
-                                <!-- <label class="form-label" for="password1">Password</label> -->
+                            <div class="me-3">
+                                 <label class="form-label" for="password1">Password</label>
                                 <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-lock"></i>
@@ -101,8 +95,8 @@
                                 {% endfor %}
                             </div>
 
-                            <div class="mb-4">
-                                <!-- <label class="form-label" for="password2">Confirm Password</label> -->
+                            <div class="">
+                                 <label class="form-label" for="password2">Confirm Password</label>
                                 <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-lock"></i>
@@ -114,13 +108,14 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <!-- <label class="form-label" for="phone_number">Phone Number</label> -->
+                        <div class="">
+                             <label class="form-label" for="phone_number">Phone Number</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-phone"></i>
                                 </span>
                                 <span class="input-group-text">
+                                    +2
                               </span>
                                 {{ form.phone_number }}
                             </div>
@@ -129,8 +124,8 @@
                             {% endfor %}
                         </div>
 
-                        <div class="mb-4">
-                            <!-- <label class="form-label" for="profile_picture">Profile Picture</label> -->
+                        <div class="">
+                             <label class="form-label" for="profile_picture">Profile Picture</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="fa fa-image"></i>
