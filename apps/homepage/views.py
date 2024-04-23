@@ -47,7 +47,7 @@ def get_projects_by_category_id(request):
 
     data = [{'id': project.id, 'title': project.title, 'details': project.details, 
              'picture_url': project.picture_url, 'current_fund': project.current_fund, 
-             'total_target': project.total_target, 'percentage': project.percentage} 
+             'total_target': project.total_target,'slug':project.slug, 'percentage': project.percentage} 
             for project in projects]
 
     return JsonResponse({'projects': data})

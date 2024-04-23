@@ -110,12 +110,20 @@
                             {% endfor %}
                         </div>
                         <!-- End profile_picture  -->
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-primary" type="submit">Save Changes</button>
+                                <a href="{% url 'profile' user.id %}" class="btn btn-secondary">Cancel</a>
+                            </div>
 
-                        <button class="btn btn-primary" type="submit">Save Changes</button>
-                        <a href="{% url 'profile' user.id %}" class="btn btn-secondary">Cancel</a>
-                        <button class="btn btn-danger" data-bs-target="#deleteModal" data-bs-toggle="modal"
-                                type="button">Delete Account
-                        </button>
+                            <div class="col text-end">
+                                <a href="{% url 'change_password' %}" class="btn btn-info">Change password</a>
+                                <button class="btn btn-danger" data-bs-target="#deleteModal" data-bs-toggle="modal"
+                                        type="button">Delete Account
+                                </button>
+                            </div>
+                        </div>
+
                     </form>
                     <!-- Delete Account Modal -->
                     <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal"
