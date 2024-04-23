@@ -55,26 +55,26 @@ def rate_project(request, slug):
         rating_value = float(request.POST.get('rating'))
         print(rating_value,"rate")
         current_user = CustomUser.objects.get(pk=request.user.pk)
-        if current_user.is_authenticated:
+        # if current_user.is_authenticated:
             # Check if the user has already rated the project
-            existing_rating = Rating.objects.filter(user=current_user, project=project).first()
-            if existing_rating:
+        existing_rating = Rating.objects.filter(user=current_user, project=project).firs()
+        if existing_rating:
                 # Update existing rating
-                existing_rating.value = rating_value
-                existing_rating.save()
-                messages.success(request, 'Your rating has been updated.')
-            else:
+            existing_rating.value = rating_value
+            existing_rating.save()
+            messages.success(request, 'Your rating has been updated.')
+        else:
                 # Create a new rating object
-                Rating.objects.create(user=current_user, project=project, value=rating_value)
-                messages.success(request, 'Thank you for rating this project.')
-            return JsonResponse({
+            Rating.objects.create(user=current_user, project=project,value=rating_value)
+            messages.success(request, 'Thank you for rating this project.')
+        return JsonResponse({
                 'success': True,
                 'project_title': project.title,
                 'project_slug': project.slug,
                 'rating_value': rating_value,
                 })
-        else:
-            return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+        # else:
+        #     return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     else:
         # Return a JSON response indicating failure
         return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
@@ -82,6 +82,11 @@ def rate_project(request, slug):
 
 def project_details(request, slug):
     project = get_object_or_404(Project, slug=slug)
+    comments = project.comments.all()
+    # Fetch comments and their replies
+    comments = Comment.objects.filter(project=project)
+    # for comment in comments:
+    #     comment.replies = Reply.objects.filter(comment=comment)
     # Calculate days left until end time
     end_datetime = project.end_time
     now_datetime = timezone.now()
@@ -117,20 +122,21 @@ def project_details(request, slug):
     top_donation = Donation.objects.filter(project=project).aggregate(Max('amount'))['amount__max']
     top_donation_user = CustomUser.objects.filter(donation__amount=Donation.objects.aggregate(max_amount=Max('amount'))['max_amount']).first()
      # Calculate current fund percentage
-    if project.total_target != 0:
-        current_fund_percentage = round((project.current_fund / project.total_target) * 100, 2)
-    else:
-        current_fund_percentage = 0  # Handle division by zero case
+    # if project.total_target != 0:
+    #     current_fund_percentage = round((project.current_fund / project.total_target) * 100, 2)
+    # else:
+    #     current_fund_percentage = 0  # Handle division by zero case
     num_donors = Donation.objects.filter(project=project).values('user').distinct().count()
     print(request.user.id)
     print(project.creator.id)
     # Check if the user is the creator and current fund is less than 25% of target
     allow_cancel = False
-    if request.user.id == project.creator.id and current_fund_percentage < 25:
+    if request.user.id == project.creator.id and project.percentag < 25:
         allow_cancel = True
         print(allow_cancel)
     context = {
         'project': project,
+        'comments': comments,
         'days_left': days_left,
         'user_rating': user_rating,
         'average_rating': average_rating,
@@ -140,7 +146,7 @@ def project_details(request, slug):
         'top_donation': top_donation,
         'top_donation_user': top_donation_user,
         'num_donors': num_donors,
-        'current_fund_percentage': current_fund_percentage,
+        # 'current_fund_percentage': current_fund_percentage,
         'allow_cancel' : allow_cancel, 
     }
     return render(request, 'projects/project_details.html', context)
@@ -180,6 +186,7 @@ def cancel_project(request, slug):
     return redirect('/')
 
 
+@login_required(login_url='login_')
 def add_donation(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -198,6 +205,7 @@ def add_donation(request, slug):
     return render(request, 'projects/add_donation.html', {'donation_form': donation_form, 'project': project})
 
 
+@login_required(login_url='login_')
 def add_comment(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -206,15 +214,34 @@ def add_comment(request, slug):
             comment = comment_form.save(commit=False)
             comment.project = project
             user_instance = CustomUser.objects.get(pk=request.user.pk)
-            comment.user =  user_instance
+            comment.user = user_instance
             comment.save()
             messages.success(request, 'Your comment has been added!')
-            return redirect('projects/project_details', slug=slug)
+            return redirect('project_details', slug=slug)
     else:
         comment_form = CommentForm()
     return render(request, 'projects/add_comment.html', {'comment_form': comment_form, 'project': project})
 
 
+@login_required(login_url='login_')
+def add_reply(request, comment_id):
+    parent_comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == 'POST':
+        reply_form = ReplyCommentForm(request.POST)
+        if reply_form.is_valid():
+            reply = reply_form.save(commit=False)
+            reply.comment = parent_comment
+            user_instance = CustomUser.objects.get(pk=request.user.pk)
+            reply.user = user_instance  
+            reply.save()
+            messages.success(request, 'Your reply has been added!')
+            return redirect('project_details', slug=parent_comment.project.slug)
+    else:
+        reply_form = ReplyCommentForm()
+    return render(request, 'projects/add_reply.html', {'reply_form': reply_form, 'parent_comment': parent_comment})
+
+
+@login_required(login_url='login_')
 def report_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -232,6 +259,7 @@ def report_project(request, slug):
     return render(request, 'projects/report_project.html', {'report_project_form': report_project_form, 'project': project})
 
 
+@login_required(login_url='login_')
 def report_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.method == 'POST':

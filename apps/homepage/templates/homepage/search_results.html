@@ -42,29 +42,9 @@
     <div class="row mb-5 g-4">
         {% if searchResults %}
             {% for searchResult in searchResults %}
-                <!-- <div class="col-12 col-md-6" width="20rem;">
-                    <div class="shadow-sm p-2 d-flex">
-                        <div class="overflow-hidden">
-                            <img src="{{ searchResult.image_url }}" class="d-block mx-auto" width="120px" height="110px" alt="" />
-                        </div>
-                        <div class="card-body px-4">
-                            <div class="mb-2 d-flex justify-content-between align-items-center">
-                                <h6 class="card-title d-inline-block">{{searchResult.title}}</h6>
-                                {% if not user.is_superuser %}
-                                <a href="{% url 'project_details' searchResult.slug %}" class="btn btn-secondary">View details</a>
-                                {% endif %}
-                            </div>
-                            <p class="mb-3"><span class="fw-bold">Total Target:</span> {{searchResult.total_target}} EGP</p>
-                            <p class="mb-1"><span class="fw-bold">Start Date:</span> {{searchResult.start_date}}</p>
-                            <p><span class="fw-bold">End Date:</span> {{searchResult.end_date}}</p>
-                        </div>
-                    </div>
-                    
-                </div> -->
-                
-                <div class="item">
+                <div class="item col-3">
                         <div class="card p-2 bg-light">
-                            <img src="{{searchResult.image_url}}" style=" height: 300px; width: 100%;" class="card-img-top"
+                            <img src="{{searchResult.picture_url}}" style=" height: 200px; width: 100%;" class="card-img-top"
                                 alt="project">
                             <div class="card-body">
                                 <h5 class="card-title">{{searchResult.title}}</h5>
@@ -72,9 +52,10 @@
                                 <progress class="w-100" value="{{ searchResult.current_fund }}"
                                     max="{{ searchResult.total_target }}"></progress>
                                 <div class="d-flex justify-content-between">
-                                    <p>{{searchResult.current_fund }} / {{ project.total_target}}</p>
-                                    <p>{{latest_projects.0.percentage}} %</p>
+                                    <p>{{searchResult.current_fund }} / {{ searchResult.total_target}}</p>
+                                    <p>{{searchResult.percentag}} %</p>
                                 </div>
+                                <a href="{% url 'project_details' searchResult.slug %}" class="btn btn-success mt-1">Show project</a>
                             </div>
                         </div>
                     </div>
@@ -93,5 +74,4 @@
     searchInput.classList.add("form-control", "bg-white","border-0","rounded-4","shadow-none","py-3","w-100");
     // searchInput.classList.add("form-control");
 </script>
-<!-- <script src="{% static 'js/script.js' %}"></script> -->
 {% endblock %}
