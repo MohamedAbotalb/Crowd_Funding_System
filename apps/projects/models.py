@@ -100,7 +100,11 @@ class Project(models.Model):
     def donation_count(self):
         return self.donation_set.all().count()
 
-
+    @property
+    def percentag(self):
+        if self.total_target == 0:
+            return 0
+        return (self.current_fund * 100) / self.total_target
 # ===================== ProjectPicture Model =====================
 def project_picture_upload_path(instance, filename):
     project_directory_name = instance.project.title.replace(' ', '_')

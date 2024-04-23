@@ -8,9 +8,7 @@
 
 <style>
     body {
-        background-image: url("{% static 'accounts/images/bg.jpg' %}");
-        background-repeat: no-repeat;
-        background-size: 100%;
+       background-color: #c1e9e5;
     }
 
     .btnsign {
@@ -20,14 +18,14 @@
     }
 
     .btnsign:hover {
-        color: aliceblue;
-        background-color: #e58ba5;
-        border-color: #e58ba5;
+         color: aliceblue;
+    background-color:#3dd0d8 ;
+    border-color: #3dd0d8;
     }
 
     img {
-        width: 50px;
-        height: 50px;
+        width: 350px;
+        height: 350px;
     }
 
     .glass {
@@ -46,7 +44,8 @@
     <div>
         <div class="container">
             <div class="row">
-                <div class="col-12 col-md-8 col-lg-6 ">
+                <div class="d-flex align-items-center">
+                     <div class="col-6 ">
                     <form action="." class="p-3 m-5 rounded-3 glass" enctype="multipart/form-data" method="POST">
                         {% csrf_token %}
                         <!-- <h1 class="text-center mb-4 fs-2">Sign up</h1> -->
@@ -127,7 +126,7 @@
                                     <i class="fa fa-phone"></i>
                                 </span>
                                 <span class="input-group-text">
-+2                                </span>
+                              </span>
                                 {{ form.phone_number }}
                             </div>
                             {% for error in form.phone_number.errors %}
@@ -157,7 +156,11 @@
                         </div>
                     </form>
                 </div>
-
+                <div class="col-6 d-flex align-items-center ">
+                    <img src="{% static 'accounts/images/charity.gif' %}" alt="">
+                </div>
+                </div>
+                
             </div>
         </div>
     </div>
