@@ -6,7 +6,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid fs-5">
-        <a class="navbar-brand fs-3 me-5" href="#">Fundsprint</a>
+        <a class="navbar-brand fs-3 me-5" href="#" style="color: #13ADB7;">Fundsprint</a>
         <button aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"
                 class="navbar-toggler" data-bs-target="#navbarNavDropdown" data-bs-toggle="collapse" type="button">
             <span class="navbar-toggler-icon"></span>
@@ -26,12 +26,12 @@
             {% if user.id %}
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link active text-capitalize" href="{% url 'profile' user.id %}">{{ user.first_name }} {{ user.last_name }}</a>
+                    <a aria-current="page" style="color: #13ADB7;" class="nav-link active text-capitalize" href="{% url 'profile' user.id %}">{{ user.first_name }} {{ user.last_name }}</a>
                 </li>
                 <li class="nav-item mx-4">
-                    <form action="{% url 'logout' %}" method="post">
+                    <form action="{% url 'logout' %}" method="post" class=" btn btn-danger ">
                         {% csrf_token %}
-                        <input class="nav-link border-0 bg-transparent" type="submit" value="Logout">
+                        <input class=" text-light nav-link border-0 bg-transparent" type="submit" value="Logout">
                     </form>
                 </li>
             </ul>
