@@ -17,12 +17,12 @@ def home_page(request):
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = "{:.3f}".format(percentage)
 
-    latest_projects = Project.objects.order_by('-start_time')[:5]
+    latest_projects = Project.objects.filter(status='active').order_by('-start_time')[:5]
     for project in latest_projects:
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = "{:.3f}".format(percentage)
 
-    featured_projects = Project.objects.filter(featured=True).order_by('-featured_at')[:5]
+    featured_projects = Project.objects.filter(featured=True,status='active').order_by('-featured_at')[:5]
     for project in featured_projects:
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = "{:.3f}".format(percentage)
@@ -37,7 +37,7 @@ def home_page(request):
 def get_projects_by_category_id(request):
     category_id = request.GET.get('category_id')
     if category_id:
-        projects = Project.objects.filter(category_id=category_id)
+        projects = Project.objects.filter(category_id=category_id,status='active')
     else:
         projects = Project.objects.all()
 
@@ -52,29 +52,6 @@ def get_projects_by_category_id(request):
 
     return JsonResponse({'projects': data})
     
-
-# def search(request):
-#     form = SearchForm(request.GET)
-#     if form.is_valid():
-#         search_option = form.cleaned_data['search_option']
-#         query = form.cleaned_data['query']
-#         print(search_option,query)
-#         if search_option == 'project':
-#             results = Project.objects.filter(title__icontains=query)
-#             print("results")
-#         elif search_option == 'tag':
-#             try:
-#                 tag = Tag.objects.get(name__iexact=query)
-#                 results = tag.projects.all()
-#                 print(results)
-#             except:
-#                 results = []
-#         else:
-#             results = []
-#     else:
-#         results = []
-#     return render(request, 'homepage/search_results.html', {'searchForm': form, 'searchResults': results})
-
 def search(request):
     form = SearchForm(request.GET)
     results = []
