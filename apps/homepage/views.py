@@ -17,12 +17,12 @@ def home_page(request):
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = "{:.3f}".format(percentage)
 
-    latest_projects = Project.objects.order_by('-start_time')[:5]
+    latest_projects = Project.objects.filter(status='active').order_by('-start_time')[:5]
     for project in latest_projects:
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = "{:.3f}".format(percentage)
 
-    featured_projects = Project.objects.filter(featured=True).order_by('-featured_at')[:5]
+    featured_projects = Project.objects.filter(featured=True,status='active').order_by('-featured_at')[:5]
     for project in featured_projects:
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = "{:.3f}".format(percentage)
@@ -37,7 +37,7 @@ def home_page(request):
 def get_projects_by_category_id(request):
     category_id = request.GET.get('category_id')
     if category_id:
-        projects = Project.objects.filter(category_id=category_id)
+        projects = Project.objects.filter(category_id=category_id,status='active')
     else:
         projects = Project.objects.all()
 

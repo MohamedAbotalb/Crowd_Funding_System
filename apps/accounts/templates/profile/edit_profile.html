@@ -126,24 +126,22 @@
 
                     </form>
                     <!-- Delete Account Modal -->
-                    <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal"
-                         tabindex="-1">
-                        <div class="modal-dialog">
+                    <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="static">
+                        <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="deleteModalLabel">Confirm Account Deletion</h5>
-                                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal"
-                                            type="button"></button>
+                                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
                                 </div>
                                 <div class="modal-body">
                                     <p>Are you sure you want to delete your account?</p>
                                     <p>This action cannot be undone.</p>
-                                    <form action="" method="post">
+                                    <p>To confirm deletion, please type <strong>Delete</strong> in the input field below:</p>
+                                    <form action="{% url 'delete_account' %}" method="post">
                                         {% csrf_token %}
                                         <div class="mb-3">
-                                            <label class="form-label" for="deletePassword">Enter Your Password:</label>
-                                            <input class="form-control" id="deletePassword" name="password" required
-                                                   type="password">
+                                            <label class="form-label" for="confirmationInput">Confirmation:</label>
+                                            <input class="form-control" id="confirmationInput" name="confirmation" required type="text">
                                         </div>
                                         <button class="btn btn-danger" type="submit">Confirm Delete</button>
                                     </form>
@@ -151,6 +149,8 @@
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>

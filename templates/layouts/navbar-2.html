@@ -12,13 +12,13 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link active text-white" href="#">Home</a>
+                    <a aria-current="page" class="nav-link text-white" href="#Categories">Categories</a>
                 </li>
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link text-white" href="#">Contact Us</a>
+                    <a aria-current="page" class="nav-link text-white" href="#Latest">Latest Projects</a>
                 </li>
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link text-white" href="#">About Us</a>
+                    <a aria-current="page" class="nav-link text-white" href="#Featured">Featured Projects</a>
                 </li>
                 <li class="nav-item mx-4">
                     <a aria-current="page" class="nav-link text-white" href="{% url 'search' %}">     <i class="fa-solid fa-magnifying-glass fa-beat-fade"></i> search</a>
@@ -30,21 +30,21 @@
                     <a aria-current="page" class="nav-link active text-capitalize " style="color: #13ADB7;" href="{% url 'profile' user.id %}">{{ user.first_name }} {{ user.last_name }}</a>
                 </li>
                 <li class="nav-item mx-4">
-                    <form action="{% url 'logout' %}" method="post">
+                    <form action="{% url 'logout' %}" method="post" class=" btn btn-danger ">
                         {% csrf_token %}
-                        <input class="nav-link border-0 bg-transparent text-white" type="submit" value="Logout">
+                        <input class="text-light  border-0 bg-transparent text-white" type="submit" value="Logout">
                     </form>
                 </li>
             </ul>
             {% else %}
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link" href="{% url 'login_' %}">Login</a>
+                    <a aria-current="page" class=" btn btn-danger text-light nav-link" href="{% url 'login_' %}">Login</a>
                 </li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link" href="{% url 'accounts_register' %}">Register</a>
+                    <a aria-current="page" class="btn btn-danger text-light nav-link" href="{% url 'accounts_register' %}">Register</a>
                 </li>
             </ul>
             {% endif %}

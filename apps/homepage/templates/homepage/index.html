@@ -17,6 +17,9 @@
 <link href="{% static 'accounts/css/owl.theme.default.min.css' %}" rel="stylesheet">
 <link href="{% static 'homepage/css/styles.css' %}" rel="stylesheet">
 <style>
+    body{
+        scroll-behavior: smooth;
+    }
     .cat{
         color: #13ADB7;
         border: 1px solid #13ADB7;
@@ -88,7 +91,7 @@
 
     <div class="container">
             <!-- categories -->
-    <section class="py-5 ">
+    <section id="Categories" class="py-5 ">
         <div class="text-center">
             <span class="fs-1" style="color: #13ADB7;">Open</span> <span class="fs-1"> Donations</span>
         </div>
@@ -135,7 +138,7 @@
     <!--End categories -->
 
     <!-- latest 5 project -->
-    <section class="py-5">
+    <section id="Latest" class="py-5">
         <div class="text-center">
         <span class="fs-1" style="color: #13ADB7;">Latest</span> <span class="fs-1">  Projects</span>
         </div>
@@ -229,7 +232,7 @@
 
 
     <!-- Featured project -->
-    <section class="py-5">
+    <section id="Featured" class="py-5">
         <div class="text-center">
             <span class="fs-1" style="color: #13ADB7;">Featured</span> <span class="fs-1">  Projects</span>
             </div>
@@ -338,6 +341,78 @@
     <!-- Owl Carousel js -->
     <script src="{% static 'accounts/js/owl.carousel.min.js' %}"></script>
 
-    <!--  -->
+    <script>
+        $(document).ready(function () {
+            const carousel = $('#all-projects-carousel');
+            
+            function initializeCarousel() {
+                carousel.owlCarousel({
+                    loop: true,
+                    margin: 30,
+                    nav: true,
+                    dots: true,
+                    autoplay: true, 
+                    autoplayTimeout: 3000,
+                    responsive: {
+                        0: {
+                            items: 1
+                        },
+                        600: {
+                            items: 3
+                        }
+                    }
+                });
+            }
+
+            initializeCarousel();
+
+            function getProjectsByCategoryId(id) {
+                let url = '/api/projects/';
+                if (id) {
+                    url += `?category_id=${id}`;
+                }
+        
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error fetching projects');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const projects = data.projects;
+                        carousel.trigger('destroy.owl.carousel');
+                        carousel.empty();
+                        projects.forEach(project => {
+                            const item = document.createElement('div');
+                            item.classList.add('item');
+                            const projectUrl = `/projects/${project.slug}/`
+                            item.innerHTML = `
+                            <a href="${projectUrl}" class="text-decoration-none text-black">
+                                <div class="card shadow p-3 mb-5 bg-body p-2 bg-light">
+                                    <img src="${project.picture_url}" style="height: 300px; width: 100%;" class="card-img-top" alt="project">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${project.title.length> 30 ? project.title.slice(0,30)+' ...' : project.title}</h5>
+                                        <p class="card-text">${project.details.length > 40 ? project.details.slice(0,40)+' ...' : project.details }</p>
+                                        <progress class="w-100" value="${project.current_fund}" max="${project.total_target}"></progress>
+                                        <div class="d-flex justify-content-between">
+                                            <p>${project.current_fund} / ${project.total_target}</p>
+                                            <p>${project.percentage}%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                            `;
+                            carousel.append(item);
+                        });
+                        initializeCarousel();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching projects:', error.message);
+                    });
+            }
+            window.getProjectsByCategoryId = getProjectsByCategoryId;
+        });
+    </script>
 
     {% endblock scripts %}

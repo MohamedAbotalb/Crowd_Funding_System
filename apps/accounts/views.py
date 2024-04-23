@@ -10,6 +10,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
+from django_countries import countries
 
 from .models import CustomUser
 from .forms import RegistrationForm, LoginForm, ChangePasswordForm, ResetPasswordForm, EditProfileForm
@@ -53,7 +54,7 @@ def activate(request, uidb64, token):
         user.save()
 
         messages.success(request, "Thank you for your email confirmation. Now you can login your account.")
-        return redirect('login')
+        return redirect('login_')
     else:
         messages.error(request, "Activation link is invalid!")
 
@@ -111,49 +112,62 @@ def login_user(request):
     return render(request, 'registration/login.html', {'form': form})
 
 
+@login_required(login_url='login_')
 def logout_user(request):
     url = reverse('home')
     return redirect(url)
 
 
+@login_required(login_url='login_')
 def user_profile(request, id):
     user = get_object_or_404(CustomUser, pk=id)
+    user.country = dict(countries)[user.country]
     donations = Donation.objects.filter(user_id=id).select_related('project')
-    projects = Project.objects.filter(creator_id=id)
+    projects = Project.objects.filter(creator_id=id,status='active')
 
     for project in projects:
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = percentage
+     
+  
 
-    return render(request, "profile/profile_page.html",
+    if(request.user.id == id):
+        url="profile/profile_page.html"
+    else:
+        url="profile/profile_page2.html"      
+
+    return render(request, url,
                   context={"User": user, "Donations": donations, "Projects": projects})
 
 
-# @login_required
+@login_required(login_url='login_')
 def edit_profile(request):
-    user = request.user
+    user = request.user.customuser
     if request.method == 'POST':
         if 'delete_account' in request.POST:
             return redirect('delete_account')
         form = EditProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            if form.data.get('country'):
+                user.country = form.data.get('country')
+            user.save()
             messages.success(request, 'Your profile has been updated successfully.')
-            return redirect('profile')
+            return redirect('profile', user.id)
     else:
         form = EditProfileForm(instance=user)
     return render(request, 'profile/edit_profile.html', {'form': form})
 
 
-@login_required
+@login_required(login_url='login_')
 def change_password(request):
-    user = request.user
+    user = request.user.customuser
     if request.method == 'POST':
         form = ChangePasswordForm(user, request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Your password has been changed")
-            return redirect('login')
+            return redirect('login_')
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
@@ -162,7 +176,6 @@ def change_password(request):
     return render(request, 'password/password_reset_confirm.html', {'form': form})
 
 
-# @user_not_authenticated
 def password_reset_request(request):
     if request.method == 'POST':
         form = ResetPasswordForm(request.POST)
@@ -225,12 +238,12 @@ def password_reset_confirm(request, uidb64, token):
     return redirect("/")
 
 
-# @login_required
+@login_required
 def delete_account(request):
     if request.method == 'POST':
         user = request.user
-        password = request.POST.get('password')
-        if user.check_password(password):
+        confirmation = request.POST.get('confirmation')
+        if confirmation == 'Delete':
             user.delete()
             messages.success(request, 'Your account has been deleted successfully.')
             return redirect('home')

@@ -23,13 +23,7 @@
 
 {% block content %}
 <div class="container">
-{% if messages %}
-<div class="my-4 mx-auto alert alert-success col-md-4 text-center fs-5" id="success-message">
-    {% for message in messages %}
-    <p class="mt-1">{{ message }}</p>
-    {% endfor %}
-</div>
-{% endif %}
+
 
 <!-- User Data -->
 <section class="py-5">
@@ -39,8 +33,6 @@
                 <img class="card-img-top rounded-circle w-50 m-auto" src="{{User.profile_picture_url}}"/>
                 <div class="card-title">
                     <h3 class="my-3">{{User}}</h3>
-
-                    <a class="btn text-light" style="background-color:#13ADB7;" href="{% url 'edit_profile' %}">Update profile</a>
                 </div>
             </div>
         </div>
@@ -112,7 +104,7 @@
 
 <!-- My Donation  -->
 <section class="py-5">
-    <h2 class="text-center p-4">My Donations</h2>
+    <h2 class="text-center p-4">Donations</h2>
     <div class="owl-carousel owl-theme" id="my-donations-carousel">
         {% for donation in Donations %}
         <a href="{% url 'project_details' donation.project.slug %}" class="text-decoration-none text-black">
@@ -140,8 +132,7 @@
 <!--My Projects  -->
 <section class="py-5 ">
     <div class="text-center">
-        <h2>My Projects</h2>
-        <a class="btn btn-success" href="{% url 'create_project' %}"> Add Project </a>
+        <h2>Projects</h2>
     </div>
     <div class="owl-carousel owl-theme pt-4" id="my-projects-carousel">
         {% for project in Projects %}
@@ -217,13 +208,7 @@
         });
     });
 
-    // Automatically hide the success message after 2 seconds
-    setTimeout(function () {
-        const successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            successMessage.style.display = 'none';
-        }
-    }, 2000);
+
 </script>
 
 

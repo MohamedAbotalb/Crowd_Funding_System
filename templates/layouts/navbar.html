@@ -32,9 +32,9 @@
                     <a aria-current="page" class="nav-link active text-capitalize" href="{% url 'profile' user.id %}" style="color: #13ADB7;">{{ user.first_name }} {{ user.last_name }}</a>
                 </li>
                 <li class="nav-item mx-4">
-                    <form action="{% url 'logout' %}" method="post">
+                    <form action="{% url 'logout' %}" method="post" class=" btn btn-danger ">
                         {% csrf_token %}
-                        <input class="nav-link border-0 bg-transparent" type="submit" value="Logout">
+                        <input class=" text-light nav-link border-0 bg-transparent" type="submit" value="Logout">
                     </form>
                 </li>
             </ul>

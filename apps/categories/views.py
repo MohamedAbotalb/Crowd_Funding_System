@@ -8,13 +8,13 @@ from apps.projects.models import Project
 
 def category_index(request):
     categories = Category.get_all_categories()
-    projects = Project.objects.all()
+    projects = Project.objects.all().filter(status='active')
     return render(request, 'categories/index.html', {'categories': categories, 'projects': projects})
 
 
 def category_show(request, slug):
     category = Category.get_category_by_slug(slug)
-    projects = Project.objects.filter(category=category)
+    projects = Project.objects.filter(category=category,status='active')
     return render(request, 'categories/show.html', {'category': category, 'projects': projects})
 
 
