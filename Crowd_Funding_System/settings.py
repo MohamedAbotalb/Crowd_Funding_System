@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.categories.apps.CategoriesConfig',
     'apps.homepage.apps.HomepageConfig',
     'taggit',
+    'django_ajax',
 ]
 
 MIDDLEWARE = [
