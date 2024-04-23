@@ -7,9 +7,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from taggit.models import Tag
+from django_ajax.decorators import ajax # type: ignore
+
 from .models import Project, ProjectPicture, Donation, Comment, ProjectReport, CommentReport,Reply
 from .forms import ProjectForm, DonationForm, CommentForm, ReportProjectForm, ReportCommentForm, ReplyCommentForm
 from apps.accounts.models import CustomUser
+
+
 
 
 @login_required(login_url='login_')
@@ -183,6 +187,7 @@ def cancel_project(request, slug):
     return redirect('/')
 
 
+# @ajax
 @login_required(login_url='login_')
 def add_donation(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -190,16 +195,21 @@ def add_donation(request, slug):
         donation_form = DonationForm(request.POST)
         if donation_form.is_valid():
             donation = donation_form.save(commit=False)
-            print(donation_form.cleaned_data['amount'])
+            # print(donation_form.cleaned_data['amount'])
             donation.project = project
             user_instance = CustomUser.objects.get(pk=request.user.pk)
-            donation.user = user_instance           
+            donation.user = user_instance
+            project.current_fund += donation.amount
+            if project.current_fund > project.total_target:
+                messages.error(request, 'please enter a donation amount lower than the total target')
+                return render(request, 'projects/project_details.html', {'project': project})
             donation.save()
+            project.save()
             messages.success(request, 'Thank you for your donation!')
-            return redirect('projects/project_details', slug=slug)
+            return redirect('project_details', slug=slug)
     else:
         donation_form = DonationForm()
-    return render(request, 'projects/add_donation.html', {'donation_form': donation_form, 'project': project})
+    return render(request, 'projects/project_details.html', {'donation_form': donation_form, 'project': project})
 
 
 @login_required(login_url='login_')
@@ -228,6 +238,7 @@ def add_reply(request, comment_id):
         if reply_form.is_valid():
             reply = reply_form.save(commit=False)
             reply.comment = parent_comment
+            print("Added comment")
             user_instance = CustomUser.objects.get(pk=request.user.pk)
             reply.user = user_instance  
             reply.save()
@@ -250,10 +261,10 @@ def report_project(request, slug):
             report.user = user_instance
             report.save()
             messages.success(request, 'Thank you for reporting this project!')
-            return redirect('projects/project_details', slug=slug)
+            return redirect('project_details', slug=slug)
     else:
         report_project_form = ReportProjectForm()
-    return render(request, 'projects/report_project.html', {'report_project_form': report_project_form, 'project': project})
+    return render(request, 'projects/project_details.html', {'report_project_form': report_project_form, 'project': project})
 
 
 @login_required(login_url='login_')
@@ -268,7 +279,7 @@ def report_comment(request, comment_id):
             report.user = user_instance
             report.save()
             messages.success(request, 'Thank you for reporting this comment!')
-            return redirect('projects/project_details', slug=comment.project.slug)
+            return redirect('project_details', slug=comment.project.slug)
     else:
         report_comment_form = ReportCommentForm()
     return render(request, 'projects/report_comment.html', {'report_comment_form': report_comment_form, 'comment': comment})
