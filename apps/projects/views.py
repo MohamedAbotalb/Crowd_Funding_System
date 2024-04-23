@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from taggit.models import Tag
-from django_ajax.decorators import ajax # type: ignore
+
 
 from .models import Project, ProjectPicture, Donation, Comment, ProjectReport, CommentReport,Reply
 from .forms import ProjectForm, DonationForm, CommentForm, ReportProjectForm, ReportCommentForm, ReplyCommentForm
@@ -154,13 +154,13 @@ def project_details(request, slug):
 
 
 def projects_list(request):
-    projects = Project.objects.all()
+    projects = Project.objects.all().filter(status='active')
     return render(request, 'projects/index.html', {'projects': projects})
 
 
 def tagged(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
-    projects = Project.objects.filter(tags=tag)
+    projects = Project.objects.filter(tags=tag,status='active')
     return render(request, '/projects/tagged.html', {'tag': tag, 'projects': projects})
 
 
