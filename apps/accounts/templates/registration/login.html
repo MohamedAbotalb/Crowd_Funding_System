@@ -34,7 +34,17 @@ img{
 }
 </style>
 {% endblock %}
+
 {% block content %}
+
+{% if messages %}
+<div class="my-4 mx-auto alert alert-success col-md-4 text-center fs-5" id="success-message">
+    {% for message in messages %}
+    <p class="mt-1">{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 <section>
     <div class="hero-body">
         <div class="container my-5">
@@ -93,5 +103,15 @@ img{
 </section>
 
 <script src="{% static 'accounts/js/script.js' %}"></script>
+
+<script>
+    // Automatically hide the success message after 2 seconds
+    setTimeout(function () {
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            successMessage.style.display = 'none';
+        }
+    }, 2000);
+</script>
 
 {% endblock %}
