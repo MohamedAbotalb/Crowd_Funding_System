@@ -308,11 +308,13 @@
             </div>
             <button type="submit" class="btn btn-warning ">Rate</button>
           </form>
-          {% if request.user.id != project.creator.id %}
-            <!-- Report Project Button -->
-            <div class="text-end">
-              <button type="button" class="btn btn-danger" id="reportProjectButton" data-bs-toggle="modal" data-bs-target="#reportProjectModal">ReporProject</button>
-            </div>   
+          {% if request.user.is_authenticated %} 
+            {% if request.user.id != project.creator.id %} 
+             <!-- Report Project Button -->
+              <div class="text-end">
+                <button type="button" class="btn btn-danger" id="reportProjectButton" data-bs-toggle="modal" data-bs-target="#reportProjectModal">ReporProject</button>
+              </div> 
+            {% endif %}   
           {% endif %}   
           {% if allow_cancel %}
           <div class="text-end">
@@ -412,8 +414,8 @@
                   </div>
               </div>
             </div>
+          
           </div>
-        </div> 
         {% if messages %}
         <div class="alert alert-success" role="alert">
           {% for message in messages %}
@@ -421,7 +423,9 @@
           {% endfor %}
         </div>
         {% endif %} 
+        </div> 
       </div>
+       
           </div>
       </div>
     </div>

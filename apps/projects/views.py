@@ -47,7 +47,7 @@ def create_project(request):
         form = ProjectForm()
     return render(request, 'projects/create_project.html', {'form': form})
 
-
+@login_required(login_url='login_')
 def rate_project(request, slug):
     if request.method == 'POST':
         project = get_object_or_404(Project, slug=slug)
