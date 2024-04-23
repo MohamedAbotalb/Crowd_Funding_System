@@ -1,16 +1,21 @@
-{% extends "layouts/base.html" %}
-
-{% block content %}
-  <h2>Report Project: {{ project.title }}</h2>
-  <form action="{% url 'report_project' slug=project.slug %}" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="id_reason">Reason for Report:</label>
-      {{ report_project_form.reason }}
-      {% for error in report_project_form.reason.errors %}
-        <span class="text-danger">{{ error }}</span><br>
-      {% endfor %}
+ <!-- Report Project Form Modal -->
+ <div class="modal fade" id="reportProjectModal" tabindex="-1" aria-labelledby="reportProjectModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportProjectMo dalLabel">Report Project: {{ project.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/" method="post">
+                    {% csrf_token %}
+                    <textarea name="reason" class="form-control" rows="3"
+                        placeholder="Please provide details about why you are reporting this project."
+                        required></textarea>
+                    <button type="submit" class="btn btn-primary">Report Project</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Report Project</button>
-  </form>
-{% endblock %}
+</div>
+</div>
