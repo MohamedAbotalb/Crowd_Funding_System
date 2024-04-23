@@ -9,23 +9,26 @@
 
 {% block content %}
 <div class="row mb-2">
+    <h3 class="text-center">projects has tag ({{tag}})</h1>
     {% for project in projects %}
-    <div class="col-md-4 mt-4">
-        <div class="cards">
-            <div class="border rounded flex-md-row mb-4 shadow-sm h-md-250">
-                <div class="p-4 d-flex flex-column position-static">
-                    <img alt="" src="{{ project.picture_url }}">
-                    <h3 class="my-1"><a href="{% url 'project_details' project.slug %}">{{ project.title }}</a></h3>
-                    <div style="display:flex">
-                        {% for tag in project.tags.all %}
-                        <a class="mr-1 badge badge-info" href="{% url 'tagged' tag.slug %}">#{{ tag }}</a>
-                        {% endfor %}
+    
+    <div class="item col-3">
+                        <div class="card p-2 bg-light">
+                            <img src="{{project.picture_url}}" style=" height: 200px; width: 100%;" class="card-img-top"
+                                alt="project">
+                            <div class="card-body">
+                                <h5 class="card-title">{{project.title}}</h5>
+                                <p class="card-text">{{project.details}}</p>
+                                <progress class="w-100" value="{{ searchResult.current_fund }}"
+                                    max="{{ searchResult.total_target }}"></progress>
+                                <div class="d-flex justify-content-between">
+                                    <p>{{project.current_fund }} / {{ project.total_target}}</p>
+                                    <p>{{project.percentag}} %</p>
+                                </div>
+                                <a href="{% url 'project_details' project.slug %}" class="btn btn-success mt-1">Show project</a>
+                            </div>
+                        </div>
                     </div>
-                    <p class="mb-auto text-muted">{{ project.creator }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
     {% endfor %}
 </div>
 {% endblock %}
