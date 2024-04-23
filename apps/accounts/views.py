@@ -197,7 +197,7 @@ def password_reset_request(request):
                 try:
                     email.send()
                     messages.success(request, "Password reset email has been sent.")
-                    return redirect('login')
+                    return redirect('login_')
                 except Exception as e:
                     messages.error(request, f"Failed to send reset password email. Error: {str(e)}")
             else:
@@ -224,7 +224,7 @@ def password_reset_confirm(request, uidb64, token):
             if form.is_valid():
                 form.save()
                 messages.success(request, "Your password has been set. You may go ahead and <b>log in</b> now.")
-                return redirect('login')
+                return redirect('login_')
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
