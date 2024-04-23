@@ -151,6 +151,8 @@ def edit_profile(request):
             user = form.save(commit=False)
             if form.data.get('country'):
                 user.country = form.data.get('country')
+            if request.FILES:
+                user.profile_picture = form.cleaned_data["profile_picture"]
             user.save()
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('profile', user.id)
