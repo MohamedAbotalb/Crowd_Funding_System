@@ -240,7 +240,11 @@ def password_reset_confirm(request, uidb64, token):
     return redirect("/")
 
 
+<<<<<<<<< Temporary merge branch 1
+@login_required(login_url='login_')
+=========
 @login_required
+>>>>>>>>> Temporary merge branch 2
 def delete_account(request):
     if request.method == 'POST':
         user = request.user
@@ -248,7 +252,7 @@ def delete_account(request):
         if confirmation == 'Delete':
             user.delete()
             messages.success(request, 'Your account has been deleted successfully.')
-            return redirect('home')
+            return redirect('/')
         else:
             messages.error(request, 'Incorrect password. Please try again.')
     return render(request, 'delete_account.html')
