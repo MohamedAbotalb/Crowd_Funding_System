@@ -1,16 +1,23 @@
-
-{% block content %}
-  <h2>Report Comment</h2>
-  <p>Comment: {{ comment.text }}</p>
-  <form action="{% url 'report_comment' comment_id=comment.id %}" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="id_reason">Reason for Report:</label>
-      {{ report_comment_form.reason }}
-      {% for error in report_comment_form.reason.errors %}
-        <span class="text-danger">{{ error }}</span><br>
-      {% endfor %}
+<div class="modal fade" id="reportCommentModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="reportCommentModal{{ comment.id }}Label" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportCommentModal{{ comment.id }}Label">Report Comment by {{ comment.user }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'report_comment' comment.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+            <div class="form-group">
+              <label for="reportReason">Reason for Reporting:</label>
+              <textarea class="form-control" id="reportReason" name="reason" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-danger">Report Comment</button>
+          </form>
+        </div>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary">Report Comment</button>
-  </form>
-{% endblock %}
+  </div>
