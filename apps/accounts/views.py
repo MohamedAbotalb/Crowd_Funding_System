@@ -230,15 +230,15 @@ def password_reset_confirm(request, uidb64, token):
     return redirect("/")
 
 
-@login_required(login_url='login_')
+@login_required
 def delete_account(request):
     if request.method == 'POST':
         user = request.user
-        password = request.POST.get('password')
-        if user.check_password(password):
+        confirmation = request.POST.get('confirmation')
+        if confirmation == 'Delete':
             user.delete()
             messages.success(request, 'Your account has been deleted successfully.')
-            return redirect('/')
+            return redirect('home')
         else:
             messages.error(request, 'Incorrect password. Please try again.')
-    return render(request, 'profile/edit_profile.html')
+    return render(request, 'delete_account.html')
