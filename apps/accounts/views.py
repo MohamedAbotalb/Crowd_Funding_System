@@ -240,11 +240,7 @@ def password_reset_confirm(request, uidb64, token):
     return redirect("/")
 
 
-<<<<<<<<< Temporary merge branch 1
 @login_required(login_url='login_')
-=========
-@login_required
->>>>>>>>> Temporary merge branch 2
 def delete_account(request):
     if request.method == 'POST':
         user = request.user
