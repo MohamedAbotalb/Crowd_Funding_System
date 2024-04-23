@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block navbar %}
+<nav id="main-navbar" class="navbar navbar-expand-lg navbar-light fixed-top bg-transparent">
+    <div class="container-fluid fs-5">
+        <a class="navbar-brand fs-3 me-5 " style="color: #13ADB7;" href="#">Fundsprint</a>
+        <button aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler" data-bs-target="#navbarNavDropdown" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item mx-4">
+                    <a aria-current="page" class="nav-link active text-white" href="#">Home</a>
+                </li>
+                <li class="nav-item mx-4">
+                    <a aria-current="page" class="nav-link text-white" href="#">Contact Us</a>
+                </li>
+                <li class="nav-item mx-4">
+                    <a aria-current="page" class="nav-link text-white" href="#">About Us</a>
+                </li>
+            </ul>
+            {% if user.id %}
+            <ul class="navbar-nav">
+                <li class="nav-item mx-4">
+                    <a aria-current="page" class="nav-link active text-capitalize " style="color: #13ADB7;" href="{% url 'profile' user.id %}">{{ user.first_name }} {{ user.last_name }}</a>
+                </li>
+                <li class="nav-item mx-4">
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <input class="nav-link border-0 bg-transparent text-white" type="submit" value="Logout">
+                    </form>
+                </li>
+            </ul>
+            {% else %}
+            <ul class="navbar-nav">
+                <li class="nav-item mx-4">
+                    <a aria-current="page" class="nav-link" href="{% url 'login_' %}">Login</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item mx-4">
+                    <a aria-current="page" class="nav-link" href="{% url 'accounts_register' %}">Register</a>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<script src="{% static 'accounts/js/script.js' %}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navbar = document.getElementById('main-navbar');
+        const threshold = 632; 
+
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > threshold) {
+                navbar.classList.add('bg-dark');
+                navbar.classList.remove('bg-transparent');
+            } else {
+                navbar.classList.add('bg-transparent');
+                navbar.classList.remove('bg-dark');
+            }
+        });
+    });
+
+
+</script>
+{% endblock %}
