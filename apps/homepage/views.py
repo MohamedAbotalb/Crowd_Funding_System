@@ -52,29 +52,6 @@ def get_projects_by_category_id(request):
 
     return JsonResponse({'projects': data})
     
-
-# def search(request):
-#     form = SearchForm(request.GET)
-#     if form.is_valid():
-#         search_option = form.cleaned_data['search_option']
-#         query = form.cleaned_data['query']
-#         print(search_option,query)
-#         if search_option == 'project':
-#             results = Project.objects.filter(title__icontains=query)
-#             print("results")
-#         elif search_option == 'tag':
-#             try:
-#                 tag = Tag.objects.get(name__iexact=query)
-#                 results = tag.projects.all()
-#                 print(results)
-#             except:
-#                 results = []
-#         else:
-#             results = []
-#     else:
-#         results = []
-#     return render(request, 'homepage/search_results.html', {'searchForm': form, 'searchResults': results})
-
 def search(request):
     form = SearchForm(request.GET)
     results = []

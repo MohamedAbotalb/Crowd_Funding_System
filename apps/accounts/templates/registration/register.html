@@ -23,11 +23,6 @@
     border-color: #3dd0d8;
     }
 
-    img {
-        width: 350px;
-        height: 350px;
-    }
-
     .glass {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
         backdrop-filter: blur(12px);
@@ -41,11 +36,11 @@
 
 {% block content %}
 <section>
-    <div>
+    <div class="hero-body">
         <div class="container">
-            <div class="row">
-                <div class="d-flex align-items-center">
-                     <div class="col-6 ">
+            <div class="row justify-content-center">
+                
+                     <div class="col-12 col-md-8 col-lg-6">
                     <form action="." class="p-3 m-5 rounded-3 glass" enctype="multipart/form-data" method="POST">
                         {% csrf_token %}
                         <!-- <h1 class="text-center mb-4 fs-2">Sign up</h1> -->
@@ -155,14 +150,7 @@
                             Have an account? <a class="text-decoration-none" href="{% url 'login_' %}">Login</a>
                         </div>
                     </form>
-                </div>
-                <div class="col-6 d-flex align-items-center ">
-                    <img src="{% static 'accounts/images/charity.gif' %}" alt="">
-                </div>
-                </div>
-                
             </div>
-        </div>
     </div>
 </section>
 
