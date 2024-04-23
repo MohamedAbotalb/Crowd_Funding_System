@@ -164,7 +164,7 @@ def projects_list(request):
 def tagged(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     projects = Project.objects.filter(tags=tag)
-    return render(request, '/projects/tagged.html', {'tag': tag, 'projects': projects})
+    return render(request, 'projects/tagged.html', {'tag': tag, 'projects': projects})
 
 
 @login_required(login_url='login_')
