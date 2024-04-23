@@ -88,11 +88,10 @@
 
     <div class="container">
             <!-- categories -->
-    <section class="py-5 ">
+    <section id="Categories" class="py-5 ">
         <div class="text-center">
             <span class="fs-1" style="color: #13ADB7;">Open</span> <span class="fs-1"> Donations</span>
         </div>
-
         <div class="categories">
         
             <div class="d-flex p-3 justify-content-center">
@@ -136,7 +135,7 @@
     <!--End categories -->
 
     <!-- latest 5 project -->
-    <section class="py-5">
+    <section id="Latest" class="py-5">
         <div class="text-center">
         <span class="fs-1" style="color: #13ADB7;">Latest</span> <span class="fs-1">  Projects</span>
         </div>
@@ -230,7 +229,7 @@
 
 
     <!-- Featured project -->
-    <section class="py-5">
+    <section id="Featured" class="py-5">
         <div class="text-center">
             <span class="fs-1" style="color: #13ADB7;">Featured</span> <span class="fs-1">  Projects</span>
             </div>
@@ -385,7 +384,7 @@
                             const item = document.createElement('div');
                             item.classList.add('item');
                             item.innerHTML = `
-                            <a href="{% url 'project_details' project.slug %}" class="text-decoration-none text-black">
+                            <a href="" class="text-decoration-none text-black">
                                 <div class="card shadow p-3 mb-5 bg-body p-2 bg-light">
                                     <img src="${project.picture_url}" style="height: 300px; width: 100%;" class="card-img-top" alt="project">
                                     <div class="card-body">
