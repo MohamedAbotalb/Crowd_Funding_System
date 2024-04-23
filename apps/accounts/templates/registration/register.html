@@ -44,8 +44,9 @@
 {% block content %}
 <section>
     <div>
-        <div class="container">
-            <div class="row">
+        <div class="container ">
+            <h1 class="pt-4 text-center" style="color: #012555;">Register</h1>
+            <div class="row d-flex justify-content-center">
                 <div class="col-12 col-md-8 col-lg-6 ">
                     <form action="." class="p-3 m-5 rounded-3 glass" enctype="multipart/form-data" method="POST">
                         {% csrf_token %}
@@ -152,7 +153,7 @@
                             <button class="btn  my-1 btnsign " type="submit">Sign Up</button>
                         </div>
 
-                        <div class="mb-1">
+                        <div class="mb-1 text-center">
                             Have an account? <a class="text-decoration-none" href="{% url 'login_' %}">Login</a>
                         </div>
                     </form>
