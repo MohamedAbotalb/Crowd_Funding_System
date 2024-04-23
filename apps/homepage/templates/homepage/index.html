@@ -105,6 +105,8 @@
             <div >
                 <div id="all-projects-carousel" class="owl-carousel owl-theme">
                     {% for project in categories_projects %}
+                    <a href="{% url 'project_details' project.slug %}" class="text-decoration-none text-black">
+
                     <div class="item">
                         <div class="card shadow p-3 mb-5 bg-body  p-2 bg-light">
                             <img src="{{project.picture_url}}" style=" height: 300px; width: 100%;" class="card-img-top"
@@ -121,6 +123,8 @@
                             </div>
                         </div>
                     </div>
+                    </a>
+
                     {% endfor %}
                 </div>
             </div>
@@ -142,6 +146,8 @@
             <div class="col-5">
                 {% if latest_projects %}
                 <!-- First card -->
+                <a href="{% url 'project_details' latest_projects.0.slug %}" class="text-decoration-none text-black">
+
                 <div class="card shadow p-3 mb-5 bg-body card-project p-2 bg-light" style="height: 100%;">
                     <img src="{{ latest_projects.0.picture_url }}" class="card-img-top" alt="project">
                     <div class="card-body">
@@ -171,6 +177,7 @@
 
                     </div>
                 </div>
+            </a>
                 {% endif %}
             </div>
             <!-- Second column (col-6) -->
@@ -178,7 +185,9 @@
                 <div class="row gy-4">
                     <!-- Second column divided into two col-6 columns -->
                     {% for project in latest_projects|slice:"1:" %}
+                    
                     <div class="col-6">
+                        <a href="{% url 'project_details' project.slug %}" class="text-decoration-none text-black">
                         <div class="card shadow p-3 mb-5 bg-body card-project p-2 bg-light" style="height: 100%;">
                             <img src="{{ project.picture_url }}" height="150" class="card-img-top" alt="project">
                             <div class="card-body">
@@ -208,6 +217,7 @@
         
                             </div>
                         </div>
+                    </a>
                     </div>
                     {% endfor %}
                 </div>
@@ -230,6 +240,7 @@
             <div class="col-5">
                 {% if featured_projects %}
                 <!-- First card -->
+                <a href="{% url 'project_details' featured_projects.0.slug %}" class="text-decoration-none text-black">
                 <div class="card shadow p-3 mb-5 bg-body card-project p-2 bg-light" style="height: 100%;">
                     <img src="{{ featured_projects.0.picture_url }}" class="card-img-top" alt="project">
                     <div class="card-body">
@@ -259,6 +270,7 @@
 
                     </div>
                 </div>
+                </a>
                 {% endif %}
             </div>
             <!-- Second column (col-6) -->
@@ -267,6 +279,8 @@
                     <!-- Second column divided into two col-6 columns -->
                     {% for project in featured_projects|slice:"1:" %}
                     <div class="col-6">
+                    <a href="{% url 'project_details' project.slug %}" class="text-decoration-none text-black">
+
                         <div class="card shadow p-3 mb-5 bg-body card-project p-2 bg-light" style="height: 100%;">
                             <img src="{{ project.picture_url }}" height="150" class="card-img-top" alt="project">
                             <div class="card-body">
@@ -296,6 +310,8 @@
         
                             </div>
                         </div>
+                    
+                    </a>
                     </div>
                     {% endfor %}
                 </div>
@@ -369,6 +385,7 @@
                             const item = document.createElement('div');
                             item.classList.add('item');
                             item.innerHTML = `
+                            <a href="{% url 'project_details' project.slug %}" class="text-decoration-none text-black">
                                 <div class="card shadow p-3 mb-5 bg-body p-2 bg-light">
                                     <img src="${project.picture_url}" style="height: 300px; width: 100%;" class="card-img-top" alt="project">
                                     <div class="card-body">
@@ -381,6 +398,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                </a>
                             `;
                             carousel.append(item);
                         });
