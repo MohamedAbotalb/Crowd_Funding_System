@@ -79,6 +79,11 @@ def rate_project(request, slug):
 
 def project_details(request, slug):
     project = get_object_or_404(Project, slug=slug)
+    comments = project.comments.all()
+    # Fetch comments and their replies
+    comments = Comment.objects.filter(project=project)
+    # for comment in comments:
+    #     comment.replies = Reply.objects.filter(comment=comment)
     # Calculate days left until end time
     end_datetime = project.end_time
     now_datetime = timezone.now()
@@ -128,6 +133,7 @@ def project_details(request, slug):
         print(allow_cancel)
     context = {
         'project': project,
+        'comments': comments,
         'days_left': days_left,
         'user_rating': user_rating,
         'average_rating': average_rating,
@@ -177,6 +183,7 @@ def cancel_project(request, slug):
     return redirect('/')
 
 
+@login_required(login_url='login_')
 def add_donation(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -195,6 +202,7 @@ def add_donation(request, slug):
     return render(request, 'projects/add_donation.html', {'donation_form': donation_form, 'project': project})
 
 
+@login_required(login_url='login_')
 def add_comment(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -203,15 +211,34 @@ def add_comment(request, slug):
             comment = comment_form.save(commit=False)
             comment.project = project
             user_instance = CustomUser.objects.get(pk=request.user.pk)
-            comment.user =  user_instance
+            comment.user = user_instance
             comment.save()
             messages.success(request, 'Your comment has been added!')
-            return redirect('projects/project_details', slug=slug)
+            return redirect('project_details', slug=slug)
     else:
         comment_form = CommentForm()
     return render(request, 'projects/add_comment.html', {'comment_form': comment_form, 'project': project})
 
 
+@login_required(login_url='login_')
+def add_reply(request, comment_id):
+    parent_comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == 'POST':
+        reply_form = ReplyCommentForm(request.POST)
+        if reply_form.is_valid():
+            reply = reply_form.save(commit=False)
+            reply.comment = parent_comment
+            user_instance = CustomUser.objects.get(pk=request.user.pk)
+            reply.user = user_instance  
+            reply.save()
+            messages.success(request, 'Your reply has been added!')
+            return redirect('project_details', slug=parent_comment.project.slug)
+    else:
+        reply_form = ReplyCommentForm()
+    return render(request, 'projects/add_reply.html', {'reply_form': reply_form, 'parent_comment': parent_comment})
+
+
+@login_required(login_url='login_')
 def report_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -229,6 +256,7 @@ def report_project(request, slug):
     return render(request, 'projects/report_project.html', {'report_project_form': report_project_form, 'project': project})
 
 
+@login_required(login_url='login_')
 def report_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.method == 'POST':
