@@ -153,9 +153,9 @@
                                   <!-- Report Comment Button -->
                                   <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-2 " data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ comment.id }}">Report</button>
                                   <!-- Reply Button -->
-                                  {% comment %} <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#replyModal{{ comment.id }}">Reply</button>  {% endcomment %}
+                                  {% comment %} <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#replyModal{{ comment.id }}">Reply</button>
                                   <!-- Replies -->
-                                  {% if comment.replies.all %}
+                                   {% if comment.replies.all %}
                                       <ul>
                                           {% for reply in comment.replies.all %}
                                               <li>
@@ -164,12 +164,12 @@
                                               </li>
                                           {% endfor %}
                                       </ul>
-                                  {% endif %}
+                                  {% endif %} 
                               </div>
                           </div>                          
                               <hr>
                               <!-- Reply Modal -->
-                              <div class="modal fade" id="replyModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="replyModal{{ comment.id }}Label" aria-hidden="true">
+                              {% comment %} <div class="modal fade" id="replyModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="replyModal{{ comment.id }}Label" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                       <div class="modal-header">
@@ -189,7 +189,7 @@
                                       </div>
                                     </div>
                                   </div>
-                                </div>                             
+                                </div>                              {% endcomment %}
                         <!-- Report Comment Modal -->
                         <div class="modal fade" id="reportCommentModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="reportCommentModal{{ comment.id }}Label" aria-hidden="true">
                           <div class="modal-dialog modal-dialog-centered">
