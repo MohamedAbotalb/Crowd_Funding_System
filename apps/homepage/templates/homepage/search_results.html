@@ -4,23 +4,29 @@
 {% block title %} Home {%endblock %}
 {% block navbar %}
 
-{% include 'layouts/navbar.html' %}
+{% include 'layouts/navbar-2.html' %}
 
 {% endblock%}
 {% block content %}
 
 {% block styles %}
-<link href="{% static 'accounts/css/owl.carousel.min.css' %}" rel="stylesheet">
-<link href="{% static 'accounts/css/owl.theme.default.min.css' %}" rel="stylesheet">
-<link href="{% static 'homepage/css/styles.css' %}" rel="stylesheet">
+<!-- <link rel="stylesheet" href="{% static 'accounts/css/signup.css' %}"> -->
 
+<style>
+    body{
+         background-color: #c1e9e5;
+}
+.section{
+    margin-top: 100px;
+}
+</style>
 {% endblock %}
 <!-- Start hero section -->
-<section class="d-flex align-items-center justify-content-center hero-section-header-bg" id="hero-section" >
+<section class="d-flex align-items-center justify-content-center hero-section-header-bg section" id="hero-section">
 <div class="container">
-    <div class="d-flex align-items-center justify-content-center flex-column g-3">
+    <div class="d-flex align-items-center justify-content-center flex-column g-3 ">
         <div class="rounded-5 border border-danger-subtle px-1 w-50 bg-white">
-            <form method="GET" action="{% url 'search' %}" class="d-flex align-items-center position-relative">
+            <form method="GET" action="{% url 'search' %}" class="d-flex align-items-center position-relative  ">
                 <!-- {{form}} -->
                 <div class="m-1">
                     {{searchForm.search_option}}

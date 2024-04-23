@@ -15,17 +15,17 @@ def home_page(request):
     categories_projects=Project.objects.all()
     for project in categories_projects:
         percentage = project.current_fund * 100 / project.total_target
-        project.percentage = percentage
+        project.percentage = "{:.3f}".format(percentage)
 
     latest_projects = Project.objects.order_by('-start_time')[:5]
     for project in latest_projects:
         percentage = project.current_fund * 100 / project.total_target
-        project.percentage = percentage
+        project.percentage = "{:.3f}".format(percentage)
 
     featured_projects = Project.objects.filter(featured=True).order_by('-featured_at')[:5]
     for project in featured_projects:
         percentage = project.current_fund * 100 / project.total_target
-        project.percentage = percentage
+        project.percentage = "{:.3f}".format(percentage)
 
     return render(request, 'homepage/index.html',context = {'top_projects':top_projects,
                                                             'latest_projects': latest_projects,
@@ -41,9 +41,13 @@ def get_projects_by_category_id(request):
     else:
         projects = Project.objects.all()
 
+    for project in projects:
+        percentage = project.current_fund * 100 / project.total_target
+        project.percentage = "{:.3f}".format(percentage)
+
     data = [{'id': project.id, 'title': project.title, 'details': project.details, 
              'picture_url': project.picture_url, 'current_fund': project.current_fund, 
-             'total_target': project.total_target} 
+             'total_target': project.total_target, 'percentage': project.percentage} 
             for project in projects]
 
     return JsonResponse({'projects': data})
