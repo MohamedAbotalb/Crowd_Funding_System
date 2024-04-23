@@ -238,7 +238,7 @@ def password_reset_confirm(request, uidb64, token):
     return redirect("/")
 
 
-@login_required
+@login_required(login_url='login_')
 def delete_account(request):
     if request.method == 'POST':
         user = request.user
