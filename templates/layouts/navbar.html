@@ -32,7 +32,7 @@
                     <a aria-current="page" class="nav-link active text-capitalize" href="{% url 'profile' user.id %}" style="color: #13ADB7;">{{ user.first_name }} {{ user.last_name }}</a>
                 </li>
                 <li class="nav-item mx-4">
-                    <form action="{% url 'logout' %}" method="post" class=" btn btn-danger ">
+                    <form action="{% url 'logout' %}" method="post" style="background-color: #13ADB7;" class=" btn ">
                         {% csrf_token %}
                         <input class=" text-light nav-link border-0 bg-transparent" type="submit" value="Logout">
                     </form>
@@ -41,12 +41,12 @@
             {% else %}
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link" href="{% url 'login_' %}" style="color: #13ADB7;">Login</a>
+                    <a aria-current="page" class="nav-link" href="{% url 'login_' %}" style="background-color: #13ADB7;">Login</a>
                 </li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item mx-4">
-                    <a aria-current="page" class="nav-link" href="{% url 'accounts_register' %}">Register</a>
+                    <a aria-current="page" style="background-color: #13ADB7;" class="nav-link" href="{% url 'accounts_register' %}">Register</a>
                 </li>
             </ul>
             {% endif %}
