@@ -116,17 +116,24 @@ def logout_user(request):
     url = reverse('/')
     return redirect(url)
 
-
+@login_required
 def user_profile(request, id):
     user = get_object_or_404(CustomUser, pk=id)
     donations = Donation.objects.filter(user_id=id).select_related('project')
-    projects = Project.objects.filter(creator_id=id)
+    projects = Project.objects.filter(creator_id=id,status='active')
 
     for project in projects:
         percentage = project.current_fund * 100 / project.total_target
         project.percentage = percentage
+     
+  
 
-    return render(request, "profile/profile_page.html",
+    if(request.user.id == id):
+        url="profile/profile_page.html"
+    else:
+        url="profile/profile_page2.html"      
+
+    return render(request, url,
                   context={"User": user, "Donations": donations, "Projects": projects})
 
 

@@ -17,6 +17,9 @@
 <link href="{% static 'accounts/css/owl.theme.default.min.css' %}" rel="stylesheet">
 <link href="{% static 'homepage/css/styles.css' %}" rel="stylesheet">
 <style>
+    body{
+        scroll-behavior: smooth;
+    }
     .cat{
         color: #13ADB7;
         border: 1px solid #13ADB7;
@@ -384,8 +387,9 @@
                         projects.forEach(project => {
                             const item = document.createElement('div');
                             item.classList.add('item');
+                            const projectUrl = `/projects/${project.slug}/`
                             item.innerHTML = `
-                            <a href="" class="text-decoration-none text-black">
+                            <a href="${projectUrl}" class="text-decoration-none text-black">
                                 <div class="card shadow p-3 mb-5 bg-body p-2 bg-light">
                                     <img src="${project.picture_url}" style="height: 300px; width: 100%;" class="card-img-top" alt="project">
                                     <div class="card-body">
