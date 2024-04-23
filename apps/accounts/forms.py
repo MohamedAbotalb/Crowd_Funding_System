@@ -1,11 +1,11 @@
 import re
-# from django.core.validators import RegexValidator
-from typing import Any
-from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
+from datetime import date
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django import forms
+from django_countries.fields import CountryField
+
 from .models import CustomUser
 
 User = get_user_model()
@@ -108,21 +108,67 @@ class LoginForm(forms.Form):
         return username
 
 
+def validate_facebook_url(value):
+    # regex to match Facebook URLs
+    regex = r'^https?://(www\.)?facebook\.com/.+'
+
+    if value and not re.match(regex, value):
+        return False
+    return True
+
+
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'profile_picture', 'facebook_profile', 'birth_date',
-                  'country']
+        fields = ['first_name', 'last_name', 'phone_number', 'profile_picture', 'facebook_profile', 'birth_date']
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Last Name'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Phone Number'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
-            'facebook_profile': forms.URLInput(
-                attrs={'class': 'form-control', 'placeholder': 'Enter Facebook Profile URL'}),
+            'facebook_profile': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Facebook Profile URL'}),
             'birth_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Country'}),
         }
+
+    def clean_mobile_phone(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number and not re.match(r'^01[0125]{1}[0-9]{8}$', phone_number):
+            raise forms.ValidationError("Mobile phone number must be a valid Egyptian phone number.")
+        return phone_number
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if len(first_name) < 2:
+            raise forms.ValidationError("First name must be at least 2 characters long.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if len(last_name) < 2:
+            raise forms.ValidationError("Last name must be at least 2 characters long.")
+        return last_name
+
+    def clean_profile_picture(self):
+        profile_picture = self.cleaned_data.get('profile_picture')
+        if not profile_picture:
+            return 'user_uploads/default_profile_picture.jpg'
+        return profile_picture
+
+    def clean_birth_date(self):
+        birth_date = self.cleaned_data.get('birth_date')
+        if birth_date:
+            today = date.today()
+            # check if birthdate is after today's date
+            if birth_date > today:
+                raise forms.ValidationError("Birthdate cannot be in the future.")
+        return birth_date
+
+    def clean_facebook_profile(self):
+        facebook_profile = self.cleaned_data.get('facebook_profile')
+        if facebook_profile:
+            if not validate_facebook_url(facebook_profile):
+                raise ValidationError('Invalid Facebook URL')
+        return facebook_profile
 
 
 class ChangePasswordForm(SetPasswordForm):
