@@ -137,50 +137,90 @@
           <!-- Add Comment Button -->
           <button type="button" class="btn btn-primary" id="addCommentButton" data-bs-toggle="modal" data-bs-target="#commentModal">Add Comment</button>
           <!-- Comments Section -->
-          <div class="row mt-4">
-          <div class="col-md-8">
+        <div class="row mt-4">
+          <div class="col-md-12">
               <h3>Comments ({{ comments|length }}):</h3>
               <ul class="list-unstyled mt-4">
                   {% if comments %}
                       {% for comment in comments %}
                           <li>
-                              <div class="comment d-flex">
-                                  <img src="{{ comment.user.profile_picture_url }}" alt="{{ comment.user.username }}'s photo" class="rounded-circle" width="50" height="50">
-                                  <div class="col-md-8 mx-3">
-                                      <h6 class="comment-header">{{ comment.user }}</h6>
-                                      <p class="comment-time"><small>{{ comment.created_at }}</small></p>
-                                      <p class="comment-content">{{ comment.text }}</p>
-                                      <!-- Reply Button -->
-                                      <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#replyModal{{ comment.id }}">Reply</button>
-                                      <!-- Report Comment Button -->
-                                      <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ comment.id }}">Report</button>
-                                      <!-- Replies -->
-                                      {% if comment.replies.all %}
-                                          <ul>
-                                              {% for reply in comment.replies.all %}
-                                                  <li>
-                                                      <p>{{ reply.text }}</p>
-                                                      <p><small>Reply by {{ reply.user }} on {{ reply.created_at }}</small></p>
-                                                  </li>
-                                              {% endfor %}
-                                          </ul>
-                                      {% endif %}
-                                  </div>
+                            <div class="comment d-flex position-relative">
+                              <img src="{{ comment.user.profile_picture_url }}" alt="{{ comment.user.username }}'s photo" class="rounded-circle" width="50" height="50">
+                              <div class="col-md-8 mx-3">
+                                  <h6 class="comment-header">{{ comment.user }}</h6>
+                                  <p class="comment-time"><small>{{ comment.created_at }}</small></p>
+                                  <p class="comment-content">{{ comment.text }}</p>
+                                  <!-- Report Comment Button -->
+                                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-2 " data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ comment.id }}">Report</button>
+                                  <!-- Reply Button -->
+                                  {% comment %} <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#replyModal{{ comment.id }}">Reply</button>  {% endcomment %}
+                                  <!-- Replies -->
+                                  {% if comment.replies.all %}
+                                      <ul>
+                                          {% for reply in comment.replies.all %}
+                                              <li>
+                                                  <p>{{ reply.text }}</p>
+                                                  <p><small>Reply by {{ reply.user }} on {{ reply.created_at }}</small></p>
+                                              </li>
+                                          {% endfor %}
+                                      </ul>
+                                  {% endif %}
                               </div>
+                          </div>                          
                               <hr>
                               <!-- Reply Modal -->
-                              {% include 'projects/add_reply.html' %}
-                              <!-- Report Comment Modal -->
-                              {% include 'projects/report_comment.html' %}                       
-                       </li>
+                              <div class="modal fade" id="replyModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="replyModal{{ comment.id }}Label" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="replyModal{{ comment.id }}Label">Reply to {{ comment.user }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form action="{% url 'add_reply' comment.id %}" method="post">
+                                          {% csrf_token %}
+                                          <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                                          <div class="form-group">
+                                            <label for="replyText">Your Reply:</label>
+                                            <textarea class="form-control" id="replyText" name="reply_text" rows="3"></textarea>
+                                          </div>
+                                          <button type="submit" class="btn btn-primary">Submit Reply</button>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>                             
+                        <!-- Report Comment Modal -->
+                        <div class="modal fade" id="reportCommentModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="reportCommentModal{{ comment.id }}Label" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="reportCommentModal{{ comment.id }}Label">Report Comment by {{ comment.user }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="{% url 'report_comment' comment.id %}" method="post">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                  <div class="form-group">
+                                    <label for="reportReason">Reason for Reporting:</label>
+                                    <textarea class="form-control" id="reportReason" name="reason" rows="3" required></textarea>
+                                  </div>
+                                  <button type="submit" class="btn btn-danger">Report Comment</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>                   
+                        </li>
                       {% endfor %}
                   {% else %}
                       <li>No comments yet.</li>
                   {% endif %}
               </ul>
-          </div>
-      </div>
-  </div>
+           </div>
+         </div>
+    </div>
     <div class=" col-4">
         <div class="card" >
           <div class="card-body">
@@ -248,7 +288,7 @@
                   <span class="card-subtitle mb-2 text-muted">average rating</span>
               </div>
             <!-- rating stars**** -->
-            <form id="ratingForm" action="{% url 'rate_project' slug=project.slug %}" method="POST" class="d-flex ">
+            <form id="ratingForm" action="{% url 'rate_project' project.slug %}" method="POST" class="d-flex ">
               {% csrf_token %}
               <div class="rate me-3">
                 <input type="radio" name="rating" id="rating10" value="5" {% if user_rating == 5 %}checked{% endif %} required /><label for="rating10" title="5"></label>
@@ -280,7 +320,7 @@
               <!-- Start Delete Modal -->
               <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal{{ project.id }}"
                   role="dialog" tabindex="-1">
-                  <div class="modal-dialog" role="document">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
                       <div class="modal-content">
                           <div class="modal-header">
                               <h5 class="modal-title" id="deleteModalLabel">Confirm project cancellation</h5>
@@ -306,16 +346,69 @@
             {% endif %}
           </div>
           <div class="card-footer">
-              <!-- <div class="container"> -->
+              {% comment %} <div class="container">  {% endcomment %}
                   <!-- Donate Button -->
                   <button type="button" class="btn btn-success w-100" id="donateButton" data-bs-toggle="modal" data-bs-target="#donationModal">Donate</button>
                 <!-- Donation Form Modal -->
-                {% include 'projects/add_donation.html' %}
+                <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                  <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="donationModalLabel">Donate to {{ project.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{% url 'add_donation' project.slug %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="number" name="amount" class="form-control" placeholder="Enter donation amount"
+                                        required>
+                                    <button type="submit" class="btn btn-primary">Donate</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>               
                 <!-- Add Comment Form Modal -->
-                {% include 'projects/add_comment.html' %}
+                <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                  <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="commentModalLabel">Add Comment to {{ project.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{% url 'add_comment' project.slug %}" method="post">
+                                    {% csrf_token %}
+                                    <textarea name="text" class="form-control" rows="3"
+                                        placeholder="Write your comment here" required></textarea>
+                                    <button type="submit" class="btn btn-primary">Add Comment</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Report Project Form Modal -->
-                {% include 'projects/report_project.html' %}
-            </div>
+                <div class="modal fade" id="reportProjectModal" tabindex="-1" aria-labelledby="reportProjectModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="reportProjectMo dalLabel">Report Project: {{ project.title }}</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <form action="/" method="post">
+                                  {% csrf_token %}
+                                  <textarea name="reason" class="form-control" rows="3"
+                                      placeholder="Please provide details about why you are reporting this project."
+                                      required></textarea>
+                                  <button type="submit" class="btn btn-primary">Report Project</button>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              </div>
+                        </div>
           {% if messages %}
           <div class="alert alert-success" role="alert">
             {% for message in messages %}
@@ -325,7 +418,6 @@
           {% endif %} 
           </div> 
         </div>
-        
             </div>
         </div>
       </div>
