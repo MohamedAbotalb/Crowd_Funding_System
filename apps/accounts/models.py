@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from django_countries.fields import CountryField
 
 
 class CustomUser(User):
@@ -8,7 +9,7 @@ class CustomUser(User):
     profile_picture = models.ImageField(upload_to='user_uploads/', null=True, blank=True, default='user_uploads/default_profile_picture.jpg')
     facebook_profile = models.URLField(max_length=200, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
-    country = models.CharField(max_length=200, null=True, blank=True)
+    country = CountryField(blank_label='Select a country', null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
