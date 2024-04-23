@@ -55,23 +55,26 @@ def rate_project(request, slug):
         rating_value = float(request.POST.get('rating'))
         print(rating_value,"rate")
         current_user = CustomUser.objects.get(pk=request.user.pk)
-        # Check if the user has already rated the project
-        existing_rating = Rating.objects.filter(user=current_user, project=project).first()
-        if existing_rating:
-            # Update existing rating
-            existing_rating.value = rating_value
-            existing_rating.save()
-            messages.success(request, 'Your rating has been updated.')
+        if current_user.is_authenticated:
+            # Check if the user has already rated the project
+            existing_rating = Rating.objects.filter(user=current_user, project=project).first()
+            if existing_rating:
+                # Update existing rating
+                existing_rating.value = rating_value
+                existing_rating.save()
+                messages.success(request, 'Your rating has been updated.')
+            else:
+                # Create a new rating object
+                Rating.objects.create(user=current_user, project=project, value=rating_value)
+                messages.success(request, 'Thank you for rating this project.')
+            return JsonResponse({
+                'success': True,
+                'project_title': project.title,
+                'project_slug': project.slug,
+                'rating_value': rating_value,
+                })
         else:
-            # Create a new rating object
-            Rating.objects.create(user=current_user, project=project, value=rating_value)
-            messages.success(request, 'Thank you for rating this project.')
-        return JsonResponse({
-            'success': True,
-            'project_title': project.title,
-            'project_slug': project.slug,
-            'rating_value': rating_value,
-             })
+            return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     else:
         # Return a JSON response indicating failure
         return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
@@ -244,3 +247,5 @@ def report_comment(request, comment_id):
     else:
         report_comment_form = ReportCommentForm()
     return render(request, 'projects/report_comment.html', {'report_comment_form': report_comment_form, 'comment': comment})
+
+

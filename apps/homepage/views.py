@@ -1,13 +1,13 @@
 from django.shortcuts import render,get_object_or_404
 from django.db.models import Avg, Count
+from taggit.models import Tag
+from .forms import SearchForm
 from django.utils import timezone
 from django.http import JsonResponse
 from apps.projects.models import Project
 from apps.categories.models import Category
 from apps.accounts.models import CustomUser
 # Create your views here.
-
-
 
 def home_page(request):
     top_projects = Project.objects.filter(status='active', end_time__gt=timezone.now()).order_by('-rate')[:5]
@@ -49,9 +49,79 @@ def get_projects_by_category_id(request):
     return JsonResponse({'projects': data})
     
 
+# def search(request):
+#     form = SearchForm(request.GET)
+#     if form.is_valid():
+#         search_option = form.cleaned_data['search_option']
+#         query = form.cleaned_data['query']
+#         print(search_option,query)
+#         if search_option == 'project':
+#             results = Project.objects.filter(title__icontains=query)
+#             print("results")
+#         elif search_option == 'tag':
+#             try:
+#                 tag = Tag.objects.get(name__iexact=query)
+#                 results = tag.projects.all()
+#                 print(results)
+#             except:
+#                 results = []
+#         else:
+#             results = []
+#     else:
+#         results = []
+#     return render(request, 'homepage/search_results.html', {'searchForm': form, 'searchResults': results})
 
+def search(request):
+    form = SearchForm(request.GET)
+    results = []
 
+    if form.is_valid():
+        search_option = form.cleaned_data['search_option']
+        query = form.cleaned_data['query'].strip()  # Remove leading/trailing spaces
+
+        if search_option == 'project':
+            results = Project.objects.filter(title__icontains=query)
+            print(results)
+        elif search_option == 'tag':
+            # Filter projects by tags
+            results = Project.objects.filter(tags__name__icontains=query)
+            print(results)
+        else:
+            results = []
+    else:
+        results = []
+
+    return render(request, 'homepage/search_results.html', {'searchForm': form, 'searchResults': results})
  
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
