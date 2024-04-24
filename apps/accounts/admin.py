@@ -5,14 +5,14 @@ from .models import CustomUser
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email_display', 'phone_number', 'facebook_profile', 'birth_date', 'country')
+    list_display = ('first_name', 'last_name', 'email_display', 'phone_number', 'facebook_profile', 'birth_date', 'country', 'is_active')
     list_filter = ('country', 'birth_date')
     search_fields = ('country', 'email')
     list_per_page = 10
     list_max_show_all = 10
     fieldsets = (
         (None, {
-            'fields': ['username']
+            'fields': ('username', 'is_active')
         }),
         ('Personal Info', {
             'fields': ('first_name', 'last_name', 'country', 'birth_date', 'phone_number', 'facebook_profile', 'profile_picture')

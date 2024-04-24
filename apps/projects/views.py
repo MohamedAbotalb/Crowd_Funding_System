@@ -61,7 +61,7 @@ def rate_project(request, slug):
         current_user = CustomUser.objects.get(pk=request.user.pk)
         # if current_user.is_authenticated:
             # Check if the user has already rated the project
-        existing_rating = Rating.objects.filter(user=current_user, project=project).firs()
+        existing_rating = Rating.objects.filter(user=current_user, project=project).first()
         if existing_rating:
                 # Update existing rating
             existing_rating.value = rating_value

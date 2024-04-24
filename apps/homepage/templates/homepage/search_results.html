@@ -4,7 +4,7 @@
 {% block title %} Home {%endblock %}
 {% block navbar %}
 
-{% include 'layouts/navbar-2.html' %}
+{% include 'layouts/navbar.html' %}
 
 {% endblock%}
 {% block content %}
@@ -13,9 +13,7 @@
 <!-- <link rel="stylesheet" href="{% static 'accounts/css/signup.css' %}"> -->
 
 <style>
-    body{
-         background-color: #c1e9e5;
-}
+
 .section{
     margin-top: 100px;
 }
@@ -61,7 +59,7 @@
                                     <p>{{searchResult.current_fund }} / {{ searchResult.total_target}}</p>
                                     <p>{{searchResult.percentag}} %</p>
                                 </div>
-                                <a href="{% url 'project_details' searchResult.slug %}" class="btn btn-success mt-1">Show project</a>
+                                <a href="{% url 'project_details' searchResult.slug %}" class="btn mt-1 text-white " style="background-color:#3dd0d8">Show project</a>
                             </div>
                         </div>
                     </div>
