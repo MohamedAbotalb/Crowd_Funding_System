@@ -9,46 +9,52 @@
 {% block styles %}
 
 <style>
-    .margine{
+    .margine {
         margin-top: 90px;
     }
-.btnsign{
-    color: aliceblue;
-    background-color: #012555;
-    border-color: #012555;
-}
-.btnsign:hover{
-     color: aliceblue;
-    background-color:#3dd0d8 ;
-    border-color: #3dd0d8;
-}
+
+    .btnsign {
+        color: aliceblue;
+        background-color: #012555;
+        border-color: #012555;
+    }
+
+    .btnsign:hover {
+        color: aliceblue;
+        background-color: #3dd0d8;
+        border-color: #3dd0d8;
+    }
 
 </style>
 {% endblock %}
 {% block content %}
 <div class="container margine">
     <div class="row mb-2">
-    <h3 class="text-center mb-4 text-secondary  text-capitalize ">projects has tag ({{tag}})</h1>
-    {% for project in projects %}
-    <div class="item col-3">
-                        <div class="card p-2 bg-light">
-                            <img src="{{project.picture_url}}" style=" height: 200px; width: 100%;" class="card-img-top"
-                                alt="project">
-                            <div class="card-body">
-                                <h5 class="card-title">{{project.title}}</h5>
-                                <p class="card-text">{{project.details}}</p>
-                                <progress class="w-100" value="{{ searchResult.current_fund }}"
-                                    max="{{ searchResult.total_target }}"></progress>
-                                <div class="d-flex justify-content-between">
-                                    <p>{{project.current_fund }} / {{ project.total_target}}</p>
-                                    <p>{{project.percentag}} %</p>
-                                </div>
-                                <a href="{% url 'project_details' project.slug %}" class="btn text-white  mt-1" style="background-color: #13ADB7;">Show project</a>
-                            </div>
-                        </div>
+        <h3 class="text-center mb-4 text-secondary  text-capitalize ">projects with tag ({{tag}})</h3>
+        {% for project in projects %}
+        <div class="item col-3">
+            <div class="card p-2 bg-light">
+                <img alt="project" class="card-img-top" src="{{project.picture_url}}"
+                     style=" height: 200px; width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">{{project.title}}</h5>
+                    <p class="card-text">{{project.details}}</p>
+                    <div class="progress" style="height:5px;">
+                        <div aria-valuemax="{{ project.total_target }}" aria-valuemin="0"
+                             aria-valuenow="{{ project.current_fund }}" class="progress-bar progress-bar-striped bg-info progress-bar-animated"
+                             role="progressbar" style="width: {{project.percentag}}%;"></div>
                     </div>
-    {% endfor %}
-</div>
+                    <div class="d-flex justify-content-between">
+                        <p>{{project.current_fund }} / {{ project.total_target}}</p>
+                        <p>{{project.percentag}} %</p>
+                    </div>
+                    <a class="btn text-white  mt-1" href="{% url 'project_details' project.slug %}"
+                       style="background-color: #13ADB7;">Show project</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

@@ -124,11 +124,11 @@
           <span class="ms-3"><i class="fa-solid fa-location-dot"></i> {{project.country }}</span>
           {% endif %}
           <div class="d-inline-block ">
-            <div class="border border-secondary rounded d-inline-block ms-5 px-2 py-1">
+            <div class="d-inline-block ms-3">
               <!-- Display tags associated with the project -->
               {% for tag in project.get_tags %}
               <!-- {% url 'tagged' slug=tag.slug %} -->
-                  <a href="{% url 'tagged' tag.slug%}" clase="text-decoration-none">#{{ tag.name }}</a>
+                  <a href="{% url 'tagged' tag.slug%}" class="text-white rounded p-1 text-decoration-none bg-success">#{{ tag.name }}</a>
               {% endfor %}
             </div>
           </div>
@@ -230,8 +230,8 @@
     <div class=" col-4">
         <div class="card" >
           <div class="card-body">
-            <span class="card-title mb-2 fs-5 ">{{ project.current_fund }}</span>
-            <span class="card-subtitle mb-2 text-muted">raised of {{ project.total_target}} target</span>
+            <span class="card-title mb-2 fs-5 ">{{ project.current_fund }} &#163;</span>
+            <span class="card-subtitle mb-2 text-muted">raised of {{ project.total_target}} &#163; target</span>
             <!-- Progress bar -->
               <div class="progress"style="height:5px;">
               <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="{{ project.current_fund }}" aria-valuemin="0" aria-valuemax="{{ project.total_target }}" style="width: {{project.percentag}}%;"></div>
@@ -263,7 +263,8 @@
               </div>
               <div>
               <span class="card-title  d-block "> {{ first_donation.user }}<span>
-              <span class=" card-title  d-block">{{ first_donation.amount }} $ <span class="card-subtitle text-muted">.First donation</span></span>
+              <span class=" card-title  d-block">{{ first_donation.amount }} &#163;
+              <span class="card-subtitle text-muted">.First donation</span></span>
               </div>
             </div>
             {% endif %}
@@ -273,8 +274,8 @@
                 <i class="fa-solid fa-hand-holding-heart"></i>
               </div>
               <div>
-              <span class="card-title d-block "> {{ last_donation.user }}<span>
-              <span class=" card-title  d-block">{{ last_donation.amount }} $ <span class="card-subtitle text-muted">.Last donation</span></span>
+              <span class="card-title d-block "> {{ last_donation.user }}</span>
+              <span class=" card-title  d-block">{{ last_donation.amount }} &#163;<span class="card-subtitle text-muted">.Last donation</span></span>
               </div>
             </div>
             {% endif %}
@@ -370,7 +371,7 @@
                             <div class="modal-body">
                                 <form action="{% url 'add_donation' project.slug %}" method="post">
                                     {% csrf_token %}
-                                    <input type="number" name="amount" class="form-control" placeholder="Enter donation amount"
+                                    <input type="number" name="amount" class="form-control my-3" placeholder="Enter donation amount"
                                         required>
                                     <button type="submit" class="btn btn-primary">Donate</button>
                                 </form>
@@ -389,7 +390,7 @@
                             <div class="modal-body">
                                 <form action="{% url 'add_comment' project.slug %}" method="post">
                                     {% csrf_token %}
-                                    <textarea name="text" class="form-control" rows="3"
+                                    <textarea name="text" class="form-control my-3" rows="3"
                                         placeholder="Write your comment here" required></textarea>
                                     <button type="submit" class="btn btn-primary">Add Comment</button>
                                 </form>
@@ -420,7 +421,7 @@
               </div>
                         </div>
           {% if messages %}
-          <div class="alert alert-success" role="alert">
+          <div class="alert alert-success" role="alert" id="success-message">
             {% for message in messages %}
             {{ message }}
             {% endfor %}
@@ -522,5 +523,13 @@
       })
       .catch(error => console.error('Error:', error));
     });
+
+    // Automatically hide the success message after 2 seconds
+    setTimeout(function () {
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            successMessage.style.display = 'none';
+        }
+    }, 2000);
   </script>
   {% endblock %}
