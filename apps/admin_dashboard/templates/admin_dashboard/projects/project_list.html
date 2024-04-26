@@ -1,0 +1,112 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block content %}
+<main>
+    <div class="container-fluid px-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                DataTable Example
+            </div>
+            <div class="card-body">
+                <form>
+    {% csrf_token %}
+    <!-- Other form fields -->
+</form>
+                <table id="datatablesSimple">
+                    <!-- Table headers -->
+                    <thead>
+                        <tr>
+                             <tr>
+                            <th>Title</th>
+                            <th>Creator</th>
+                            <th>Category</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Status</th>
+                            <th>Is Featured</th>
+                        </tr>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows -->
+                        {% for project in projects %}
+                        <tr>
+                             <td>{{ project.title }}</td>
+                            <td>{{ project.creator.username }}</td>
+                            <td>{{ project.category.name }}</td>
+                            <td>{{ project.start_time }}</td>
+                            <td>{{ project.end_time }}</td>
+                            <td>{{ project.status }}</td>
+                            <td>
+                                <button class="toggle-feature btn
+                                                {% if project.featured %}
+                                                     btn-warning
+                                                {% else %}
+                                                    btn-secondary
+                                                {% endif %}" 
+                                        data-project-id="{{ project.id }}" 
+                                        data-project-slug="{{ project.slug }}" 
+                                        data-is-featured="{{ project.featured }}">
+                                    {% if project.featured %}
+                                        Featured
+                                    {% else %}
+                                        Not Featured
+                                    {% endif %}
+                                </button>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.toggle-feature');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectSlug = this.getAttribute('data-project-slug'); // Accessing the data-project-slug attribute
+            console.log(projectSlug);
+            
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            console.log(csrfToken);
+            
+            // Send a POST request to toggle the featured status
+            fetch(`/admin/projects/${projectSlug}/featured/`, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({}), // No need to send additional data
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to toggle featured status');
+                }
+            })
+            .then(data => {
+                // Update the button text
+                button.textContent = data.is_featured ? ' Featured' : 'not Featured';
+                console.log(button.textContent )
+                  button.classList.toggle('btn-warning', data.is_featured);
+                    button.classList.toggle('btn-secondary', !data.is_featured);
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+            });
+        });
+    });
+});
+
+</script>
+
+
+{% endblock %}
