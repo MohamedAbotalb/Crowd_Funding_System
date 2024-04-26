@@ -1,0 +1,51 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+
+<main>
+    <div class="container-fluid px-4">
+
+        <!-- Start All Created Donations -->
+        <div class="card my-4 ">
+            <div class="card-header bg-success text-white d-flex flex-column flex-md-row align-items-center fs-5">
+                <div class="mb-3 mb-md-0 text-center text-md-start">
+                    <i class="fas fa-table me-1"></i>
+                    All Created Donations
+                </div>
+                <div class="ms-md-auto">
+                    Total Donations: {{total_donations}}
+                    <i class="fas fa-sterling-sign me-1"></i>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="datatablesSimple">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Project</th>
+                        <th>Amount</th>
+                        <th>Created At</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for donation in all_donations %}
+                    <tr>
+                        <td>{{donation.id}}</td>
+                        <td>{{donation.user}}</td>
+                        <td>{{donation.project}}</td>
+                        <td>{{donation.amount}} £</td>
+                        <td>{{donation.created_at}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- End All Registered Users -->
+
+    </div>
+</main>
+
+{% endblock %}

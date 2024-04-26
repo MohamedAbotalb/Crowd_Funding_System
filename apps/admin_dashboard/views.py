@@ -59,6 +59,18 @@ def delete_user(request, id):
     return redirect('show_users')
 
 
+def show_donations(request):
+    all_donations = Donation.objects.all().order_by('-created_at')
+    total_donations = Donation.objects.aggregate(total_donations=Sum('amount'))['total_donations']
+
+    context = {
+        'all_donations': all_donations,
+        'total_donations': total_donations,
+    }
+
+    return render(request, 'admin_dashboard/donations/index.html', context)
+
+
 def show_projects(request):
     projects = Project.objects.all()
     return render(request, 'admin_dashboard/projects/project_list.html', {'projects': projects})
