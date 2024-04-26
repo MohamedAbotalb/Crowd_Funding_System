@@ -25,3 +25,4 @@ urlpatterns = [
     path('projects_reports/<int:id>/', views.show_project_report, name='show_project_report'),
     path('projects_reports/<int:id>/delete/', views.delete_project_report, name='delete_project_report'),
 ]
+
