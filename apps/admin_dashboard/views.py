@@ -32,7 +32,7 @@ def index(request):
     get_latest_donations = Donation.objects.all().order_by('-created_at')[:5]
     get_latest_projects = Project.objects.filter(status='active').order_by('-start_time')[:5]
     get_featured_projects = Project.objects.filter(featured=True, status='active').order_by('-featured_at')[:5]
-
+    
     context = {
         'all_users_count': all_users_count,
         'all_projects_count': all_projects_count,
@@ -43,7 +43,6 @@ def index(request):
         'get_latest_projects': get_latest_projects,
         'get_featured_projects': get_featured_projects,
     }
-
     return render(request, 'admin_dashboard/index.html', context)
 
 def show_projects(request):
