@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db.models import Sum, Avg, Max
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 
 from django_countries import countries
 
@@ -33,10 +33,10 @@ def index(request):
     get_featured_projects = Project.objects.filter(featured=True, status='active').order_by('-featured_at')[:5]
     
     context = {
-        'all_users': all_users_count,
-        'all_projects': all_projects_count,
-        'all_donations': all_donations_count,
-        'all_categories': all_categories_count,
+        'all_users': all_users,
+        'all_projects': all_projects,
+        'all_donations': all_donations,
+        'all_categories': all_categories,
         'get_latest_users': get_latest_users,
         'get_latest_donations': get_latest_donations,
         'get_latest_projects': get_latest_projects,
@@ -134,8 +134,7 @@ def show_project(request, slug):
     
     # Fetch comments and their replies for the project
     comments = Comment.objects.filter(project=project)
-    
-    
+
     # Calculate days left until end time
     end_datetime = project.end_time
     now_datetime = timezone.now()
@@ -183,12 +182,10 @@ def delete_project(request, slug):
         return redirect('show_projects')
     return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
 
+
 def delete_comment(request, slug, id):
-    # Get the comment object
     comment = get_object_or_404(Comment, id=id)
-    # Delete the comment
     comment.delete()
-    # Redirect back to the project details page
     return redirect('show_project', slug=slug)
 # return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)\
             
