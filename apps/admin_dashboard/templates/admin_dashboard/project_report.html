@@ -1,0 +1,23 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card my-5">
+        <div class="card-header">
+            <h5 class="card-title">Project Report Details</h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text"><strong>User:</strong> {{ report.user }}</p>
+            <p class="card-text"><strong>Project:</strong> {{ report.project.title }}</p>
+            <p class="card-text"><strong>Reason:</strong> {{ report.reason }}</p>
+            <p class="card-text"><strong>Created At:</strong> {{ report.created_at }}</p>
+            {% comment %} <form action="{% 'delete_project_report' project.report.id %}" method="post">
+                {% csrf_token %} {% endcomment %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            {% comment %} </form> {% endcomment %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

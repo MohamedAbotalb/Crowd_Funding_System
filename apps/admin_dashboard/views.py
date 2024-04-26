@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django_countries import countries
 from apps.accounts.models import CustomUser
-from apps.projects.models import Project, Donation
+from apps.projects.models import Project, Donation, ProjectReport, CommentReport
 from apps.categories.models import Category
 
 
@@ -50,4 +50,47 @@ def featured_project(request, slug):
         project.save()
         return JsonResponse({'success': True, 'is_featured': project.featured})
     else:
-        return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+        return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)\
+            
+
+def show_reports(request):
+
+    project_reports = ProjectReport.objects.all()
+    comment_reports = CommentReport.objects.all()
+    
+    return render(request, 'admin_dashboard/reports.html', {'project_reports': project_reports, 'comment_reports': comment_reports})
+
+
+def show_comment_report(request, id=None):
+    if id:
+        comment_report = get_object_or_404(CommentReport, id=id)
+    else:
+        comment_report = CommentReport.objects.first()  
+        
+    return render(request, 'admin_dashboard/show_comment_report.html', {'comment_report': comment_report})
+
+
+def delete_comment_report(request, id):
+    
+    comment_report = get_object_or_404(CommentReport, id=id)
+    comment_report.delete()
+
+    return redirect('show_comment_report')
+
+
+def show_project_report(request, id=None):
+    
+    if id:
+        project_report = get_object_or_404(ProjectReport, id=id)
+    else:
+        project_report = ProjectReport.objects.first()
+        
+    return render(request, 'admin_dashboard/show_project_report.html', {'project_report': project_report})
+
+
+def delete_project_report(request, id):
+    
+    project_report = get_object_or_404(ProjectReport, id=id)
+    project_report.delete()
+    
+    return redirect('show_project_report')
