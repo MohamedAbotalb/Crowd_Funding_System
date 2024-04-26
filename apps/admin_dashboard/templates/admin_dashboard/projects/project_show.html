@@ -1,0 +1,177 @@
+  {% extends 'layouts/base.html' %}
+  {% load static %}
+
+  {% block title %}{{ section.title }}{% endblock %}
+  {% block navbar %} 
+  {% include 'layouts/navbar.html' %}
+  {% endblock %}
+
+  {% block content %}
+  <div class="container page">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="text-center mb-2">
+        <h3>{{ project.title }}</h3>
+      </div>
+      <div class="row mt-4">
+          <div class="d-flex">
+          <div class="me-5 col-8">
+              <div>
+          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for picture in project.pictures.all %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ picture.image.url }}" class="d-block w-100" style="height:360px ;" alt="Project Image">
+              </div>
+              {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+        <div class="col-12 mt-4 text-capitalize" style="height: 45px;">
+          {% if project.creator.profile_picture %}
+            <img src="{{ project.creator.profile_picture.url }}" alt="Creator's Profile Picture" style="width: 30px; height: 30px; border-radius: 50%;"  >
+          {% else %}
+            <!-- Default placeholder image or fallback -->
+            <img src="{% static 'placeholder.jpg' %}" alt="Default Profile Picture" >
+          {% endif %}
+          <span class="ms-1">{{project.creator }}</span>
+          <span class="ms-4"><i class="fa-solid fa-layer-group"></i> {{project.category}}</span>
+          {% if project.country %}
+          <span class="ms-3"><i class="fa-solid fa-location-dot"></i> {{project.country }}</span>
+          {% endif %}
+          <div class="d-inline-block ">
+            <div class="d-inline-block ms-3">
+              <!-- Display tags associated with the project -->
+              {% for tag in project.get_tags %}
+              <!-- {% url 'tagged' slug=tag.slug %} -->
+                  <a href="{% url 'tagged' tag.slug%}" class="text-white rounded p-1 text-decoration-none bg-success">#{{ tag.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          
+        </div>
+        <hr>
+        <div>
+          <h5>Project description</h5>
+          <p>{{ project.details }}</p>
+        </div>
+        <hr>
+          <!-- Comments Section -->
+        <!-- Comments Section -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Comments ({{ comments|length }}):</h3>
+        <ul class="list-unstyled mt-4">
+            {% if comments %}
+                {% for comment in comments %}
+                    <li>
+                        <div class="comment d-flex position-relative">
+                            <img src="{{ comment.user.profile_picture_url }}" alt="{{ comment.user.username }}'s photo" class="rounded-circle" width="50" height="50">
+                            <div class="col-md-8 mx-3">
+                                <h6 class="comment-header">{{ comment.user }}</h6>
+                                <p class="comment-time"><small>{{ comment.created_at }}</small></p>
+                                <p class="comment-content">{{ comment.text }}</p>
+                                <!-- Add delete button -->
+                                    <form action="{% url 'delete_comment' project.slug comment.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                            </div>
+                        </div>
+                        <hr>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>No comments yet.</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+    </div>
+    <div class=" col-4">
+        <div class="card" >
+          <div class="card-body">
+            <span class="card-title mb-2 fs-5 ">{{ project.current_fund }} &#163;</span>
+            <span class="card-subtitle mb-2 text-muted">raised of {{ project.total_target}} &#163; target</span>
+            <!-- Progress bar -->
+              <div class="progress"style="height:5px;">
+              <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="{{ project.current_fund }}" aria-valuemin="0" aria-valuemax="{{ project.total_target }}" style="width: {{project.percentag}}%;"></div>
+              </div>
+              <p class="text-end mb-0">{{project.percentag}}%</p>
+            <!-- ****days left**** -->
+            <div class="mb-2 d-flex ">
+              <div class="fs-4 me-3 ">
+                <i class="fa-regular fa-clock fa-spin"></i>
+              </div>
+              <div>
+              <span class="card-title d-block mb-0 "> {{ days_left }}</span>
+              <span class="card-title text-muted">Days left</span>
+              </div>
+            </div>
+            <div class="mb-2 d-flex ">
+              <div class="fs-4 me-3 ">
+                <i class="fa-solid fa-arrow-up-right-dots"></i>
+              </div>
+              <div>
+              <span class="card-title fs-5">{{num_donors}} </span>
+              <span class=" card-title">people have just made a donation</span>
+              </div>
+            </div>
+            {% if first_donation.user %}
+            <div class="mb-2 d-flex ">
+              <div class="fs-4 me-3 ">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+              </div>
+              <div>
+              <span class="card-title  d-block "> {{ first_donation.user }}<span>
+              <span class=" card-title  d-block">{{ first_donation.amount }} &#163;
+              <span class="card-subtitle text-muted">.First donation</span></span>
+              </div>
+            </div>
+            {% endif %}
+            {% if first_donation.user %}
+            <div class="mb-2 d-flex ">
+              <div class="fs-4 me-3 ">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+              </div>
+              <div>
+              <span class="card-title d-block "> {{ last_donation.user }}</span>
+              <span class=" card-title  d-block">{{ last_donation.amount }} &#163;<span class="card-subtitle text-muted">.Last donation</span></span>
+              </div>
+            </div>
+            {% endif %}
+            {% if first_donation.user %}
+            <div class="mb-2 d-flex ">
+              <div class="fs-4 me-3 ">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+              </div>
+              <div>
+              <span class="card-title  d-block "> {{ top_donation_user }}<span>
+              <span class=" card-title d-block">{{ top_donation}} $ <span class="card-subtitle text-muted">.Top donation</span></span>
+              </div>
+            </div>
+            {% endif %}
+              <div class="mb-3">
+                {% if average_rating %}
+                  <span class="card-title mb-4 fs-5 " id="average-rating"> {{ average_rating }}</span>
+                  <span class="card-subtitle mb-2 text-muted">average rating</span>
+              </div>
+             {% endif %}
+          <!--  -->
+        </div>
+            </div>
+        </div>
+      </div>
+    <br>
+  </div>
+  </div>
+  {% endblock %}
