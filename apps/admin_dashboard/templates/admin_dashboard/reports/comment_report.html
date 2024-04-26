@@ -12,10 +12,10 @@
             <p class="card-text"><strong>Comment ID:</strong> {{ report.comment.id }}</p>
             <p class="card-text"><strong>Reason:</strong> {{ report.reason }}</p>
             <p class="card-text"><strong>Created At:</strong> {{ report.created_at }}</p>
-            {% comment %} <form action="{% url 'delete_comment_report' report.id %}" method="post">
-                {% csrf_token %} {% endcomment %}
+            <form action="{% url 'delete_comment_report' report.id %}" method="post">
+                {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Delete</button>
-            {% comment %} </form> {% endcomment %}
+            </form>
         </div>
     </div>
 </div>
