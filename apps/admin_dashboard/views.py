@@ -1,17 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
 from django.http import JsonResponse
 from django_countries import countries
 from apps.accounts.models import CustomUser
 from apps.projects.models import Project, Donation, ProjectReport, CommentReport
 from apps.categories.models import Category
 
-
 def index(request):
-    all_users = CustomUser.objects.all().count
-    all_projects = Project.objects.all().count
-    all_donations = Donation.objects.all().count()
-    all_categories = Category.objects.all().count
+    all_users_count = CustomUser.objects.all().count()
+    all_projects_count = Project.objects.all().count()
+    all_donations_count = Donation.objects.all().count()
+    all_categories_count = Category.objects.all().count()
+
     get_latest_users = CustomUser.objects.all().order_by('-date_joined')[:5]
 
     for user in get_latest_users:
@@ -26,10 +25,10 @@ def index(request):
     get_featured_projects = Project.objects.filter(featured=True, status='active').order_by('-featured_at')[:5]
 
     context = {
-        'all_users': all_users,
-        'all_projects': all_projects,
-        'all_donations': all_donations,
-        'all_categories': all_categories,
+        'all_users_count': all_users_count,
+        'all_projects_count': all_projects_count,
+        'all_donations_count': all_donations_count,
+        'all_categories_count': all_categories_count,
         'get_latest_users': get_latest_users,
         'get_latest_donations': get_latest_donations,
         'get_latest_projects': get_latest_projects,
@@ -54,38 +53,36 @@ def featured_project(request, slug):
             
 
 def show_reports(request):
-
     project_reports = ProjectReport.objects.all()
     comment_reports = CommentReport.objects.all()
     
-    return render(request, 'admin_dashboard/reports.html', {'project_reports': project_reports, 'comment_reports': comment_reports})
+    return render(request, 'admin_dashboard/reports/reports.html', {'project_reports': project_reports, 'comment_reports': comment_reports})
 
-
-def show_comment_report(request, id=None):
+def show_comment_report(request, id):
     if id:
         comment_report = get_object_or_404(CommentReport, id=id)
     else:
         comment_report = CommentReport.objects.first()  
         
-    return render(request, 'admin_dashboard/show_comment_report.html', {'comment_report': comment_report})
+    return render(request, 'admin_dashboard/reports/comment_report.html', {'comment_report': comment_report})
 
 
 def delete_comment_report(request, id):
     
     comment_report = get_object_or_404(CommentReport, id=id)
     comment_report.delete()
+    
+    return redirect('show_reports')
 
-    return redirect('show_comment_report')
 
-
-def show_project_report(request, id=None):
+def show_project_report(request, id):
     
     if id:
         project_report = get_object_or_404(ProjectReport, id=id)
     else:
         project_report = ProjectReport.objects.first()
         
-    return render(request, 'admin_dashboard/show_project_report.html', {'project_report': project_report})
+    return render(request, 'admin_dashboard/reports/project_report.html', {'project_report': project_report})
 
 
 def delete_project_report(request, id):
@@ -93,4 +90,4 @@ def delete_project_report(request, id):
     project_report = get_object_or_404(ProjectReport, id=id)
     project_report.delete()
     
-    return redirect('show_project_report')
+    return redirect('show_reports')

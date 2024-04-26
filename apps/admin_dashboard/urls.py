@@ -19,11 +19,9 @@ urlpatterns = [
     # path('categories/<slug:slug>/delete/', views.delete_category, name='delete_category'),
     # path('donations/', views.show_donations, name='show_donations'),
     path('reports/', views.show_reports, name='show_reports'),
-    path('comments_reports/', views.show_comment_report, name='show_comment_report'),
     path('comments_reports/<int:id>/', views.show_comment_report, name='show_comment_report'),
-    path('comments_reports/<int:id>/delete/', views.delete_comment_report, name='delete_comment'),
+    path('comments_reports/<int:id>/delete/', views.delete_comment_report, name='delete_comment_report'),
     path('projects_reports/<int:id>/', views.show_project_report, name='show_project_report'),
-    path('projects_reports/', views.show_project_report, name='show_project_report'),
+    path('projects_reports/<int:id>/', views.show_project_report, name='show_project_report'),
     path('projects_reports/<int:id>/delete/', views.delete_project_report, name='delete_project_report'),
 ]
-
