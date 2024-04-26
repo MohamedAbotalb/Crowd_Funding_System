@@ -1,0 +1,78 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+
+<main>
+    <div class="container-fluid px-4">
+        <div class="row my-4">
+            <div class="col-xl-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Project Reports
+                    </div>
+                    <div class="card-body">
+                        <table id="project-reports" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Project Title</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in project_reports %}
+                                <tr>
+                                    <td>{{ report.id }}</td>
+                                    <td>{{ report.user.username }}</td>
+                                    <td>{{ report.project.title }}</td>
+                                    <td>
+                                        <a href="{% url 'show_project_report' report.id %}" class="btn btn-primary">Show</a>
+                                        <a href="{% url 'delete_project_report' report.id %}" class="btn btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Comment Reports
+                    </div>
+                    <div class="card-body">
+                        <table id="comment-reports" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Comment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in comment_reports %}
+                                <tr>
+                                    <td>{{ report.id }}</td>
+                                    <td>{{ report.user.username }}</td>
+                                    <td>{{ report.comment.text }}</td>
+                                    <td>
+                                        <a href="{% url 'show_comment_report' report.id %}" class="btn btn-primary">Show</a>
+                                        <a href="{% url 'delete_comment_report' report.id %}" class="btn btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

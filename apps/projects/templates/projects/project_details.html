@@ -161,7 +161,7 @@
                                   <!-- Reply Button -->
                                   {% comment %} <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#replyModal{{ comment.id }}">Reply</button>  {% endcomment %}
                                   <!-- Replies -->
-                                   {% if comment.replies.all %}
+                                   {% comment %} {% if comment.replies.all %}
                                       <ul>
                                           {% for reply in comment.replies.all %}
                                               <li>
@@ -170,7 +170,7 @@
                                               </li>
                                           {% endfor %}
                                       </ul>
-                                  {% endif %} 
+                                  {% endif %}  {% endcomment %}
                               </div>
                           </div>                          
                               <hr>

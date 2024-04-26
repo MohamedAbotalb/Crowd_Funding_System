@@ -6,16 +6,20 @@ from django_countries import countries
 from apps.projects.models import Project,ProjectPicture,Comment, Reply, Donation, CustomUser, Rating
 import re
 from apps.projects.forms import ProjectForm
+from django.http import JsonResponse
+from django_countries import countries
+from apps.accounts.models import CustomUser
+from apps.projects.models import Project, Donation, ProjectReport, CommentReport
 from apps.categories.models import Category
 from django.utils import timezone
 from django.db.models import Avg, Max
 
-
 def index(request):
-    all_users = CustomUser.objects.all().count
-    all_projects = Project.objects.all().count
-    all_donations = Donation.objects.all().count()
-    all_categories = Category.objects.all().count
+    all_users_count = CustomUser.objects.all().count()
+    all_projects_count = Project.objects.all().count()
+    all_donations_count = Donation.objects.all().count()
+    all_categories_count = Category.objects.all().count()
+
     get_latest_users = CustomUser.objects.all().order_by('-date_joined')[:5]
 
     for user in get_latest_users:
@@ -30,10 +34,10 @@ def index(request):
     get_featured_projects = Project.objects.filter(featured=True, status='active').order_by('-featured_at')[:5]
 
     context = {
-        'all_users': all_users,
-        'all_projects': all_projects,
-        'all_donations': all_donations,
-        'all_categories': all_categories,
+        'all_users_count': all_users_count,
+        'all_projects_count': all_projects_count,
+        'all_donations_count': all_donations_count,
+        'all_categories_count': all_categories_count,
         'get_latest_users': get_latest_users,
         'get_latest_donations': get_latest_donations,
         'get_latest_projects': get_latest_projects,
@@ -114,22 +118,6 @@ def show_project(request, slug):
         project.rate = None
     project.save()
     
-    # Check if the user has rated the project
-    user_rating = None
-    if request.user.is_authenticated:
-        current_user = request.user
-        user_rating_obj = Rating.objects.filter(user=current_user, project=project).first()
-        if user_rating_obj:
-            user_rating = user_rating_obj.value
-    
-    # Get related projects based on tags
-    related_projects = Project.objects.filter(tags__in=project.tags.all()).exclude(id=project.id).distinct()[:4]
-    for related_project in related_projects:
-        end_datetime = related_project.end_time
-        now_datetime = timezone.now()
-        days_left = (end_datetime.date() - now_datetime.date()).days
-        related_project.days_left = days_left
-    
     # Retrieve the first and last donation made to the project
     first_donation = Donation.objects.filter(project=project).order_by('created_at').first()
     last_donation = Donation.objects.filter(project=project).order_by('-created_at').first()
@@ -141,26 +129,17 @@ def show_project(request, slug):
     # Calculate the number of donors
     num_donors = Donation.objects.filter(project=project).values('user').distinct().count()
     
-    # Check if the user is the creator and current fund is less than 25% of target
-    allow_cancel = False
-    if request.user.id == project.creator.id and project.percentag < 25:
-        allow_cancel = True
-    
     context = {
         'project': project,
         'comments': comments,
         'days_left': days_left,
-        'user_rating': user_rating,
         'average_rating': average_rating,
-        'related_projects': related_projects,
         'first_donation': first_donation,
         'last_donation': last_donation,
         'top_donation': top_donation,
         'top_donation_user': top_donation_user,
         'num_donors': num_donors,
-        'allow_cancel' : allow_cancel, 
     }
-    
     return render(request, 'admin_dashboard/projects/project_show.html', context)
 
 
@@ -180,3 +159,45 @@ def delete_comment(request, slug, id):
     comment.delete()
     # Redirect back to the project details page
     return redirect('show_project', slug=slug)
+# return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)\
+            
+
+def show_reports(request):
+    project_reports = ProjectReport.objects.all()
+    comment_reports = CommentReport.objects.all()
+    
+    return render(request, 'admin_dashboard/reports/reports.html', {'project_reports': project_reports, 'comment_reports': comment_reports})
+
+def show_comment_report(request, id):
+    if id:
+        comment_report = get_object_or_404(CommentReport, id=id)
+    else:
+        comment_report = CommentReport.objects.first()  
+        
+    return render(request, 'admin_dashboard/reports/comment_report.html', {'comment_report': comment_report})
+
+
+def delete_comment_report(request, id):
+    
+    comment_report = get_object_or_404(CommentReport, id=id)
+    comment_report.delete()
+    
+    return redirect('show_reports')
+
+
+def show_project_report(request, id):
+    
+    if id:
+        project_report = get_object_or_404(ProjectReport, id=id)
+    else:
+        project_report = ProjectReport.objects.first()
+        
+    return render(request, 'admin_dashboard/reports/project_report.html', {'project_report': project_report})
+
+
+def delete_project_report(request, id):
+    
+    project_report = get_object_or_404(ProjectReport, id=id)
+    project_report.delete()
+    
+    return redirect('show_reports')
