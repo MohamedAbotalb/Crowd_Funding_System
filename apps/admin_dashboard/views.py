@@ -1,4 +1,5 @@
 import re
+from .decorators import superuser_required
 from django.utils import timezone
 from django.db.models import Sum, Avg, Max
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,7 +13,7 @@ from apps.projects.models import Project, Donation, ProjectPicture, Comment, Pro
 from apps.categories.models import Category
 from apps.categories.forms import CategoryForm
 
-
+@superuser_required
 def index(request):
     all_users = CustomUser.objects.all().count()
     all_projects = Project.objects.all().count()
@@ -44,7 +45,7 @@ def index(request):
 
     return render(request, 'admin_dashboard/index.html', context)
 
-
+@superuser_required
 def show_users(request):
     all_users = CustomUser.objects.all().order_by('-date_joined')
 
@@ -57,13 +58,13 @@ def show_users(request):
 
     return render(request, 'admin_dashboard/users/index.html', {'all_users': all_users})
 
-
+@superuser_required
 def delete_user(request, id):
     user = get_object_or_404(CustomUser, id=id)
     user.delete()
     return redirect('show_users')
 
-
+@superuser_required
 def show_donations(request):
     all_donations = Donation.objects.all().order_by('-created_at')
     total_donations = Donation.objects.aggregate(total_donations=Sum('amount'))['total_donations']
@@ -75,12 +76,12 @@ def show_donations(request):
 
     return render(request, 'admin_dashboard/donations/index.html', context)
 
-
+@superuser_required
 def show_projects(request):
     projects = Project.objects.all()
     return render(request, 'admin_dashboard/projects/project_list.html', {'projects': projects})
 
-
+@superuser_required
 def edit_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -98,13 +99,15 @@ def edit_project(request, slug):
     return render(request, 'admin_dashboard/projects/edit_project.html', {'form': form, 'project': project})
 
 
-
+@superuser_required
 def project_picture(request, slug):
     project = get_object_or_404(Project, slug=slug)
     print(slug,"slug")
     project_pictures = ProjectPicture.objects.filter(project__slug=slug)
     return render(request, 'admin_dashboard/projects/project_pictures.html', {'project': project,'pictures': project_pictures})
 
+
+@superuser_required
 def delete_project_picture(request,slug, pk):
     project_picture = get_object_or_404(ProjectPicture, pk=pk)
     print(slug,"slug")
@@ -112,6 +115,8 @@ def delete_project_picture(request,slug, pk):
         project_picture.delete()
     return redirect(reverse('project_picture', kwargs={'slug': slug}))
 
+
+@superuser_required
 def featured_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -122,6 +127,7 @@ def featured_project(request, slug):
         return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
 
 
+@superuser_required
 def show_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     comments = Comment.objects.filter(project=project)
@@ -153,6 +159,7 @@ def show_project(request, slug):
     return render(request, 'admin_dashboard/projects/project_show.html', context)
 
 
+@superuser_required
 def delete_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -162,14 +169,15 @@ def delete_project(request, slug):
     return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
 
 
+@superuser_required
 def delete_comment(request, slug, id):
     comment = get_object_or_404(Comment, id=id)
     comment.delete()
     return redirect('show_project', slug=slug)
-
 # return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)\
 
 
+@superuser_required
 def show_reports(request):
     project_reports = ProjectReport.objects.all()
     comment_reports = CommentReport.objects.all()
@@ -177,6 +185,7 @@ def show_reports(request):
     return render(request, 'admin_dashboard/reports/reports.html', {'project_reports': project_reports, 'comment_reports': comment_reports})
 
 
+@superuser_required
 def show_comment_report(request, id):
     if id:
         comment_report = get_object_or_404(CommentReport, id=id)
@@ -186,6 +195,7 @@ def show_comment_report(request, id):
     return render(request, 'admin_dashboard/reports/comment_report.html', {'comment_report': comment_report})
 
 
+@superuser_required
 def delete_comment_report(request, id):
     comment_report = get_object_or_404(CommentReport, id=id)
     comment_report.delete()
@@ -193,6 +203,7 @@ def delete_comment_report(request, id):
     return redirect('show_project')
 
 
+@superuser_required
 def show_project_report(request, id):
     if id:
         project_report = get_object_or_404(ProjectReport, id=id)
@@ -202,6 +213,7 @@ def show_project_report(request, id):
     return render(request, 'admin_dashboard/reports/project_report.html', {'project_report': project_report})
 
 
+@superuser_required
 def delete_project_report(request, id):
     project_report = get_object_or_404(ProjectReport, id=id)
     project_report.delete()
@@ -209,17 +221,20 @@ def delete_project_report(request, id):
     return redirect('show_reports')
 
 
+@superuser_required
 def show_categories(request):
     all_categories = Category.get_all_categories()
     return render(request, 'admin_dashboard/categories/show_categories.html', {'all_categories': all_categories})
 
 
+@superuser_required
 def show_category(request, slug):
     category = Category.get_category_by_slug(slug)
     Projects = Project.objects.all().filter(category_id=category.id)
     return render(request, 'admin_dashboard/categories/show_category.html', {'category': category, 'Projects': Projects})
 
 
+@superuser_required
 def create_category(request):
     form = CategoryForm()
     if request.method == "POST":
@@ -230,6 +245,7 @@ def create_category(request):
     return render(request, 'admin_dashboard/categories/create_categories.html', {'form': form})
 
 
+@superuser_required
 def update_category(request, slug):
     category = Category.get_category_by_slug(slug)
     form = CategoryForm(instance=category)
@@ -241,6 +257,7 @@ def update_category(request, slug):
     return render(request, 'admin_dashboard/categories/update_categories.html', context={"form": form})
 
 
+@superuser_required
 def delete_category(request, slug):
     category = Category.get_category_by_slug(slug)
     category.delete()
