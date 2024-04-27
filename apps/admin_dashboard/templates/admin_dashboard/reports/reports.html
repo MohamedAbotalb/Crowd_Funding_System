@@ -16,12 +16,23 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Project Title</th>
                                     <th>User</th>
+                                    <th>Project Title</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for report in project_reports %}
+                                <tr>
+                                    <td>{{ report.id }}</td>
+                                    <td>{{ report.user.username }}</td>
+                                    <td>{{ report.project.title }}</td>
+                                    <td>
+                                        <a href="{% url 'show_project_report' report.id %}" class="btn btn-primary">Show</a>
+                                        <a href="{% url 'delete_project_report' report.id %}" class="btn btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -38,12 +49,23 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Project Title</th>
                                     <th>User</th>
+                                    <th>Comment</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for report in comment_reports %}
+                                <tr>
+                                    <td>{{ report.id }}</td>
+                                    <td>{{ report.user.username }}</td>
+                                    <td>{{ report.comment.text }}</td>
+                                    <td>
+                                        <a href="{% url 'show_comment_report' report.id %}" class="btn btn-primary">Show</a>
+                                        <a href="{% url 'delete_comment_report' report.id %}" class="btn btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
