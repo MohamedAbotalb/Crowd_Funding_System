@@ -2,13 +2,10 @@
 {% block content %}
 <main>
     <div class="container-fluid px-4">
-        <div class="my-3 text-end ">
-    <a href="{% url 'create_project-admin' %}" class=" text-white fs-5 btn btn-info text-capitalize ">add project</a>
-</div>
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-table me-1"></i>
-                DataTable Example
+        <div class="card my-4">
+            <div class="card-header fs-5 bg-danger text-white">
+                <i class="fas fa-diagram-project me-1"></i>
+                All Created Projects
             </div>
             <div class="card-body">
                 <form>
@@ -23,7 +20,7 @@
                             <th colspan="3">Actions</th>
                             <th>statuse</th>
                             <th>Is Featured</th>
-                        </tr> 
+                        </tr>
                     </thead>
                     <tbody>
                         <!-- Table rows -->
@@ -66,9 +63,9 @@
                                                      btn-warning
                                                 {% else %}
                                                     btn-secondary
-                                                {% endif %}" 
-                                        data-project-id="{{ project.id }}" 
-                                        data-project-slug="{{ project.slug }}" 
+                                                {% endif %}"
+                                        data-project-id="{{ project.id }}"
+                                        data-project-slug="{{ project.slug }}"
                                         data-is-featured="{{ project.featured }}">
                                     {% if project.featured %}
                                         Featured
@@ -98,17 +95,17 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const toggleButtons = document.querySelectorAll('.toggle-feature');
-    
+
     toggleButtons.forEach(button => {
         button.addEventListener('click', function() {
             const projectSlug = this.getAttribute('data-project-slug'); // Accessing the data-project-slug attribute
             console.log(projectSlug);
-            
+
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             console.log(csrfToken);
-            
+
             // Send a POST request to toggle the featured status
-            fetch(`/admin/projects/${projectSlug}/featured/`, { 
+            fetch(`/admin/projects/${projectSlug}/featured/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
