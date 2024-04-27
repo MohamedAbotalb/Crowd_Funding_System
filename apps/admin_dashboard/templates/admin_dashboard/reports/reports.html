@@ -8,11 +8,11 @@
             <div class="col-xl-6">
                 <div class="card mb-4">
                     <div class="card-header bg-warning fs-5">
-                        <i class="fas fa-comments me1"></i>
+                        <i class="fas fa-comments me-1"></i>
                         Project Reports
                     </div>
                     <div class="card-body">
-                        <table id="project-reports" class="table table-striped">
+                        <table id="datatablesSimple" class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -28,8 +28,8 @@
                                     <td>{{ report.user.username }}</td>
                                     <td>{{ report.project.title }}</td>
                                     <td>
-                                        <a href="{% url 'show_project_report' report.id %}" class="btn btn-primary">Show</a>
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteProjectReportModal{{ report.id }}">Delete</button>
+                                        <a href="{% url 'show_project_report' report.id %}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteProjectReportModal{{ report.id }}"><i class="fas fa-trash"></i></button>
                                         <!-- Delete Project Report Modal -->
                                         <div class="modal fade" id="deleteProjectReportModal{{ report.id }}" tabindex="-1" aria-labelledby="deleteProjectReportModalLabel{{ report.id }}" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -43,7 +43,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <a href="{% url 'delete_project_report' report.id %}" class="btn btn-danger">Delete</a>
+                                                        <a href="{% url 'delete_project_report' report.id %}" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -59,11 +59,11 @@
             <div class="col-xl-6">
                 <div class="card mb-4">
                     <div class="card-header bg-warning fs-5">
-                        <i class="fas fa-comments me1"></i>
+                        <i class="fas fa-comments me-1"></i>
                         Comment Reports
                     </div>
                     <div class="card-body">
-                        <table id="comment-reports" class="table table-striped">
+                        <table id="datatablesSimple" class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -79,8 +79,8 @@
                                     <td>{{ report.user.username }}</td>
                                     <td>{{ report.comment.text }}</td>
                                     <td>
-                                        <a href="{% url 'show_comment_report' report.id %}" class="btn btn-primary">Show</a>
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCommentReportModal{{ report.id }}">Delete</button>
+                                        <a href="{% url 'show_comment_report' report.id %}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCommentReportModal{{ report.id }}"><i class="fas fa-trash"></i></button>
                                         <!-- Delete Comment Report Modal -->
                                         <div class="modal fade" id="deleteCommentReportModal{{ report.id }}" tabindex="-1" aria-labelledby="deleteCommentReportModalLabel{{ report.id }}" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -94,7 +94,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <a href="{% url 'delete_comment_report' report.id %}" class="btn btn-danger">Delete</a>
+                                                        <a href="{% url 'delete_comment_report' report.id %}" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
