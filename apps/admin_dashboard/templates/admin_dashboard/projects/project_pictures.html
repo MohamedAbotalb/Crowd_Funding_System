@@ -1,32 +1,23 @@
 {% extends 'admin_dashboard/base.html' %}
 {% block content %}
-<h2>Project Pictures</h2>
-<a href="{% url 'edit_project' slug=project.slug %}" class="">Back to Form</a>
+<h2 class="text-center my-3 bg-light ">Project Pictures</h2>
+
+<div class="container ">
+<a href="{% url 'edit_project' slug=project.slug %}" class="btn btn-info mb-3 fs-5 text-bg-light " >Back to Form</a>
 <div class="row">
     {% for picture in pictures %}
     <div class="col-md-3 mb-3">
         <div class="card">
-            <img src="{{ picture.image.url }}" class="card-img-top img-thumbnail" alt="Project Image" style="height: 250px;">
-            <div class="card-body">
+            <img src="{{ picture.image.url }}" class="card-img-top img-thumbnail rounded-0 " alt="Project Image" style="height: 250px; ">
+            <div class="card-footer">
                 <form action="{% url 'delete_project_picture' slug=project.slug pk=picture.pk %}" method="post" >
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-block w-100">Delete</button>
                 </form>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+</div>
 {% endblock %}
-<!-- <div class="form-group mb-4">
-                            <div class="row">
-                                {% for picture in project.pictures.all %}
-                                <div class="col-md-3 mb-3">
-                                    <div class="position-relative">
-                                        <img src="{{ picture.image.url }}" alt="Project Image" class="img-thumbnail" style="max-width: 200px; height: 200px;">
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <a href="{% url 'project_picture' slug=project.slug%}" class="btn btn-info text-capitalize fs-5 ">view picture</a>
-                        </div> -->
