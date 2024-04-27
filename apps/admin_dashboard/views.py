@@ -81,20 +81,19 @@ def show_projects(request):
 
 
 def edit_project(request, slug):
+    print(request)
     project = get_object_or_404(Project, slug=slug)
+    pictures = ProjectPicture.objects.filter(project=project)
     if request.method == 'POST':
-        print("naglaa")
+        print(pictures)
         form = ProjectForm(request.POST, request.FILES, instance=project)
         if form.is_valid():
             project = form.save(commit=False)
-            project_pictures = request.FILES.getlist('image')
-            for pic in project_pictures:
-                ProjectPicture.objects.create(project=project, image=pic)
             project.save()
+            # Redirect to the project details page after successful update
             return redirect('show_project', slug=project.slug)
     else:
         form = ProjectForm(instance=project)
-    pictures = ProjectPicture.objects.filter(project=project)
     return render(request, 'admin_dashboard/projects/edit_project.html', {'form': form, 'project': project, 'pictures': pictures})
 
 def delete_project_picture(request, slug, pk):

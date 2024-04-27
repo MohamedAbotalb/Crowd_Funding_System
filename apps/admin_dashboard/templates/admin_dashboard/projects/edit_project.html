@@ -5,7 +5,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-md-8 col-lg-8 mx-md-auto">
-                    <form action="." class="p-3 rounded" enctype="multipart/form-data" method="POST">
+                    <form action="{% url 'edit_project' project.slug %}" class="p-3 rounded" enctype="multipart/form-data" method="POST">
                         {% csrf_token %}
                         <h1 class="my-3">Update Project</h1>
 
@@ -93,16 +93,17 @@
 
                         </div>
                         <!-- Start display pictures -->
-                           
-                       <!-- Inside the loop where you display project pictures -->
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <!-- Optionally, you can display the picture -->
-                            <img src="{{ picture.image.url }}" alt="Project Image" class="img-thumbnail" style="max-width: 200px; height: 200px;">
-                            <!-- Add a submit button for deletion -->
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-
+                        <div class="form-group mb-4">
+                            <div class="row">
+                                {% for picture in project.pictures.all %}
+                                <div class="col-md-3 mb-3">
+                                    <div class="position-relative">
+                                        <img src="{{ picture.image.url }}" alt="Project Image" class="img-thumbnail" style="max-width: 200px; height: 200px;">
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                         <!-- End display pictures -->
                         <!-- Start pictures -->
                         <div class="form-group mb-4">
