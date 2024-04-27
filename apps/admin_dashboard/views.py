@@ -190,7 +190,7 @@ def delete_comment_report(request, id):
     comment_report = get_object_or_404(CommentReport, id=id)
     comment_report.delete()
 
-    return redirect('show_reports')
+    return redirect('show_project')
 
 
 def show_project_report(request, id):

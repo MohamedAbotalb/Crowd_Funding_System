@@ -85,7 +85,7 @@
                     <tbody>
                     {% for user in get_latest_users %}
                     <tr>
-                        <td>{{user.id}}</td>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{user.first_name}}</td>
                         <td>{{user.last_name}}</td>
                         <td>{{user.username}}</td>
@@ -122,7 +122,7 @@
                     <tbody>
                     {% for donation in get_latest_donations %}
                     <tr>
-                        <th>{{donation.id}}</th>
+                        <th>{{ forloop.counter }}</th>
                         <td>{{donation.user}}</td>
                         <td>{{donation.project}}</td>
                         <td>{{donation.amount}} £</td>
@@ -160,7 +160,7 @@
                     <tbody>
                     {% for project in get_latest_projects %}
                     <tr>
-                        <td>{{project.id}}</td>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{project.title}}</td>
                         <td>{{project.total_target}}</td>
                         <td>{{project.current_fund}}</td>
@@ -202,7 +202,7 @@
                     <tbody>
                     {% for project in get_featured_projects %}
                     <tr>
-                        <td>{{project.id}}</td>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{project.title}}</td>
                         <td>{{project.total_target}}</td>
                         <td>{{project.current_fund}}</td>
