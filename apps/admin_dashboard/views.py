@@ -85,22 +85,14 @@ def edit_project(request, slug):
     if request.method == 'POST':
         form = ProjectForm(request.POST, request.FILES, instance=project)
         if form.is_valid():
-            # Save the form data without committing to the database yet
             project = form.save(commit=False)
-
-            # Process the uploaded images
             project_pictures = request.FILES.getlist('image')
             print(project_pictures)
             for pic in project_pictures:
                 ProjectPicture.objects.create(project=project, image=pic)
-
-            # Save the project and its related images
             project.save()
-
-            # Redirect to the project details page
             return redirect('show_project', slug=project.slug)
     else:
-        # Initialize the form with existing project data
         form = ProjectForm(instance=project)
     return render(request, 'admin_dashboard/projects/edit_project.html', {'form': form, 'project': project})
 
@@ -166,7 +158,6 @@ def delete_project(request, slug):
     if request.method == 'POST':
         project.delete()
         messages.success(request, 'Project deleted successfully.')
-        # Redirect to the admin dashboard index page after deletion
         return redirect('show_projects')
     return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
 
