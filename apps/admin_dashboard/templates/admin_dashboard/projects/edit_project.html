@@ -1,0 +1,140 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+<section>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-8 col-lg-8 mx-md-auto">
+                    <form action="." class="p-3 rounded" enctype="multipart/form-data" method="POST">
+                        {% csrf_token %}
+                        <h1 class="my-3">Update Project</h1>
+
+                        <!-- Start title -->
+                        <div class="mb-3">
+                            <label class="form-label" for="id_title">Title</label>
+                            <div class="input-group has-validation">
+                                {{ form.title }}
+                            </div>
+                            {% for error in form.title.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <!-- End title -->
+
+                        <!-- Start details -->
+                        <div class="mb-4">
+                            <label class="form-label" for="id_details">Details</label>
+                            <div class="input-group has-validation">
+                                {{ form.details }}
+                            </div>
+                            {% for error in form.details.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <!-- End details -->
+
+                        <div class="row">
+                            <!-- Start start_time -->
+                            <div class="mb-4 col-md-6">
+                                <label class="form-label" for="id_start_time">Start Time</label>
+                                <div class="input-group has-validation">
+                                    {{ form.start_time }}
+                                </div>
+                                {% for error in form.start_time.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <!-- End start_time -->
+
+                            <!-- start end_time -->
+                            <div class="mb-4 col-md-6">
+                                <label class="form-label" for="id_end_time">End Time</label>
+                                <div class="input-group has-validation">
+                                    {{ form.end_time }}
+                                </div>
+                                {% for error in form.end_time.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <!-- End end_time -->
+                        </div>
+
+                        <div class="row">
+                            <!-- Start total_target -->
+                            <div class="mb-4 col-md-6">
+                                <label class="form-label" for="id_total_target">Total Target</label>
+                                <div class="input-group has-validation">
+                                    {{ form.total_target }}
+                                </div>
+                                {% for error in form.total_target.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <!-- End total_target -->
+
+                            <!-- Start category -->
+<div class="mb-4 col-md-6">
+    <label class="form-label" for="id_category">Category</label>
+    <div class="input-group has-validation">
+        <select class="form-select" id="id_category" name="category">
+            <option disabled value="">Select category</option>
+            {% for op_value, op_label in form.fields.category.choices %}
+                <option value="{{ op_value }}" {% if op_value == project.category.pk %}selected{% endif %}>
+                    {{ op_label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    {% for error in form.category.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+</div>
+<!-- End category -->
+
+                        </div>
+                        <!-- Start display pictures -->
+                           
+                       <!-- Inside the loop where you display project pictures -->
+                        <form action="{% url 'delete_project_picture' slug=project.slug pk=picture.pk  %}" method="post">
+                            {% csrf_token %}
+                            <!-- Optionally, you can display the picture -->
+                            <img src="{{ picture.image.url }}" alt="Project Image" class="img-thumbnail" style="max-width: 200px; height: 200px;">
+                            <!-- Add a submit button for deletion -->
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+
+                        <!-- End display pictures -->
+                        <!-- Start pictures -->
+                        <div class="form-group mb-4">
+                            <label class="form-label" for="id_pictures">Add Pictures</label>
+                            <input accept="image/jpeg, image/png, image/jpg" class="form-control" id="id_pictures" multiple name="image " type="file">
+                            {% if messages %}
+                                {% for message in messages %}
+                                <p class="text-danger mt-1">{{ message }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <!-- End pictures -->
+                        
+                        <!-- Start tags -->
+                        <div class="form-group mb-4">
+                            <div class="form-group mb-4">
+                                <label class="form-label" for="id_tags">Tags</label>
+                                <input class="form-control "data-role="tagsinput" id="id_tags" name="tags" type="text" value="{{ project.tags.names|join:' ' }}">
+                            </div>
+
+                            {% for error in form.tags.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <!-- End tags -->
+
+                        <div class="text-center my-3">
+                            <button class="btn btn-warning " type="submit">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+</section>
+{% endblock %}
