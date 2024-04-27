@@ -5,7 +5,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-md-8 col-lg-8 mx-md-auto">
-                    <form action="{% url 'edit_project' project.slug %}" class="p-3 rounded" enctype="multipart/form-data" method="POST">
+                    <form action="." class="p-3 rounded" enctype="multipart/form-data" method="POST">
                         {% csrf_token %}
                         <h1 class="my-3">Update Project</h1>
 
@@ -108,7 +108,7 @@
                         <!-- Start pictures -->
                         <div class="form-group mb-4">
                             <label class="form-label" for="id_pictures">Add Pictures</label>
-                            <input accept="image/jpeg, image/png, image/jpg" class="form-control" id="id_pictures" multiple name="image " type="file">
+                            <input accept="image/jpeg, image/png, image/jpg" class="form-control" id="id_pictures" multiple name="image" type="file">
                             {% if messages %}
                                 {% for message in messages %}
                                 <p class="text-danger mt-1">{{ message }}</p>

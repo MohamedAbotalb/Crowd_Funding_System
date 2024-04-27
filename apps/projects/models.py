@@ -111,7 +111,10 @@ class Project(models.Model):
         return (self.current_fund * 100) / self.total_target
 # ===================== ProjectPicture Model =====================
 def project_picture_upload_path(instance, filename):
-    project_directory_name = instance.project.title.replace(' ', '_')
+    if instance.project.pictures.exists():
+        project_directory_name = os.path.dirname(instance.project.pictures.first().image.path)
+    else:
+        project_directory_name = instance.project.title.replace(' ', '_')
     return os.path.join('project_uploads', project_directory_name, filename)
 
 
