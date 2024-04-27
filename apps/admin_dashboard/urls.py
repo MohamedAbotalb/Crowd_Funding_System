@@ -24,4 +24,7 @@ urlpatterns = [
     path('projects_reports/<int:id>/delete/', views.delete_project_report, name='delete_project_report'),
     path('comments_reports/<int:id>/', views.show_comment_report, name='show_comment_report'),
     path('comments_reports/<int:id>/delete/', views.delete_comment_report, name='delete_comment_report'),
+    path('projects/<slug:slug>/project_pictures/', views.project_picture, name='project_picture'),
+    path('projects/<slug:slug>/delete_picture/<int:pk>/', views.delete_project_picture, name='delete_project_picture'),
 ]
+
