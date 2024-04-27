@@ -12,7 +12,7 @@
                         Project Reports
                     </div>
                     <div class="card-body">
-                        <table id="datatablesSimple" class="table table-striped">
+                        <table class="table table-striped datatablesSimple">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -63,7 +63,7 @@
                         Comment Reports
                     </div>
                     <div class="card-body">
-                        <table id="datatablesSimple" class="table table-striped">
+                        <table class="table table-striped datatablesSimple">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -110,5 +110,17 @@
         </div>
     </div>
 </main>
+
+<script>
+    window.addEventListener('DOMContentLoaded', event => {
+        const datatablesSimple = document.querySelectorAll('.datatablesSimple');
+
+        if (datatablesSimple.length > 0) {
+            Array.from(datatablesSimple).forEach((element) => {
+                new simpleDatatables.DataTable(element);
+            });
+        }
+    });
+</script>
 
 {% endblock %}
