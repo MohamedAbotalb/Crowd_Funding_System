@@ -93,21 +93,22 @@
 
                         </div>
                         <!-- Start display pictures -->
-                           
-                       <!-- Inside the loop where you display project pictures -->
-                        <form action="{% url 'delete_project_picture' slug=project.slug pk=picture.pk  %}" method="post">
-                            {% csrf_token %}
-                            <!-- Optionally, you can display the picture -->
-                            <img src="{{ picture.image.url }}" alt="Project Image" class="img-thumbnail" style="max-width: 200px; height: 200px;">
-                            <!-- Add a submit button for deletion -->
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-
+                        <div class="form-group mb-4">
+                            <div class="row">
+                                {% for picture in project.pictures.all %}
+                                <div class="col-md-3 mb-3">
+                                    <div class="position-relative">
+                                        <img src="{{ picture.image.url }}" alt="Project Image" class="img-thumbnail" style="max-width: 200px; height: 200px;">
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                         <!-- End display pictures -->
                         <!-- Start pictures -->
                         <div class="form-group mb-4">
                             <label class="form-label" for="id_pictures">Add Pictures</label>
-                            <input accept="image/jpeg, image/png, image/jpg" class="form-control" id="id_pictures" multiple name="image " type="file">
+                            <input accept="image/jpeg, image/png, image/jpg" class="form-control" id="id_pictures" multiple name="image" type="file">
                             {% if messages %}
                                 {% for message in messages %}
                                 <p class="text-danger mt-1">{{ message }}</p>
