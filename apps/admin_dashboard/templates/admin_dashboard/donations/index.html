@@ -32,7 +32,7 @@
                     <tbody>
                     {% for donation in all_donations %}
                     <tr>
-                        <td>{{donation.id}}</td>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{donation.user}}</td>
                         <td>{{donation.project}}</td>
                         <td>{{donation.amount}} £</td>
