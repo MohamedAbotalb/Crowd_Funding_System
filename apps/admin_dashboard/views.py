@@ -12,8 +12,6 @@ from apps.accounts.models import CustomUser
 from apps.projects.models import Project, Donation, ProjectPicture, Comment, ProjectReport, CommentReport, Reply, Rating
 from apps.categories.models import Category
 from apps.categories.forms import CategoryForm
-from django.contrib import messages
-
 
 
 def index(request):
@@ -34,7 +32,7 @@ def index(request):
     get_latest_donations = Donation.objects.all().order_by('-created_at')[:5]
     get_latest_projects = Project.objects.filter(status='active').order_by('-start_time')[:5]
     get_featured_projects = Project.objects.filter(featured=True, status='active').order_by('-featured_at')[:5]
-    
+
     context = {
         'all_users': all_users,
         'all_projects': all_projects,
@@ -45,13 +43,13 @@ def index(request):
         'get_latest_projects': get_latest_projects,
         'get_featured_projects': get_featured_projects,
     }
-    
+
     return render(request, 'admin_dashboard/index.html', context)
 
 
 def show_users(request):
     all_users = CustomUser.objects.all().order_by('-date_joined')
-    
+
     for user in all_users:
         if user.country:
             country_name = dict(countries).get(user.country, user.country)
@@ -84,7 +82,7 @@ def show_projects(request):
     projects = Project.objects.all()
     return render(request, 'admin_dashboard/projects/project_list.html', {'projects': projects})
 
-  
+
 def create_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST, request.FILES)
@@ -134,7 +132,7 @@ def featured_project(request, slug):
 def show_project(request, slug):
     # Fetch the project based on the provided slug
     project = get_object_or_404(Project, slug=slug)
-    
+
     # Fetch comments and their replies for the project
     comments = Comment.objects.filter(project=project)
 
@@ -142,7 +140,7 @@ def show_project(request, slug):
     end_datetime = project.end_time
     now_datetime = timezone.now()
     days_left = (end_datetime.date() - now_datetime.date()).days
-    
+
     # Calculate the average rating for the project
     average_rating = project.ratings.aggregate(Avg('value'))['value__avg']
     if average_rating is not None:
@@ -150,18 +148,18 @@ def show_project(request, slug):
     else:
         project.rate = None
     project.save()
-    
+
     # Retrieve the first and last donation made to the project
     first_donation = Donation.objects.filter(project=project).order_by('created_at').first()
     last_donation = Donation.objects.filter(project=project).order_by('-created_at').first()
-    
+
     # Retrieve the top donation amount for the project
     top_donation = Donation.objects.filter(project=project).aggregate(Max('amount'))['amount__max']
     top_donation_user = CustomUser.objects.filter(donation__amount=Donation.objects.aggregate(max_amount=Max('amount'))['max_amount']).first()
-    
+
     # Calculate the number of donors
     num_donors = Donation.objects.filter(project=project).values('user').distinct().count()
-    
+
     context = {
         'project': project,
         'comments': comments,
@@ -190,13 +188,14 @@ def delete_comment(request, slug, id):
     comment = get_object_or_404(Comment, id=id)
     comment.delete()
     return redirect('show_project', slug=slug)
+
 # return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)\
-            
+
 
 def show_reports(request):
     project_reports = ProjectReport.objects.all()
     comment_reports = CommentReport.objects.all()
-    
+
     return render(request, 'admin_dashboard/reports/reports.html', {'project_reports': project_reports, 'comment_reports': comment_reports})
 
 
@@ -204,15 +203,15 @@ def show_comment_report(request, id):
     if id:
         comment_report = get_object_or_404(CommentReport, id=id)
     else:
-        comment_report = CommentReport.objects.first()  
-        
+        comment_report = CommentReport.objects.first()
+
     return render(request, 'admin_dashboard/reports/comment_report.html', {'comment_report': comment_report})
 
 
 def delete_comment_report(request, id):
     comment_report = get_object_or_404(CommentReport, id=id)
     comment_report.delete()
-    
+
     return redirect('show_reports')
 
 
@@ -221,26 +220,26 @@ def show_project_report(request, id):
         project_report = get_object_or_404(ProjectReport, id=id)
     else:
         project_report = ProjectReport.objects.first()
-        
+
     return render(request, 'admin_dashboard/reports/project_report.html', {'project_report': project_report})
 
 
 def delete_project_report(request, id):
     project_report = get_object_or_404(ProjectReport, id=id)
     project_report.delete()
-    
+
     return redirect('show_reports')
 
 
 def show_categories(request):
-    all_categories= Category.get_all_categories()
-    return render(request,'admin_dashboard/categories/show_categories.html', {'all_categories': all_categories})
+    all_categories = Category.get_all_categories()
+    return render(request, 'admin_dashboard/categories/show_categories.html', {'all_categories': all_categories})
 
 
-def show_category(request,slug):
+def show_category(request, slug):
     category = Category.get_category_by_slug(slug)
-    Projects= Project.objects.all().filter(category_id=category.id)
-    return render(request,'admin_dashboard/categories/show_category.html', {'category': category,'Projects':Projects})
+    Projects = Project.objects.all().filter(category_id=category.id)
+    return render(request, 'admin_dashboard/categories/show_category.html', {'category': category, 'Projects': Projects})
 
 
 def create_category(request):
@@ -248,7 +247,7 @@ def create_category(request):
     if request.method == "POST":
         form = CategoryForm(request.POST)
         if form.is_valid():
-            category=form.save()
+            category = form.save()
             return redirect(category.show_url)
     return render(request, 'admin_dashboard/categories/create_categories.html', {'form': form})
 
@@ -265,6 +264,6 @@ def update_category(request, slug):
 
 
 def delete_category(request, slug):
-      category = Category.get_category_by_slug(slug)
-      category.delete()
-      return redirect('show_categories')
+    category = Category.get_category_by_slug(slug)
+    category.delete()
+    return redirect('show_categories')
