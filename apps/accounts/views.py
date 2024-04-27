@@ -57,9 +57,9 @@ def activate(request, uidb64, token):
 
 
 def create_user(request):
+    if request.user.is_authenticated:
+        return redirect('/')
     form = RegistrationForm()
-    # if request.user.is_authenticated: 
-    #     return redirect('/')
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -75,6 +75,8 @@ def create_user(request):
 
 
 def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('/')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
