@@ -2,7 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('projects/<slug:slug>/delete_picture/<int:pk>/', views.delete_project_picture, name='delete_project_picture'),
     path('index/', views.index, name='admin_dashboard'),
     path('users/', views.show_users, name='show_users'),
     path('users/<int:id>/delete/', views.delete_user, name='delete_user'),
@@ -12,9 +11,7 @@ urlpatterns = [
     path('projects/<slug:slug>/featured/', views.featured_project, name='featured_project'),
     path('projects/<slug:slug>/delete/', views.delete_project, name='delete_project'),
     path('projects/<slug:slug>/comments/<int:id>/delete/', views.delete_comment, name='delete_comment'),
-    path('projects/<slug:slug>/delete/', views.delete_project, name='delete_project'),
-    path('projects/<slug:slug>/comments/<int:id>/delete/', views.delete_comment, name='delete_comment'),
-    path('comments_reports/<int:id>/delete/', views.delete_comment, name='delete_comment'),
+    path('projects/<slug:slug>/delete_picture/<int:pk>/', views.delete_project_picture, name='delete_project_picture'),
     path('categories/', views.show_categories, name='show_categories'),
     path('categories/<slug:slug>/', views.show_category, name='show_category'),
     path('categories/<slug:slug>/update/', views.update_category, name='update_category'),
