@@ -2,6 +2,7 @@ import re
 from django.utils import timezone
 from django.db.models import Sum, Avg, Max
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django_countries import countries
@@ -96,21 +97,20 @@ def edit_project(request, slug):
         form = ProjectForm(instance=project)
     return render(request, 'admin_dashboard/projects/edit_project.html', {'form': form, 'project': project})
 
-def delete_project_picture(request, slug, pk):
-    # Fetch the project picture object
-    project_picture = get_object_or_404(ProjectPicture, pk=pk)
-    print(project_picture)
-    if request.method == 'POST':
-        try:
-            # Delete the project picture
-            project_picture.delete()
-            messages.success(request, 'Project picture deleted successfully.')
-        except Exception as e:
-            # If there's any error during deletion, display an error message
-            messages.error(request, f'An error occurred while deleting the project picture: {e}')
-    # Redirect to a relevant URL after deletion, such as the project edit page
-    return redirect('edit_project', slug=slug)
 
+
+def project_picture(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    print(slug,"slug")
+    project_pictures = ProjectPicture.objects.filter(project__slug=slug)
+    return render(request, 'admin_dashboard/projects/project_pictures.html', {'project': project,'pictures': project_pictures})
+
+def delete_project_picture(request,slug, pk):
+    project_picture = get_object_or_404(ProjectPicture, pk=pk)
+    print(slug,"slug")
+    if request.method == 'POST':
+        project_picture.delete()
+    return redirect(reverse('project_picture', kwargs={'slug': slug}))
 
 def featured_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
