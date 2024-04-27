@@ -95,7 +95,7 @@
                         <!-- Start display pictures -->
                            
                        <!-- Inside the loop where you display project pictures -->
-                        <form action="{% url 'delete_project_picture' slug=project.slug pk=picture.pk  %}" method="post">
+                        <form action="" method="post">
                             {% csrf_token %}
                             <!-- Optionally, you can display the picture -->
                             <img src="{{ picture.image.url }}" alt="Project Image" class="img-thumbnail" style="max-width: 200px; height: 200px;">

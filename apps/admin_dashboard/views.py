@@ -83,26 +83,19 @@ def show_projects(request):
 def edit_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
+        print("naglaa")
         form = ProjectForm(request.POST, request.FILES, instance=project)
         if form.is_valid():
-            # Save the form data without committing to the database yet
             project = form.save(commit=False)
-
-            # Process the uploaded images
             project_pictures = request.FILES.getlist('image')
-            print(project_pictures)
             for pic in project_pictures:
                 ProjectPicture.objects.create(project=project, image=pic)
-
-            # Save the project and its related images
             project.save()
-            pictures = ProjectPicture.objects.filter(project=project)
-            # Redirect to the project details page
             return redirect('show_project', slug=project.slug)
     else:
-        # Initialize the form with existing project data
         form = ProjectForm(instance=project)
-    return render(request, 'admin_dashboard/projects/edit_project.html', {'form': form, 'project': project,'pictures':pictures})
+    pictures = ProjectPicture.objects.filter(project=project)
+    return render(request, 'admin_dashboard/projects/edit_project.html', {'form': form, 'project': project, 'pictures': pictures})
 
 def delete_project_picture(request, slug, pk):
     # Fetch the project picture object
