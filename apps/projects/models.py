@@ -167,7 +167,7 @@ class ProjectReport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Report by {self.user.username} on {self.project.title}"
+        return f"Report by {self.user} on {self.project.title}"
 
 # ===================== Rating Model =====================
 class Rating(models.Model):
