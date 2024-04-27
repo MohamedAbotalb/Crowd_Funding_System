@@ -266,7 +266,5 @@ def update_category(request, slug):
 
 def delete_category(request, slug):
       category = Category.get_category_by_slug(slug)
-      confirmation = request.POST.get('confirmation')
-      if confirmation == 'Delete':
-            category.delete()
+      category.delete()
       return redirect('show_categories')
