@@ -1,0 +1,128 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block content %}
+<main>
+    <div class="container-fluid px-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                DataTable Example
+            </div>
+            <div class="card-body">
+                <form>
+    {% csrf_token %}
+    <!-- Other form fields -->
+</form>
+<a href="{% url 'create_category' %}" class="btn btn-success m-3 ">Add Category</a>
+
+
+                <table id="datatablesSimple">
+                    <!-- Table headers -->
+                    <thead>
+                        <tr>
+                             <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>created_at</th>
+                            <th>Actions</th>
+
+                        </tr>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows -->
+                        {% for category in all_categories %}
+                        <tr>
+                             <td>{{ category.id }}</td>
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.description }}</td>
+                            <td>{{ category.created_at }}</td>
+                            <td>
+                                <a href="{{category.show_url}}" class="btn btn-info">Show</a>
+                                <a href="{{category.update_url}}" class="btn btn-warning">Edit</a>
+                                <button data-bs-target="#deleteModal" data-bs-toggle="modal"
+                                type="button" class="btn btn-danger">Delete</button>
+                                <!-- Delete category Modal -->
+                    <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="static">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Confirm category Deletion</h5>
+                                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this category?</p>
+                                    <p>This action cannot be undone.</p>
+                                    <p>To confirm deletion, please type <strong>Delete</strong> in the input field below:</p>
+                                    <form action="{{category.delete_url}}" method="post">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label class="form-label" for="confirmationInput">Confirmation:</label>
+                                            <input class="form-control" id="confirmationInput" name="confirmation" required type="text">
+                                        </div>
+                                        <button class="btn btn-danger" type="submit">Confirm Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.toggle-feature');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectSlug = this.getAttribute('data-project-slug'); // Accessing the data-project-slug attribute
+            console.log(projectSlug);
+            
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            console.log(csrfToken);
+            
+            // Send a POST request to toggle the featured status
+            fetch(`/admin/projects/${projectSlug}/featured/`, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({}), // No need to send additional data
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to toggle featured status');
+                }
+            })
+            .then(data => {
+                // Update the button text
+                button.textContent = data.is_featured ? ' Featured' : 'not Featured';
+                console.log(button.textContent )
+                  button.classList.toggle('btn-warning', data.is_featured);
+                    button.classList.toggle('btn-secondary', !data.is_featured);
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+            });
+        });
+    });
+});
+
+</script> -->
+
+
+{% endblock %}

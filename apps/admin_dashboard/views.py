@@ -11,6 +11,9 @@ from apps.projects.forms import ProjectForm
 from apps.accounts.models import CustomUser
 from apps.projects.models import Project, Donation, ProjectPicture, Comment, ProjectReport, CommentReport, Reply, Rating
 from apps.categories.models import Category
+from apps.categories.forms import CategoryForm
+from django.contrib import messages
+
 
 
 def index(request):
@@ -227,3 +230,43 @@ def delete_project_report(request, id):
     project_report.delete()
     
     return redirect('show_reports')
+
+
+def show_categories(request):
+    all_categories= Category.get_all_categories()
+    return render(request,'admin_dashboard/categories/show_categories.html', {'all_categories': all_categories})
+
+
+def show_category(request,slug):
+    category = Category.get_category_by_slug(slug)
+    Projects= Project.objects.all().filter(category_id=category.id)
+    return render(request,'admin_dashboard/categories/show_category.html', {'category': category,'Projects':Projects})
+
+
+def create_category(request):
+    form = CategoryForm()
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category=form.save()
+            return redirect(category.show_url)
+    return render(request, 'admin_dashboard/categories/create_categories.html', {'form': form})
+
+
+def update_category(request, slug):
+    category = Category.get_category_by_slug(slug)
+    form = CategoryForm(instance=category)
+    if request.method == "POST":
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect(category.show_url)
+    return render(request, 'admin_dashboard/categories/update_categories.html', context={"form": form})
+
+
+def delete_category(request, slug):
+      category = Category.get_category_by_slug(slug)
+      confirmation = request.POST.get('confirmation')
+      if confirmation == 'Delete':
+            category.delete()
+      return redirect('show_categories')
