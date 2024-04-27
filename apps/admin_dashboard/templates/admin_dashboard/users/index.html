@@ -40,14 +40,14 @@
                         <td>{{user.facebook_profile}}</td>
                         <td>{{user.country}}</td>
                         <td>
-                            <button class="btn btn-danger delete-user" data-bs-target="#confirmDeleteModal" data-bs-toggle="modal"
+                            <button class="btn btn-danger delete-user" data-bs-target="#confirmDeleteModal{{ user.id }}" data-bs-toggle="modal"
                                     data-user-id="{{ user.id }}" type="button"><i class="fa-regular fa-trash-can"></i>
                             </button>
                         </td>
 
                         <!-- Delete User Confirmation Modal -->
-                        <div aria-hidden="true" aria-labelledby="confirmDeleteModalLabel" class="modal fade"
-                             id="confirmDeleteModal" tabindex="-1">
+                        <div aria-hidden="true" aria-labelledby="confirmDeleteModalLabel{{ user.id }}" class="modal fade"
+                             id="confirmDeleteModal{{ user.id }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
