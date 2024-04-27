@@ -1,0 +1,16 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container my-5">
+    <h2>Add new Category</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{form }}
+
+        <input class="btn btn-primary w-25 d-block mx-auto my-5" type="submit">
+    </form>
+</div>
+
+<script src="{% static 'categories/js/script.js' %}"></script>
+
+{% endblock %}

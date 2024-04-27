@@ -7,8 +7,8 @@
         <div class="row my-4">
             <div class="col-xl-6">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fas fa-table me-1"></i>
+                    <div class="card-header bg-warning fs-5">
+                        <i class="fas fa-comments me1"></i>
                         Project Reports
                     </div>
                     <div class="card-body">
@@ -24,12 +24,30 @@
                             <tbody>
                                 {% for report in project_reports %}
                                 <tr>
-                                    <td>{{ report.id }}</td>
+                                    <td>{{ forloop.counter }}</td>
                                     <td>{{ report.user.username }}</td>
                                     <td>{{ report.project.title }}</td>
                                     <td>
                                         <a href="{% url 'show_project_report' report.id %}" class="btn btn-primary">Show</a>
-                                        <a href="{% url 'delete_project_report' report.id %}" class="btn btn-danger">Delete</a>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteProjectReportModal{{ report.id }}">Delete</button>
+                                        <!-- Delete Project Report Modal -->
+                                        <div class="modal fade" id="deleteProjectReportModal{{ report.id }}" tabindex="-1" aria-labelledby="deleteProjectReportModalLabel{{ report.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteProjectReportModalLabel{{ report.id }}">Confirm Deletion</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete this project report?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <a href="{% url 'delete_project_report' report.id %}" class="btn btn-danger">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -40,8 +58,8 @@
             </div>
             <div class="col-xl-6">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fas fa-table me-1"></i>
+                    <div class="card-header bg-warning fs-5">
+                        <i class="fas fa-comments me1"></i>
                         Comment Reports
                     </div>
                     <div class="card-body">
@@ -57,12 +75,30 @@
                             <tbody>
                                 {% for report in comment_reports %}
                                 <tr>
-                                    <td>{{ report.id }}</td>
+                                    <td>{{ forloop.counter }}</td>
                                     <td>{{ report.user.username }}</td>
                                     <td>{{ report.comment.text }}</td>
                                     <td>
                                         <a href="{% url 'show_comment_report' report.id %}" class="btn btn-primary">Show</a>
-                                        <a href="{% url 'delete_comment_report' report.id %}" class="btn btn-danger">Delete</a>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCommentReportModal{{ report.id }}">Delete</button>
+                                        <!-- Delete Comment Report Modal -->
+                                        <div class="modal fade" id="deleteCommentReportModal{{ report.id }}" tabindex="-1" aria-labelledby="deleteCommentReportModalLabel{{ report.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteCommentReportModalLabel{{ report.id }}">Confirm Deletion</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete this comment report?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <a href="{% url 'delete_comment_report' report.id %}" class="btn btn-danger">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}

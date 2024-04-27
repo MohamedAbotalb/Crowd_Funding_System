@@ -1,12 +1,16 @@
-from apps.projects.forms import ProjectForm
 from django import forms
+from apps.categories.models import Category
 
-class ProjectFormWithImage(ProjectForm):
-    image = forms.ImageField(
-        label='Image', 
-        required=False,
-        widget=forms.FileInput(attrs={'class': 'form-control-file'})
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Name", "class": "form-control"})
     )
 
-    class Meta(ProjectForm.Meta):
-        fields = ProjectForm.Meta.fields + ('image',)
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "Description", "class": "form-control", "rows": 3}),
+    )

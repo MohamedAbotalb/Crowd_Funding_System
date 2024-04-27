@@ -9,8 +9,7 @@ from apps.projects.forms import ProjectForm
 from apps.accounts.models import CustomUser
 from apps.projects.models import Project, Donation, ProjectPicture, Comment, ProjectReport, CommentReport, Reply, Rating
 from apps.categories.models import Category
-from .forms import ProjectFormWithImage
-
+from apps.categories.forms import CategoryForm
 
 
 def index(request):
@@ -30,7 +29,7 @@ def index(request):
     get_latest_donations = Donation.objects.all().order_by('-created_at')[:5]
     get_latest_projects = Project.objects.filter(status='active').order_by('-start_time')[:5]
     get_featured_projects = Project.objects.filter(featured=True, status='active').order_by('-featured_at')[:5]
-    
+
     context = {
         'all_users': all_users,
         'all_projects': all_projects,
@@ -41,13 +40,13 @@ def index(request):
         'get_latest_projects': get_latest_projects,
         'get_featured_projects': get_featured_projects,
     }
-    
+
     return render(request, 'admin_dashboard/index.html', context)
 
 
 def show_users(request):
     all_users = CustomUser.objects.all().order_by('-date_joined')
-    
+
     for user in all_users:
         if user.country:
             country_name = dict(countries).get(user.country, user.country)
@@ -119,6 +118,8 @@ def delete_project_picture(request, slug, pk):
             messages.error(request, f'An error occurred while deleting the project picture: {e}')
     # Redirect to a relevant URL after deletion, such as the project edit page
     return redirect('edit_project', slug=slug)
+
+
 def featured_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
@@ -146,7 +147,6 @@ def show_project(request, slug):
     top_donation = Donation.objects.filter(project=project).aggregate(Max('amount'))['amount__max']
     top_donation_user = CustomUser.objects.filter(donation__amount=Donation.objects.aggregate(max_amount=Max('amount'))['max_amount']).first()
     num_donors = Donation.objects.filter(project=project).values('user').distinct().count()
-    
     context = {
         'project': project,
         'comments': comments,
@@ -172,19 +172,17 @@ def delete_project(request, slug):
 
 
 def delete_comment(request, slug, id):
-    # Get the comment object
     comment = get_object_or_404(Comment, id=id)
-    # Delete the comment
     comment.delete()
-    # Redirect back to the project details page
     return redirect('show_project', slug=slug)
+
 # return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)\
-            
+
 
 def show_reports(request):
     project_reports = ProjectReport.objects.all()
     comment_reports = CommentReport.objects.all()
-    
+
     return render(request, 'admin_dashboard/reports/reports.html', {'project_reports': project_reports, 'comment_reports': comment_reports})
 
 
@@ -192,15 +190,15 @@ def show_comment_report(request, id):
     if id:
         comment_report = get_object_or_404(CommentReport, id=id)
     else:
-        comment_report = CommentReport.objects.first()  
-        
+        comment_report = CommentReport.objects.first()
+
     return render(request, 'admin_dashboard/reports/comment_report.html', {'comment_report': comment_report})
 
 
 def delete_comment_report(request, id):
     comment_report = get_object_or_404(CommentReport, id=id)
     comment_report.delete()
-    
+
     return redirect('show_reports')
 
 
@@ -209,12 +207,50 @@ def show_project_report(request, id):
         project_report = get_object_or_404(ProjectReport, id=id)
     else:
         project_report = ProjectReport.objects.first()
-        
+
     return render(request, 'admin_dashboard/reports/project_report.html', {'project_report': project_report})
 
 
 def delete_project_report(request, id):
     project_report = get_object_or_404(ProjectReport, id=id)
     project_report.delete()
-    
+
     return redirect('show_reports')
+
+
+def show_categories(request):
+    all_categories = Category.get_all_categories()
+    return render(request, 'admin_dashboard/categories/show_categories.html', {'all_categories': all_categories})
+
+
+def show_category(request, slug):
+    category = Category.get_category_by_slug(slug)
+    Projects = Project.objects.all().filter(category_id=category.id)
+    return render(request, 'admin_dashboard/categories/show_category.html', {'category': category, 'Projects': Projects})
+
+
+def create_category(request):
+    form = CategoryForm()
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save()
+            return redirect(category.show_url)
+    return render(request, 'admin_dashboard/categories/create_categories.html', {'form': form})
+
+
+def update_category(request, slug):
+    category = Category.get_category_by_slug(slug)
+    form = CategoryForm(instance=category)
+    if request.method == "POST":
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect(category.show_url)
+    return render(request, 'admin_dashboard/categories/update_categories.html', context={"form": form})
+
+
+def delete_category(request, slug):
+    category = Category.get_category_by_slug(slug)
+    category.delete()
+    return redirect('show_categories')

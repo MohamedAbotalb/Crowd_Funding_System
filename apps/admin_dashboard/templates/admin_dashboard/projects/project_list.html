@@ -22,7 +22,7 @@
                             <th >delete</th>
                             <th>statuse</th>
                             <th>Is Featured</th>
-                        </tr> 
+                        </tr>
                     </thead>
                     <tbody>
                         <!-- Table rows -->
@@ -65,9 +65,9 @@
                                                      btn-warning
                                                 {% else %}
                                                     btn-secondary
-                                                {% endif %}" 
-                                        data-project-id="{{ project.id }}" 
-                                        data-project-slug="{{ project.slug }}" 
+                                                {% endif %}"
+                                        data-project-id="{{ project.id }}"
+                                        data-project-slug="{{ project.slug }}"
                                         data-is-featured="{{ project.featured }}">
                                     {% if project.featured %}
                                         Featured
@@ -98,17 +98,17 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const toggleButtons = document.querySelectorAll('.toggle-feature');
-    
+
     toggleButtons.forEach(button => {
         button.addEventListener('click', function() {
             const projectSlug = this.getAttribute('data-project-slug'); // Accessing the data-project-slug attribute
             console.log(projectSlug);
-            
+
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             console.log(csrfToken);
-            
+
             // Send a POST request to toggle the featured status
-            fetch(`/admin/projects/${projectSlug}/featured/`, { 
+            fetch(`/admin/projects/${projectSlug}/featured/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

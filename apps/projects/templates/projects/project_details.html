@@ -407,12 +407,12 @@
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                              <form action="/" method="post">
+                              <form action="{% url 'report_project' project.id %}" method="post">
                                   {% csrf_token %}
                                   <textarea name="reason" class="form-control" rows="3"
                                       placeholder="Please provide details about why you are reporting this project."
                                       required></textarea>
-                                  <button type="submit" class="btn btn-primary">Report Project</button>
+                                  <button type="submit" class="btn btn-danger">Report Project</button>
                               </form>
                           </div>
                       </div>

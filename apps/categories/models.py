@@ -30,12 +30,12 @@ class Category(models.Model):
 
     @property
     def show_url(self):
-        return reverse("category_show", args=[self.slug])
+        return reverse("show_category", args=[self.slug])
 
     @property
     def update_url(self):
-        return reverse('category_update', args=[self.slug])
+        return reverse('update_category', args=[self.slug])
 
     @property
     def delete_url(self):
-        return reverse('category_delete', args=[self.slug])
+        return reverse('delete_category', args=[self.slug])
