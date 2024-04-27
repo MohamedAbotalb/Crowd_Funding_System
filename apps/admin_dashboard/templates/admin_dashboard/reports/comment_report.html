@@ -8,13 +8,13 @@
             <h5 class="card-title">Comment Report Details</h5>
         </div>
         <div class="card-body">
-            <p class="card-text"><strong>User:</strong> {{ report.user }}</p>
-            <p class="card-text"><strong>Comment ID:</strong> {{ report.comment.id }}</p>
-            <p class="card-text"><strong>Reason:</strong> {{ report.reason }}</p>
-            <p class="card-text"><strong>Created At:</strong> {{ report.created_at }}</p>
-            <form action="{% url 'delete_comment_report' report.id %}" method="post">
+            <p class="card-text"><strong>User:</strong> {{ comment_report.user }}</p>
+            <p class="card-text"><strong>Project Title:</strong> {{ comment_report.comment.project.title }}</p>
+            <p class="card-text"><strong>Comment Text:</strong> {{ comment_report.comment.text }}</p>
+            <p class="card-text"><strong>Created At:</strong> {{ comment_report.created_at }}</p>
+            <form action="{% url 'delete_comment_report' comment_report.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Delete</button>
+                <button type="submit" class="btn btn-danger">Delete Report</button>
             </form>
         </div>
     </div>

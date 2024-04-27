@@ -24,7 +24,7 @@
                             <tbody>
                                 {% for report in project_reports %}
                                 <tr>
-                                    <td>{{ report.id }}</td>
+                                    <td>{{ forloop.counter }}</td>
                                     <td>{{ report.user.username }}</td>
                                     <td>{{ report.project.title }}</td>
                                     <td>
@@ -57,7 +57,7 @@
                             <tbody>
                                 {% for report in comment_reports %}
                                 <tr>
-                                    <td>{{ report.id }}</td>
+                                    <td>{{ forloop.counter }}</td>
                                     <td>{{ report.user.username }}</td>
                                     <td>{{ report.comment.text }}</td>
                                     <td>
