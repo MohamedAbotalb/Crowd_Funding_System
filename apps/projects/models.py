@@ -54,6 +54,10 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
+
+   
+
+
     @classmethod
     def get_project_by_slug(cls, slug):
         return get_object_or_404(cls, slug=slug)

@@ -1,4 +1,4 @@
-  {% extends 'layouts/base.html' %}
+{% extends 'admin_dashboard/base.html' %}
   {% load static %}
 
   {% block title %}{{ section.title }}{% endblock %}
@@ -64,7 +64,6 @@
           <p>{{ project.details }}</p>
         </div>
         <hr>
-          <!-- Comments Section -->
         <!-- Comments Section -->
 <div class="row mt-4">
     <div class="col-md-12">
@@ -80,10 +79,30 @@
                                 <p class="comment-time"><small>{{ comment.created_at }}</small></p>
                                 <p class="comment-content">{{ comment.text }}</p>
                                 <!-- Add delete button -->
-                                    <form action="{% url 'delete_comment' project.slug comment.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                    </form>
+                                <div class="text-end">
+                                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ comment.id }}">Delete</button>
+                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade" id="confirmDeleteModal{{ comment.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ comment.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmDeleteModalLabel{{ comment.id }}">Confirm Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete this comment?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form action="{% url 'delete_comment' project.slug comment.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <hr>
@@ -95,6 +114,7 @@
         </ul>
     </div>
 </div>
+
 
     </div>
     <div class=" col-4">

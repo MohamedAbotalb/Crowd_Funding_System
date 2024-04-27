@@ -3,10 +3,8 @@ from django.utils import timezone
 from django.db.models import Sum, Avg, Max
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import JsonResponse
-
+from django.http import HttpResponse, JsonResponse
 from django_countries import countries
-
 from apps.projects.forms import ProjectForm
 from apps.accounts.models import CustomUser
 from apps.projects.models import Project, Donation, ProjectPicture, Comment, ProjectReport, CommentReport, Reply, Rating
@@ -19,7 +17,6 @@ def index(request):
     all_projects = Project.objects.all().count()
     all_donations = Donation.objects.all().count()
     all_categories = Category.objects.all().count()
-
     get_latest_users = CustomUser.objects.all().order_by('-date_joined')[:5]
 
     for user in get_latest_users:
@@ -83,45 +80,49 @@ def show_projects(request):
     return render(request, 'admin_dashboard/projects/project_list.html', {'projects': projects})
 
 
-def create_project(request):
+def edit_project(request, slug):
+    project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
+        form = ProjectForm(request.POST, request.FILES, instance=project)
         if form.is_valid():
-            user_instance = CustomUser.objects.get(pk=request.user.pk)
-            project_pictures = request.FILES.getlist('pictures')
-            tags = form.cleaned_data.get('tags', [])
-
-            if len(project_pictures) == 0:
-                messages.error(request, f'You should choose at least 1 picture.')
-                return render(request, 'projects/create_project.html', {'form': form})
-
-            if len(tags) > 5:
-                form.add_error('tags', "Maximum 5 tags allowed.")
-            for tag in tags:
-                if not re.match(r'^[a-zA-Z0-9_]+$', tag):
-                    form.add_error('tags', "Tags can only contain letters, numbers, and underscore.")
-                    break
-            if form.errors:
-                return render(request, 'projects/create_project.html', {'form': form})
-
+            # Save the form data without committing to the database yet
             project = form.save(commit=False)
-            project.creator = user_instance
-            project.save()
-            form.save_m2m()
 
+            # Process the uploaded images
+            project_pictures = request.FILES.getlist('image')
+            print(project_pictures)
             for pic in project_pictures:
                 ProjectPicture.objects.create(project=project, image=pic)
 
-            return redirect('show_projects')
+            # Save the project and its related images
+            project.save()
+            pictures = ProjectPicture.objects.filter(project=project)
+            # Redirect to the project details page
+            return redirect('show_project', slug=project.slug)
     else:
-        form = ProjectForm()
-    return render(request, 'projects/create_project.html', {'form': form})
+        # Initialize the form with existing project data
+        form = ProjectForm(instance=project)
+    return render(request, 'admin_dashboard/projects/edit_project.html', {'form': form, 'project': project,'pictures':pictures})
+
+def delete_project_picture(request, slug, pk):
+    # Fetch the project picture object
+    project_picture = get_object_or_404(ProjectPicture, pk=pk)
+    print(project_picture)
+    if request.method == 'POST':
+        try:
+            # Delete the project picture
+            project_picture.delete()
+            messages.success(request, 'Project picture deleted successfully.')
+        except Exception as e:
+            # If there's any error during deletion, display an error message
+            messages.error(request, f'An error occurred while deleting the project picture: {e}')
+    # Redirect to a relevant URL after deletion, such as the project edit page
+    return redirect('edit_project', slug=slug)
 
 
 def featured_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
-        # Toggle the featured status of the project
         project.featured = not project.featured
         project.save()
         return JsonResponse({'success': True, 'is_featured': project.featured})
@@ -130,36 +131,22 @@ def featured_project(request, slug):
 
 
 def show_project(request, slug):
-    # Fetch the project based on the provided slug
     project = get_object_or_404(Project, slug=slug)
-
-    # Fetch comments and their replies for the project
     comments = Comment.objects.filter(project=project)
-
-    # Calculate days left until end time
     end_datetime = project.end_time
     now_datetime = timezone.now()
     days_left = (end_datetime.date() - now_datetime.date()).days
-
-    # Calculate the average rating for the project
     average_rating = project.ratings.aggregate(Avg('value'))['value__avg']
     if average_rating is not None:
         project.rate = round(average_rating, 2)
     else:
         project.rate = None
     project.save()
-
-    # Retrieve the first and last donation made to the project
     first_donation = Donation.objects.filter(project=project).order_by('created_at').first()
     last_donation = Donation.objects.filter(project=project).order_by('-created_at').first()
-
-    # Retrieve the top donation amount for the project
     top_donation = Donation.objects.filter(project=project).aggregate(Max('amount'))['amount__max']
     top_donation_user = CustomUser.objects.filter(donation__amount=Donation.objects.aggregate(max_amount=Max('amount'))['max_amount']).first()
-
-    # Calculate the number of donors
     num_donors = Donation.objects.filter(project=project).values('user').distinct().count()
-
     context = {
         'project': project,
         'comments': comments,
