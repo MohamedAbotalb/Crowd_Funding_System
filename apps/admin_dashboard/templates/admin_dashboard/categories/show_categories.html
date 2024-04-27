@@ -28,7 +28,7 @@
                         <!-- Table rows -->
                         {% for category in all_categories %}
                         <tr>
-                            <td>{{ category.id }}</td>
+                            <td>{{ forloop.counter }}</td>
                             <td>{{ category.name }}</td>
                             <td>{{ category.description }}</td>
                             <td>{{ category.created_at }}</td>
