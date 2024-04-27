@@ -110,7 +110,6 @@ def delete_project_picture(request,slug, pk):
     print(slug,"slug")
     if request.method == 'POST':
         project_picture.delete()
-        # Optionally, add a success message
     return redirect(reverse('project_picture', kwargs={'slug': slug}))
 
 def featured_project(request, slug):
