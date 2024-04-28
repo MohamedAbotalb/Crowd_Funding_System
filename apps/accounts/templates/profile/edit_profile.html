@@ -69,7 +69,7 @@
 
                         <!-- start end_time -->
                         <div class="my-4">
-                            <label class="form-label" for="id_birth_date">End Time</label>
+                            <label class="form-label" for="id_birth_date">Birth Date</label>
                             <div class="input-group has-validation">
                                 {{ form.birth_date }}
                             </div>
@@ -135,13 +135,11 @@
                                 </div>
                                 <div class="modal-body">
                                     <p>Are you sure you want to delete your account?</p>
-                                    <p>This action cannot be undone.</p>
                                     <p>To confirm deletion, please type <strong>Delete</strong> in the input field below:</p>
                                     <form action="{% url 'delete_account' %}" method="post">
                                         {% csrf_token %}
                                         <div class="mb-3">
-                                            <label class="form-label" for="confirmationInput">Confirmation:</label>
-                                            <input class="form-control" id="confirmationInput" name="confirmation" required type="text">
+                                                <input class="form-control" id="confirmationInput" name="confirmation" required type="text">
                                         </div>
                                         <button class="btn btn-danger" type="submit">Confirm Delete</button>
                                     </form>

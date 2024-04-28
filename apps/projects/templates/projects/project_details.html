@@ -407,8 +407,8 @@
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                              <form action="{% url 'report_project' project.id %}" method="post">
-                                  {% csrf_token %}
+                            <form action="{% url 'report_project' project.slug %}" method="post">
+                              {% csrf_token %}
                                   <textarea name="reason" class="form-control" rows="3"
                                       placeholder="Please provide details about why you are reporting this project."
                                       required></textarea>
