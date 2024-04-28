@@ -1,17 +1,22 @@
-import re
-from .decorators import superuser_required
+import os
+import shutil
+
+from django.conf import settings
 from django.utils import timezone
 from django.db.models import Sum, Avg, Max
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django_countries import countries
+
+from .decorators import superuser_required
 from apps.projects.forms import ProjectForm
 from apps.accounts.models import CustomUser
 from apps.projects.models import Project, Donation, ProjectPicture, Comment, ProjectReport, CommentReport, Reply, Rating
 from apps.categories.models import Category
 from apps.categories.forms import CategoryForm
+
 
 @superuser_required
 def index(request):
@@ -45,6 +50,7 @@ def index(request):
 
     return render(request, 'admin_dashboard/index.html', context)
 
+
 @superuser_required
 def show_users(request):
     all_users = CustomUser.objects.all().order_by('-date_joined')
@@ -58,11 +64,13 @@ def show_users(request):
 
     return render(request, 'admin_dashboard/users/index.html', {'all_users': all_users})
 
+
 @superuser_required
 def delete_user(request, id):
     user = get_object_or_404(CustomUser, id=id)
     user.delete()
     return redirect('show_users')
+
 
 @superuser_required
 def show_donations(request):
@@ -76,10 +84,12 @@ def show_donations(request):
 
     return render(request, 'admin_dashboard/donations/index.html', context)
 
+
 @superuser_required
 def show_projects(request):
     projects = Project.objects.all()
     return render(request, 'admin_dashboard/projects/project_list.html', {'projects': projects})
+
 
 @superuser_required
 def edit_project(request, slug):
@@ -161,11 +171,31 @@ def show_project(request, slug):
 
 @superuser_required
 def delete_project(request, slug):
-    project = get_object_or_404(Project, slug=slug)
+    project = Project.get_project_by_slug(slug)
     if request.method == 'POST':
+        project_directory = os.path.join(settings.MEDIA_ROOT, 'project_uploads', project.title.replace(' ', '_'))
+        current_fund = project.current_fund
+        recipient_project = Project.objects.filter(category=project.category).exclude(pk=project.pk).first()
+
+        # add the current fund of that project to another project in the same category
+        if recipient_project:
+            recipient_project.current_fund += current_fund
+            recipient_project.save()
+
+        else:
+            # If no project in the same category, transfer the funds to any available project
+            recipient_project = Project.objects.exclude(pk=project.pk).first()
+            recipient_project.current_fund += current_fund
+            recipient_project.save()
+
+        # Delete the project directory
+        if os.path.exists(project_directory):
+            shutil.rmtree(project_directory)
+
         project.delete()
         messages.success(request, 'Project deleted successfully.')
         return redirect('show_projects')
+
     return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
 
 
