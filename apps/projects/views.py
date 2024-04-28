@@ -1,19 +1,19 @@
+import os
 import re
-from django.db.models import Avg, Max
-from django.http import JsonResponse
-from .models import Project, Rating
-from django.utils import timezone
+import shutil
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg, Max
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from taggit.models import Tag
 
-
-from .models import Project, ProjectPicture, Donation, Comment, ProjectReport, CommentReport,Reply
-from .forms import ProjectForm, DonationForm, CommentForm, ReportProjectForm, ReportCommentForm, ReplyCommentForm
+from .forms import ProjectForm, DonationForm, CommentForm, ReportProjectForm, ReportCommentForm
+from .models import Project, ProjectPicture, Donation, Comment, Rating
 from apps.accounts.models import CustomUser
-
-
 
 
 @login_required(login_url='login_')
@@ -50,6 +50,7 @@ def create_project(request):
     else:
         form = ProjectForm()
     return render(request, 'projects/create_project.html', {'form': form})
+
 
 @login_required(login_url='login_')
 def rate_project(request, slug):
@@ -131,13 +132,11 @@ def project_details(request, slug):
     # else:
     #     current_fund_percentage = 0  # Handle division by zero case
     num_donors = Donation.objects.filter(project=project).values('user').distinct().count()
-    print(request.user.id)
-    print(project.creator.id)
     # Check if the user is the creator and current fund is less than 25% of target
     allow_cancel = False
     if request.user.id == project.creator.id and project.percentag < 25:
         allow_cancel = True
-        print(allow_cancel)
+
     context = {
         'project': project,
         'comments': comments,
@@ -151,7 +150,7 @@ def project_details(request, slug):
         'top_donation_user': top_donation_user,
         'num_donors': num_donors,
         # 'current_fund_percentage': current_fund_percentage,
-        'allow_cancel' : allow_cancel, 
+        'allow_cancel': allow_cancel,
     }
     return render(request, 'projects/project_details.html', context)
 
@@ -170,9 +169,9 @@ def tagged(request, slug):
 @login_required(login_url='login_')
 def cancel_project(request, slug):
     project = Project.get_project_by_slug(slug)
-    print(project)
+    project_directory = os.path.join(settings.MEDIA_ROOT, 'project_uploads', project.title.replace(' ', '_'))
+
     current_fund = project.current_fund
-    print(current_fund)
     recipient_project = Project.objects.filter(category=project.category).exclude(pk=project.pk).first()
 
     # add the current fund of that project to another project in the same category
@@ -186,11 +185,14 @@ def cancel_project(request, slug):
         recipient_project.current_fund += current_fund
         recipient_project.save()
 
+    # Delete the project directory
+    if os.path.exists(project_directory):
+        shutil.rmtree(project_directory)
+
     project.delete()
     return redirect('/')
 
 
-# @ajax
 @login_required(login_url='login_')
 def add_donation(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -198,7 +200,6 @@ def add_donation(request, slug):
         donation_form = DonationForm(request.POST)
         if donation_form.is_valid():
             donation = donation_form.save(commit=False)
-            # print(donation_form.cleaned_data['amount'])
             donation.project = project
             user_instance = CustomUser.objects.get(pk=request.user.pk)
             donation.user = user_instance
@@ -233,28 +234,28 @@ def add_comment(request, slug):
     return render(request, 'projects/add_comment.html', {'comment_form': comment_form, 'project': project})
 
 
-@login_required(login_url='login_')
-def add_reply(request, comment_id):
-    parent_comment = get_object_or_404(Comment, id=comment_id)
-    if request.method == 'POST':
-        reply_form = ReplyCommentForm(request.POST)
-        if reply_form.is_valid():
-            reply = reply_form.save(commit=False)
-            reply.comment = parent_comment
-            print("Added comment")
-            user_instance = CustomUser.objects.get(pk=request.user.pk)
-            reply.user = user_instance  
-            reply.save()
-            messages.success(request, 'Your reply has been added!')
-            return redirect('project_details', slug=parent_comment.project.slug)
-    else:
-        reply_form = ReplyCommentForm()
-    return render(request, 'projects/add_reply.html', {'reply_form': reply_form, 'parent_comment': parent_comment})
+# @login_required(login_url='login_')
+# def add_reply(request, comment_id):
+#     parent_comment = get_object_or_404(Comment, id=comment_id)
+#     if request.method == 'POST':
+#         reply_form = ReplyCommentForm(request.POST)
+#         if reply_form.is_valid():
+#             reply = reply_form.save(commit=False)
+#             reply.comment = parent_comment
+#             print("Added comment")
+#             user_instance = CustomUser.objects.get(pk=request.user.pk)
+#             reply.user = user_instance
+#             reply.save()
+#             messages.success(request, 'Your reply has been added!')
+#             return redirect('project_details', slug=parent_comment.project.slug)
+#     else:
+#         reply_form = ReplyCommentForm()
+#     return render(request, 'projects/add_reply.html', {'reply_form': reply_form, 'parent_comment': parent_comment})
 
 
 @login_required(login_url='login_')
 def report_project(request, slug):
-    project = get_object_or_404(Project, slug=slug)
+    project = Project.get_project_by_slug(slug)
     if request.method == 'POST':
         report_project_form = ReportProjectForm(request.POST)
         if report_project_form.is_valid():
@@ -285,4 +286,4 @@ def report_comment(request, comment_id):
             return redirect('project_details', slug=comment.project.slug)
     else:
         report_comment_form = ReportCommentForm()
-    return render(request, 'projects/report_comment.html', {'report_comment_form': report_comment_form, 'comment': comment})
+    return render(request, 'projects/project_details.html', {'report_comment_form': report_comment_form, 'comment': comment})

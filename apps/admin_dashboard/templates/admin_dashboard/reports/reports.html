@@ -25,7 +25,7 @@
                                 {% for report in project_reports %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ report.user.username }}</td>
+                                    <td>{{ report.user }}</td>
                                     <td>{{ report.project.title }}</td>
                                     <td>
                                         <a href="{% url 'show_project_report' report.id %}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
@@ -76,7 +76,7 @@
                                 {% for report in comment_reports %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ report.user.username }}</td>
+                                    <td>{{ report.user }}</td>
                                     <td>{{ report.comment.text }}</td>
                                     <td>
                                         <a href="{% url 'show_comment_report' report.id %}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
@@ -94,7 +94,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <a href="{% url 'delete_comment_report' report.comment.id %}" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
+                                                        <a href="{% url 'delete_comment_report' report.id %}" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
                                                     </div>
                                                 </div>
                                             </div>

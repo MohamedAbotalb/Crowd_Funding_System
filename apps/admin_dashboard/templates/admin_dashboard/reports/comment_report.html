@@ -10,7 +10,7 @@
         <div class="card-body">
             <p class="card-text"><strong>User:</strong> {{ comment_report.user }}</p>
             <p class="card-text"><strong>Project Title:</strong> {{ comment_report.comment.project.title }}</p>
-            <p class="card-text"><strong>Comment Text:</strong> {{ comment_report.comment.text }}</p>
+            <p class="card-text"><strong>Report Reason:</strong> {{ comment_report.reason }}</p>
             <p class="card-text"><strong>Created At:</strong> {{ comment_report.created_at }}</p>
             <form action="{% url 'delete_comment_report' comment_report.id %}" method="post">
                 {% csrf_token %}
