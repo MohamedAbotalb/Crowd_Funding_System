@@ -1,4 +1,7 @@
 import re
+import shutil
+import os
+from django.conf import settings
 from .decorators import superuser_required
 from django.utils import timezone
 from django.db.models import Sum, Avg, Max
@@ -161,12 +164,41 @@ def show_project(request, slug):
 
 @superuser_required
 def delete_project(request, slug):
-    project = get_object_or_404(Project, slug=slug)
     if request.method == 'POST':
-        project.delete()
-        messages.success(request, 'Project deleted successfully.')
-        return redirect('show_projects')
-    return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
+        project = Project.get_project_by_slug(slug)
+        
+        if project:
+            project_directory = os.path.join(settings.MEDIA_ROOT, 'project_uploads', project.title.replace(' ', '_'))
+
+            current_fund = project.current_fund
+            recipient_project = Project.objects.filter(category=project.category).exclude(pk=project.pk).first()
+
+            if recipient_project:
+                recipient_project.current_fund += current_fund
+                recipient_project.save()
+            else:
+                recipient_project = Project.objects.exclude(pk=project.pk).first()
+                if recipient_project:
+                    recipient_project.current_fund += current_fund
+                    recipient_project.save()
+
+            if os.path.exists(project_directory):
+                shutil.rmtree(project_directory)
+
+            project.delete()
+            messages.success(request, 'Project deleted successfully.')
+            return redirect('show_projects')
+        
+        return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
+    
+# @superuser_required
+# def delete_project(request, slug):
+#     project = get_object_or_404(Project, slug=slug)
+#     if request.method == 'POST':
+#         project.delete()
+#         messages.success(request, 'Project deleted successfully.')
+#         return redirect('show_projects')
+#     return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
 
 
 @superuser_required
