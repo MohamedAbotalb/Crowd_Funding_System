@@ -233,23 +233,23 @@ def add_comment(request, slug):
     return render(request, 'projects/add_comment.html', {'comment_form': comment_form, 'project': project})
 
 
-@login_required(login_url='login_')
-def add_reply(request, comment_id):
-    parent_comment = get_object_or_404(Comment, id=comment_id)
-    if request.method == 'POST':
-        reply_form = ReplyCommentForm(request.POST)
-        if reply_form.is_valid():
-            reply = reply_form.save(commit=False)
-            reply.comment = parent_comment
-            print("Added comment")
-            user_instance = CustomUser.objects.get(pk=request.user.pk)
-            reply.user = user_instance  
-            reply.save()
-            messages.success(request, 'Your reply has been added!')
-            return redirect('project_details', slug=parent_comment.project.slug)
-    else:
-        reply_form = ReplyCommentForm()
-    return render(request, 'projects/add_reply.html', {'reply_form': reply_form, 'parent_comment': parent_comment})
+# @login_required(login_url='login_')
+# def add_reply(request, comment_id):
+#     parent_comment = get_object_or_404(Comment, id=comment_id)
+#     if request.method == 'POST':
+#         reply_form = ReplyCommentForm(request.POST)
+#         if reply_form.is_valid():
+#             reply = reply_form.save(commit=False)
+#             reply.comment = parent_comment
+#             print("Added comment")
+#             user_instance = CustomUser.objects.get(pk=request.user.pk)
+#             reply.user = user_instance  
+#             reply.save()
+#             messages.success(request, 'Your reply has been added!')
+#             return redirect('project_details', slug=parent_comment.project.slug)
+#     else:
+#         reply_form = ReplyCommentForm()
+#     return render(request, 'projects/add_reply.html', {'reply_form': reply_form, 'parent_comment': parent_comment})
 
 
 @login_required(login_url='login_')
