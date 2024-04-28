@@ -88,15 +88,15 @@ def rate_project(request, slug):
 def project_details(request, slug):
     project = get_object_or_404(Project, slug=slug)
     comments = project.comments.all()
-    # Fetch comments and their replies
     comments = Comment.objects.filter(project=project)
     # for comment in comments:
     #     comment.replies = Reply.objects.filter(comment=comment)
     # Calculate days left until end time
+
     end_datetime = project.end_time
     now_datetime = timezone.now()
     days_left = (end_datetime.date() - now_datetime.date()).days
-    # Calculate the average rating for the project
+
     average_rating = project.ratings.aggregate(Avg('value'))['value__avg']
     print(average_rating,"avg")
     if average_rating is not None:
@@ -104,35 +104,35 @@ def project_details(request, slug):
         print(project.rate,"pro")
     else:
         project.rate = None
+
     project.save()
-    # Check if the user has rated the project
+    
     user_rating = None
     if request.user.is_authenticated:
         current_user = request.user
         user_rating_obj = Rating.objects.filter(user=current_user, project=project).first()
         if user_rating_obj:
             user_rating = user_rating_obj.value
-    # Get related projects based on tags
+
     related_projects = Project.objects.filter(tags__in=project.tags.all()).exclude(id=project.id).distinct()[:4]
-    # Calculate days left for each related project
     for related_project in related_projects:
             end_datetime = related_project.end_time
             now_datetime = timezone.now()
             days_left = (end_datetime.date() - now_datetime.date()).days
             related_project.days_left = days_left
-    # Retrieve the first and last donation made to the project
+
     first_donation = Donation.objects.filter(project=project).order_by('created_at').first()
     last_donation = Donation.objects.filter(project=project).order_by('-created_at').first()
-    # Retrieve the top donation amount for the project
     top_donation = Donation.objects.filter(project=project).aggregate(Max('amount'))['amount__max']
     top_donation_user = CustomUser.objects.filter(donation__amount=Donation.objects.aggregate(max_amount=Max('amount'))['max_amount']).first()
-     # Calculate current fund percentage
+
     # if project.total_target != 0:
     #     current_fund_percentage = round((project.current_fund / project.total_target) * 100, 2)
     # else:
     #     current_fund_percentage = 0  # Handle division by zero case
+
     num_donors = Donation.objects.filter(project=project).values('user').distinct().count()
-    # Check if the user is the creator and current fund is less than 25% of target
+
     allow_cancel = False
     if request.user.id == project.creator.id and project.percentag < 25:
         allow_cancel = True

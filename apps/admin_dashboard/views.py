@@ -171,32 +171,32 @@ def show_project(request, slug):
 
 @superuser_required
 def delete_project(request, slug):
-    project = Project.get_project_by_slug(slug)
     if request.method == 'POST':
-        project_directory = os.path.join(settings.MEDIA_ROOT, 'project_uploads', project.title.replace(' ', '_'))
-        current_fund = project.current_fund
-        recipient_project = Project.objects.filter(category=project.category).exclude(pk=project.pk).first()
+        project = Project.get_project_by_slug(slug)
+        
+        if project:
+            project_directory = os.path.join(settings.MEDIA_ROOT, 'project_uploads', project.title.replace(' ', '_'))
 
-        # add the current fund of that project to another project in the same category
-        if recipient_project:
-            recipient_project.current_fund += current_fund
-            recipient_project.save()
+            current_fund = project.current_fund
+            recipient_project = Project.objects.filter(category=project.category).exclude(pk=project.pk).first()
 
-        else:
-            # If no project in the same category, transfer the funds to any available project
-            recipient_project = Project.objects.exclude(pk=project.pk).first()
-            recipient_project.current_fund += current_fund
-            recipient_project.save()
+            if recipient_project:
+                recipient_project.current_fund += current_fund
+                recipient_project.save()
+            else:
+                recipient_project = Project.objects.exclude(pk=project.pk).first()
+                if recipient_project:
+                    recipient_project.current_fund += current_fund
+                    recipient_project.save()
 
-        # Delete the project directory
-        if os.path.exists(project_directory):
-            shutil.rmtree(project_directory)
+            if os.path.exists(project_directory):
+                shutil.rmtree(project_directory)
 
-        project.delete()
-        messages.success(request, 'Project deleted successfully.')
-        return redirect('show_projects')
-
-    return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
+            project.delete()
+            messages.success(request, 'Project deleted successfully.')
+            return redirect('show_projects')
+        
+        return render(request, 'admin_dashboard/projects/project_list.html', {'project': project})
 
 
 @superuser_required

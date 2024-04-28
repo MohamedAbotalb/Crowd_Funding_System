@@ -25,4 +25,3 @@ urlpatterns = [
     path('comments_reports/<int:id>/', views.show_comment_report, name='show_comment_report'),
     path('comments_reports/<int:id>/delete/', views.delete_comment_report, name='delete_comment_report'),
 ]
-
