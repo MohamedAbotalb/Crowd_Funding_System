@@ -285,4 +285,4 @@ def report_comment(request, comment_id):
             return redirect('project_details', slug=comment.project.slug)
     else:
         report_comment_form = ReportCommentForm()
-    return render(request, 'projects/report_comment.html', {'report_comment_form': report_comment_form, 'comment': comment})
+    return render(request, 'projects/project_details.html', {'report_comment_form': report_comment_form, 'comment': comment})

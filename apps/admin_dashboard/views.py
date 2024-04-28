@@ -174,7 +174,6 @@ def delete_comment(request, slug, id):
     comment = get_object_or_404(Comment, id=id)
     comment.delete()
     return redirect('show_project', slug=slug)
-# return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)\
 
 
 @superuser_required
@@ -200,7 +199,7 @@ def delete_comment_report(request, id):
     comment_report = get_object_or_404(CommentReport, id=id)
     comment_report.delete()
 
-    return redirect('show_project')
+    return redirect('show_reports')
 
 
 @superuser_required
