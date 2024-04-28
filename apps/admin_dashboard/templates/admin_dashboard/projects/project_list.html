@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.textContent = data.is_featured ? ' Featured' : 'not Featured';
                 console.log(button.textContent )
                   button.classList.toggle('btn-warning', data.is_featured);
-                    button.classList.toggle('btn-secondary', !data.is_featured);
+                  button.classList.toggle('btn-secondary', !data.is_featured);
             })
             .catch(error => {
                 console.error('Error:', error.message);
