@@ -113,6 +113,7 @@ class ReportCommentForm(forms.ModelForm):
             'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Please provide details about why you are reporting this comment.'})
         }
 
+
 class ReplyCommentForm(forms.ModelForm):
     class Meta:
         model = Comment

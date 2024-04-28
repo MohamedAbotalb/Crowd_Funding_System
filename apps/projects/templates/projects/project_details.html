@@ -319,7 +319,7 @@
               {% if request.user.id != project.creator.id %} 
               <!-- Report Project Button -->
                 <div class="text-end">
-                  <button type="button" class="btn btn-danger" id="reportProj ectButton" data-bs-toggle="modal" data-bs-target="#reportProjectModal">ReporProject</button>
+                  <button type="button" class="btn btn-danger" id="reportProjectButton" data-bs-toggle="modal" data-bs-target="#reportProjectModal">Report Project</button>
                 </div> 
               {% endif %}   
             {% endif %}   
@@ -403,23 +403,21 @@
                   <div class="modal-dialog">
                       <div class="modal-content">
                           <div class="modal-header">
-                              <h5 class="modal-title" id="reportProjectMo dalLabel">Report Project: {{ project.title }}</h5>
+                              <h5 class="modal-title" id="reportProjectModalLabel">Report Project: {{ project.title }}</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            <form action="{% url 'report_project' project.slug %}" method="post">
-                              {% csrf_token %}
-                                  <textarea name="reason" class="form-control" rows="3"
-                                      placeholder="Please provide details about why you are reporting this project."
-                                      required></textarea>
+                              <form action="{% url 'report_project' project.slug %}" method="post">
+                                  {% csrf_token %}
+                                  <textarea name="reason" class="form-control" rows="3" placeholder="Please provide details about why you are reporting this project." required></textarea>
                                   <button type="submit" class="btn btn-danger">Report Project</button>
                               </form>
                           </div>
                       </div>
                   </div>
+                </div>
               </div>
-              </div>
-                        </div>
+          </div>
           {% if messages %}
           <div class="alert alert-success" role="alert" id="success-message">
             {% for message in messages %}

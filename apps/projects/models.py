@@ -4,7 +4,6 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.db import models
 from django.urls import reverse
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.core.validators import MaxValueValidator, MinValueValidator
 from taggit.managers import TaggableManager
@@ -54,10 +53,6 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
-
-   
-
-
     @classmethod
     def get_project_by_slug(cls, slug):
         return get_object_or_404(cls, slug=slug)
@@ -89,26 +84,13 @@ class Project(models.Model):
         return self.tags.all()
 
     @property
-    def average_rating(self):
-        return self.rate_set.all().aggregate(Avg('rate'))['rate__avg']
-
-    @property
-    def rates_count(self):
-        return self.rate_set.all().count()
-
-    @property
-    def comment_count(self):
-        return self.comment_set.all().count()
-
-    @property
-    def donation_count(self):
-        return self.donation_set.all().count()
-
-    @property
     def percentag(self):
         if self.total_target == 0:
             return 0
-        return (self.current_fund * 100) / self.total_target
+        value = (self.current_fund * 100) / self.total_target
+        return round(value, 2)
+
+
 # ===================== ProjectPicture Model =====================
 def project_picture_upload_path(instance, filename):
     if instance.project.pictures.exists():
@@ -145,26 +127,21 @@ class Comment(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f'Comment by {self.user} on {self.project.title}'
 
+# ===================== Reply Model =====================
 class Reply(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f'Reply by {self.user} to {self.comment.user} on {self.comment.project.title}'
-    
+
 class CommentReport(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
     reason = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"Report by {self.user} on comment: {self.comment.id}"
 
 # ===================== Report Project Model =====================
 class ProjectReport(models.Model):
@@ -173,8 +150,6 @@ class ProjectReport(models.Model):
     reason = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"Report by {self.user} on {self.project.title}"
 
 # ===================== Rating Model =====================
 class Rating(models.Model):
@@ -184,7 +159,4 @@ class Rating(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ('user', 'project') 
-
-    def __str__(self):
-        return f"Rating {self.value} by {self.user} on {self.project}"
+        unique_together = ('user', 'project')
