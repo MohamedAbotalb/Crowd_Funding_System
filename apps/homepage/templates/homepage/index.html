@@ -59,7 +59,7 @@
                 {% for project in top_projects %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
                     <div class="overlay position-absolute w-100 h-100"></div>
-                    <img src="{{ project.picture_url }}" height="700px" class="d-block w-100" alt="{{ project.title }}">
+                    <img src="{{ project.picture_url }}" height="900px" class="d-block w-100" alt="{{ project.title }}">
                     <div class="carousel-caption d-none d-md-block">
                         <h2 class="text-capitalize text-light fw-bolder fs-1">{{ project.title }}</h2>
                         <p class="w-50 text-light mx-auto">{{ project.details }}</p>
